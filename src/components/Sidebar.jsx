@@ -70,7 +70,6 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* Sidebar Items */}
       {items.map((item, index) => (
         <div key={index}>
           {/* Main Item */}
