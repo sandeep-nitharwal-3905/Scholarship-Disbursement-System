@@ -2,8 +2,8 @@ import React from "react";
 import TopBar from "./TopBar";
 import Sidebar from "./Sidebar";
 import StatButton from "./StatButton";
+import TrackStat from "./TrackStat";
 import { Users, GraduationCap, UserPlus } from "lucide-react";
-
 const Dashboard = () => (
   <div className="flex flex-col h-screen bg-gray-100">
     <TopBar isNotification={false} />
@@ -24,6 +24,7 @@ const Dashboard = () => (
           <StatButton count={69} title="Text3" color="blue" icon={UserPlus} />
           <StatButton count={2} title="Text4" color="blue-100" icon={Users} />
         </div>
+        <TrackStat status="3" />
       </div>
     </div>
   </div>
