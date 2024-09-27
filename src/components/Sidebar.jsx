@@ -10,8 +10,9 @@ import {
   BookOpen,
   Home,
   BarChart2,
-  LogOut, // Add the logout icon
+  LogOut,
 } from "lucide-react";
+import { Link } from "react-router-dom"; // Import Link for navigation
 
 const Sidebar = () => {
   const [dropdownOpen, setDropdownOpen] = useState({
@@ -33,12 +34,15 @@ const Sidebar = () => {
   };
 
   const items = [
-    { name: "Home", icon: Home },
-    { name: "Dashboard", icon: BarChart2 },
+    { name: "Home", icon: Home, path: "/" },
+    { name: "Dashboard", icon: BarChart2, path: "/dashboard" }, // Updated path to /dashboard
     {
       name: "Document Status",
       icon: GraduationCap,
-      dropdown: ["Upload Documents", "Track Submission Status"],
+      dropdown: [
+        { name: "Upload Documents", path: "/upload" },
+        "Track Submission Status",
+      ],
     },
     {
       name: "Scholarship Info",
@@ -73,33 +77,39 @@ const Sidebar = () => {
       {items.map((item, index) => (
         <div key={index}>
           {/* Main Item */}
-          <div
+          <Link
+            to={item.path || "#"}
             className={`flex items-center py-2 px-4 rounded cursor-pointer ${
               item.name === "Dashboard" ? "bg-[#CDC1FF]" : "hover:bg-gray-700"
             }`}
-            onClick={() => (item.dropdown ? toggleDropdown(item.name) : null)}
           >
             <item.icon size={20} className="mr-2" />
             <span className="text-base">{item.name}</span>
-            {item.dropdown &&
-              (dropdownOpen[item.name] ? (
-                <ChevronUp size={20} className="ml-auto" />
-              ) : (
-                <ChevronDown size={20} className="ml-auto" />
-              ))}
-          </div>
-
-          {/* Sub-Items (Dropdown Content) */}
+          </Link>
+          {/* Dropdown handling */}
           {item.dropdown && dropdownOpen[item.name] && (
             <div className="ml-8">
-              {item.dropdown.map((subItem, subIndex) => (
-                <div
-                  key={subIndex}
-                  className="py-2 px-4 rounded cursor-pointer hover:bg-gray-700 text-sm"
-                >
-                  {subItem}
-                </div>
-              ))}
+              {item.dropdown.map((subItem, subIndex) => {
+                if (typeof subItem === "object") {
+                  return (
+                    <Link
+                      key={subIndex}
+                      to={subItem.path}
+                      className="py-2 px-4 rounded cursor-pointer hover:bg-gray-700 text-sm block"
+                    >
+                      {subItem.name}
+                    </Link>
+                  );
+                }
+                return (
+                  <div
+                    key={subIndex}
+                    className="py-2 px-4 rounded cursor-pointer hover:bg-gray-700 text-sm"
+                  >
+                    {subItem}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
