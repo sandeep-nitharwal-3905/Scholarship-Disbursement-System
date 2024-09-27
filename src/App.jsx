@@ -1,3 +1,4 @@
+// App.jsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
@@ -8,14 +9,14 @@ import Layout from "./components/Layout"; // Import the Layout component
 const App = () => {
   return (
     <Router>
-      <Layout>
-        {/* Uncomment the desired component to display */}
-        {/* <Login /> */}
-        <Routes>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/upload" element={<UploadDocs />} />
-        </Routes>
-      </Layout>
+    <Layout>
+      {/* Uncomment the desired component to display */}
+      {/* <Login /> */}
+      <Routes>
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/upload" element={<UploadDocs />} />
+      </Routes>
+    </Layout>
     </Router>
   );
 };

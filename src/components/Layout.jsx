@@ -1,3 +1,4 @@
+// Layout.jsx
 import React from "react";
 import TopBar from "./TopBar";
 import NewTopBar from "./NewTopBar";
@@ -10,10 +11,13 @@ const Layout = ({ children }) => {
       <NewTopBar />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <div className="flex-1 p-8 overflow-auto">{children}</div>
+        <div className="flex-1 p-8 overflow-auto">
+          {children}
+        </div>
       </div>
     </div>
   );
 };
 
 export default Layout;
+
