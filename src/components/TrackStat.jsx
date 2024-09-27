@@ -1,13 +1,13 @@
 import React from "react";
-import { Check, FileInput, ListTodo } from "lucide-react";
+import { Check, FileInput } from "lucide-react";
 
 const TrackStat = ({ status = "" }) => {
   const orderStatuses = [
-    { id: "1", label: "Documents Collection", icon: FileInput },
-    { id: "2", label: "Documents Authentication", icon: FileInput },
-    { id: "3", label: "xyz2", icon: FileInput },
-    { id: "4", label: "xyz3", icon: FileInput },
-    { id: "5", label: "Approval / Rejection", icon: ListTodo },
+    { id: "1", label: "All Documents Uploaded", icon: FileInput },
+    { id: "2", label: "Documents Under Review", icon: FileInput },
+    { id: "3", label: "Documents Verified", icon: FileInput },
+    { id: "4", label: "Payment Processing", icon: FileInput },
+    { id: "5", label: "Scholarship Disbursed", icon: FileInput },
   ];
 
   const isStatusActive = (currentStatus, targetStatus) => {
