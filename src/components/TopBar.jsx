@@ -36,31 +36,37 @@ const TopBar = (props) => {
   }, []);
 
   return (
-    <div className="bg-[#4A4947] text-white p-4 flex justify-between items-center">
+    <div className="bg-[#4A4947] text-white p-4 flex justify-between items-center shadow-md">
       <h1 className="text-xl font-bold">Scholarship Disbursement System</h1>
 
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-6">
+        {/* Notification Icon */}
         <div className="relative" ref={bellDropdownRef}>
           {props.isNotification ? (
             <BellDot
               color="#3e9392"
-              className="cursor-pointer"
+              className="cursor-pointer hover:scale-110 transition-transform"
               onClick={toggleBellDropdown}
+              size={24}
             />
           ) : (
             <Bell
               color="#3e9392"
-              className="cursor-pointer"
+              className="cursor-pointer hover:scale-110 transition-transform"
               onClick={toggleBellDropdown}
+              size={24}
             />
           )}
           {isBellDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-black z-10">
+            <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg py-1 text-black z-10">
               <div className="px-4 py-2 cursor-pointer hover:bg-gray-100">
-                Notifications 1
+                Notification 1
               </div>
               <div className="px-4 py-2 cursor-pointer hover:bg-gray-100">
-                Notifications 2
+                Notification 2
+              </div>
+              <div className="px-4 py-2 cursor-pointer hover:bg-gray-100 border-t border-gray-200">
+                View All Notifications
               </div>
             </div>
           )}

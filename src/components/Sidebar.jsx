@@ -15,9 +15,9 @@ import {
 
 const Sidebar = () => {
   const [dropdownOpen, setDropdownOpen] = useState({
-    Text1: false,
-    Text2: false,
-    Text3: false,
+    documentStatus: false,
+    scholarshipInfo: false,
+    userManagement: false,
   });
 
   const toggleDropdown = (section) => {
@@ -28,27 +28,26 @@ const Sidebar = () => {
   };
 
   const items = [
+    { name: "Home", icon: Home },
     { name: "Dashboard", icon: BarChart2 },
     {
-      name: "Text1",
+      name: "Document Status",
       icon: GraduationCap,
-      dropdown: ["asd", "Edsadxafdsams"],
+      dropdown: ["Upload Documents", "Track Submission Status"],
     },
     {
-      name: "Text2",
+      name: "Scholarship Info",
       icon: Building,
-      dropdown: ["afsd", "sdfs"],
+      dropdown: ["Eligibility Criteria", "Scholarship Types"],
     },
     {
-      name: "Text3",
+      name: "User Management",
       icon: Users,
-      dropdown: ["vsdv", "asdasce"],
+      dropdown: ["Manage Users", "User Roles"],
     },
-    { name: "asd", icon: UserPlus },
-    { name: "asd", icon: BookOpen },
-    { name: "asd", icon: Home },
-    { name: "asd", icon: Layout },
-    { name: "asd", icon: Settings },
+    { name: "Payment History", icon: UserPlus },
+    { name: "Guidelines", icon: BookOpen },
+    { name: "Settings", icon: Layout },
   ];
 
   return (
@@ -58,7 +57,9 @@ const Sidebar = () => {
         <div className="w-10 h-10 rounded-full bg-gray-600 mr-3"></div>
         <div>
           <p className="font-semibold">idk 123</p>
-          <p className="text-xs text-gray-400">Student / Admin(will depend!)</p>
+          <p className="text-xs text-gray-400">
+            Student / Admin (will depend!)
+          </p>
         </div>
       </div>
 
