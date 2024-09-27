@@ -6,7 +6,7 @@ import { Users, GraduationCap, UserPlus } from "lucide-react";
 
 const Dashboard = () => (
   <div className="flex flex-col h-screen bg-gray-100">
-    <TopBar />
+    <TopBar isNotification={false} />
     <div className="flex flex-1 overflow-hidden">
       <Sidebar />
       <div className="flex-1 p-8 overflow-auto">
