@@ -17,6 +17,9 @@ const TrackStat = ({ status = "" }) => {
     return currentIndex >= targetIndex;
   };
 
+  const currentStatusLabel =
+    orderStatuses.find((s) => s.id === status)?.label || "Unknown Status";
+
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white shadow-lg rounded-lg">
       <h1 className="text-2xl font-bold mb-6 text-center">
@@ -58,10 +61,8 @@ const TrackStat = ({ status = "" }) => {
                   }`}
                   style={{
                     position: "absolute",
-                    left: `${(100 / (orderStatuses.length - 1)) * index}%`,
-                    right: `${
-                      100 - (100 / (orderStatuses.length - 1)) * (index + 1)
-                    }%`,
+                    left: `${(100 / (orderStatuses.length - 1)) * index}%`, // Position the bar correctly
+                    width: `${100 / (orderStatuses.length - 1)}%`, // Set width to fill the space
                     top: "28px",
                   }}
                 />
@@ -72,7 +73,7 @@ const TrackStat = ({ status = "" }) => {
       </div>
 
       <p className="mt-4 text-sm text-gray-600 text-center">
-        Current Status: {status}
+        Current Status: {currentStatusLabel}
       </p>
     </div>
   );
