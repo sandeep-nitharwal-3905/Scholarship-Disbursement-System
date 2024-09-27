@@ -4,9 +4,9 @@ import TopBar from "./TopBar";
 import Sidebar from "./Sidebar";
 import StatButton from "./StatButton";
 import TrackStat from "./TrackStat";
-import PhotoSlider from "./CursorSlider"; 
-import NotificationPanel from "./NotificationPanel"; 
-import SubmissionStatus from "./SubmissionStatus"; 
+import PhotoSlider from "./CursorSlider";
+import NotificationPanel from "./NotificationPanel";
+import SubmissionStatus from "./SubmissionStatus";
 import { Users, GraduationCap, UserPlus } from "lucide-react";
 import NewTopBar from "./NewTopBar";
 const Dashboard = () => (
@@ -45,15 +45,10 @@ const Dashboard = () => (
             icon={Users}
           />
         </div>
-
-        {/* Add the PhotoSlider component here */}
+        <TrackStat status="3" />
         <PhotoSlider />
-
-        {/* New Components */}
         <SubmissionStatus />
         <NotificationPanel />
-
-        <TrackStat status="3" />
       </div>
     </div>
   </div>
