@@ -21,7 +21,7 @@ const TrackStat = ({ status = "" }) => {
     orderStatuses.find((s) => s.id === status)?.label || "Unknown Status";
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-white shadow-lg rounded-lg">
+    <div className="p-6 max-w-4xl mx-auto bg-white  rounded-lg">
       <h1 className="text-2xl font-bold mb-6 text-center">
         Document Status Tracker
       </h1>

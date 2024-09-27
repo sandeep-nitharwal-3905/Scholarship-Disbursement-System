@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ChevronDown,
   ChevronUp,
@@ -12,14 +12,16 @@ import {
   BarChart2,
   LogOut,
 } from "lucide-react";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { NavLink } from "react-router-dom"; // Import NavLink for active styling
 
 const Sidebar = () => {
   const [dropdownOpen, setDropdownOpen] = useState({
-    documentStatus: false,
+    documentStatus: true, // Default dropdown open for Document Status
     scholarshipInfo: false,
     userManagement: false,
   });
+
+  const [activeLink, setActiveLink] = useState("Dashboard"); // Set initial active link to Dashboard
 
   const toggleDropdown = (section) => {
     setDropdownOpen((prev) => ({
@@ -35,13 +37,13 @@ const Sidebar = () => {
 
   const items = [
     { name: "Home", icon: Home, path: "/" },
-    { name: "Dashboard", icon: BarChart2, path: "/dashboard" }, // Updated path to /dashboard
+    { name: "Dashboard", icon: BarChart2, path: "/dashboard" },
     {
       name: "Document Status",
       icon: GraduationCap,
       dropdown: [
         { name: "Upload Documents", path: "/upload" },
-        "Track Submission Status",
+        { name: "Track Submission Status", path: "/track" }, // Example sublink
       ],
     },
     {
@@ -77,28 +79,54 @@ const Sidebar = () => {
       {items.map((item, index) => (
         <div key={index}>
           {/* Main Item */}
-          <Link
-            to={item.path || "#"}
-            className={`flex items-center py-2 px-4 rounded cursor-pointer ${
-              item.name === "Dashboard" ? "bg-[#CDC1FF]" : "hover:bg-gray-700"
-            }`}
+          <div
+            onClick={() => {
+              if (item.dropdown) {
+                toggleDropdown(item.name);
+              } else {
+                setActiveLink(item.name); // Set active link
+              }
+            }}
           >
-            <item.icon size={20} className="mr-2" />
-            <span className="text-base">{item.name}</span>
-          </Link>
+            <NavLink
+              to={item.path || "#"}
+              className={`flex items-center py-2 px-4 rounded cursor-pointer ${
+                activeLink === item.name ? "bg-gray-600" : "hover:bg-gray-700"
+              }`}
+              onClick={() => {
+                if (!item.dropdown) setActiveLink(item.name); // Set active link if not dropdown
+              }}
+            >
+              <item.icon size={20} className="mr-2" />
+              <span className="text-base">{item.name}</span>
+              {item.dropdown && (
+                dropdownOpen[item.name] ? (
+                  <ChevronUp size={20} className="ml-auto" />
+                ) : (
+                  <ChevronDown size={20} className="ml-auto" />
+                )
+              )}
+            </NavLink>
+          </div>
+
           {/* Dropdown handling */}
           {item.dropdown && dropdownOpen[item.name] && (
             <div className="ml-8">
               {item.dropdown.map((subItem, subIndex) => {
                 if (typeof subItem === "object") {
                   return (
-                    <Link
+                    <NavLink
                       key={subIndex}
                       to={subItem.path}
-                      className="py-2 px-4 rounded cursor-pointer hover:bg-gray-700 text-sm block"
+                      className={({ isActive }) =>
+                        `py-2 px-4 rounded cursor-pointer hover:bg-gray-700 text-sm block ${
+                          activeLink === subItem.name ? "bg-gray-600" : ""
+                        }`
+                      }
+                      onClick={() => setActiveLink(subItem.name)} // Set active link for dropdown
                     >
                       {subItem.name}
-                    </Link>
+                    </NavLink>
                   );
                 }
                 return (
@@ -116,7 +144,7 @@ const Sidebar = () => {
       ))}
 
       {/* Logout Button Container */}
-      <div className="mt-4 p-4 bg-gray-700 rounded-lg">
+      <div className="mt-4 bg-gray-700 rounded-lg">
         <div
           className="flex items-center py-2 px-4 rounded cursor-pointer hover:bg-red-600 transition duration-200"
           onClick={handleLogout}
