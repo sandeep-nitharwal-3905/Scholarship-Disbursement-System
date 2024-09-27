@@ -36,7 +36,6 @@ const Sidebar = () => {
   };
 
   const items = [
-    { name: "Home", icon: Home, path: "/" },
     { name: "Dashboard", icon: BarChart2, path: "/dashboard" },
     {
       name: "Document Status",
@@ -99,13 +98,12 @@ const Sidebar = () => {
             >
               <item.icon size={20} className="mr-2" />
               <span className="text-base">{item.name}</span>
-              {item.dropdown && (
-                dropdownOpen[item.name] ? (
+              {item.dropdown &&
+                (dropdownOpen[item.name] ? (
                   <ChevronUp size={20} className="ml-auto" />
                 ) : (
                   <ChevronDown size={20} className="ml-auto" />
-                )
-              )}
+                ))}
             </NavLink>
           </div>
 
