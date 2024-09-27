@@ -35,11 +35,37 @@ const TopBar = (props) => {
     };
   }, []);
 
+  const handleLogin = () => {
+    // Implement login action, e.g., redirect to login page
+    console.log("Login clicked");
+  };
+
+  const handleRegister = () => {
+    // Implement registration action, e.g., redirect to registration page
+    console.log("Register clicked");
+  };
+
   return (
-    <div className="bg-[#4A4947] text-white p-4 flex justify-between items-center shadow-md">
+    <div className="bg-[#000000FF] text-white p-4 flex justify-between items-center shadow-md">
       <h1 className="text-xl font-bold">Scholarship Disbursement System</h1>
 
       <div className="flex items-center space-x-6">
+        {/* Applicant Login Button */}
+        <button
+          onClick={handleLogin}
+          className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+        >
+          Applicant Login
+        </button>
+        
+        {/* New Registration Button */}
+        <button
+          onClick={handleRegister}
+          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+        >
+          New Registration
+        </button>
+
         {/* Notification Icon */}
         <div className="relative" ref={bellDropdownRef}>
           {props.isNotification ? (
