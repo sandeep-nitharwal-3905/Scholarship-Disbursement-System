@@ -7,6 +7,8 @@ import Layout from "./components/Layout";
 import Track from "./components/Track";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
+import AdminDashboard from "./components/AdminDashboard";
+import AdminTrack from "./components/AdminTrack";
 const App = () => {
   return (
     <Router>
@@ -22,6 +24,8 @@ const App = () => {
                 <Route path="/home" element={<Home />} />
                 <Route path="/upload" element={<UploadDocs />} />
                 <Route path="/track" element={<Track />} />
+                <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                <Route path="/admin-track" element={<AdminTrack />} />
               </Routes>
             </Layout>
           }

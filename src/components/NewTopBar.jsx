@@ -1,17 +1,27 @@
-import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import React, { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 const NewTopBar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   const menuItems = [
-    { label: 'Home', items: [] },
-    { label: 'About', items: [] },
-    { label: 'How To Apply', items: [] },
-    { label: 'Downloads', items: ['Income Certificate', 'User Manual', 'User Manual For Non-NET', 'HDI Forwarding Letter Format(For Board Toppers)', 'GUIDELINES', 'TR FORM 7'] },
-    { label: 'Contacts', items: [] },
-    { label: 'Weblinks', items: [] },
-    { label: 'Emergency Relief Fund', items: [] },
+    { label: "Home", items: [] },
+    { label: "About", items: [] },
+    { label: "How To Apply", items: [] },
+    {
+      label: "Downloads",
+      items: [
+        "Income Certificate",
+        "User Manual",
+        "User Manual For Non-NET",
+        "HDI Forwarding Letter Format(For Board Toppers)",
+        "GUIDELINES",
+        "TR FORM 7",
+      ],
+    },
+    { label: "Contacts", items: [] },
+    { label: "Weblinks", items: [] },
+    { label: "Emergency Relief Fund", items: [] },
   ];
 
   return (
@@ -31,7 +41,10 @@ const NewTopBar = () => {
               >
                 {item.label}
                 {item.items.length > 0 && (
-                  <ChevronDown className="inline-block ml-2 group-hover:transform group-hover:rotate-180 transition-transform duration-200" size={16} />
+                  <ChevronDown
+                    className="inline-block ml-2 group-hover:transform group-hover:rotate-180 transition-transform duration-200"
+                    size={16}
+                  />
                 )}
               </a>
               {item.items.length > 0 && activeDropdown === index && (
