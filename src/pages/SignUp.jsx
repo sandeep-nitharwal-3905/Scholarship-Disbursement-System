@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { registerUser } from "../firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const [isPageLoaded, setIsPageLoaded] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [dob, setDob] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTimeout(() => {
@@ -9,8 +18,21 @@ const SignUp = () => {
     }, 500);
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (password.length < 6) {
+      setError("Password must be greater than 5 characters.");
+      return;
+    }
+
+    try {
+      await registerUser(email, password, fullName, dob, phoneNumber);
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Registration error:", error);
+      setError("Failed to register. Please try again.");
+    }
   };
 
   return (
@@ -27,24 +49,40 @@ const SignUp = () => {
           <input
             type="text"
             placeholder="Full Name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
             className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
             required
           />
           <input
             type="email"
             placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
             required
           />
           <input
             type="date"
             placeholder="Date of Birth"
+            value={dob}
+            onChange={(e) => setDob(e.target.value)}
             className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
             required
           />
           <input
             type="tel"
             placeholder="Phone Number"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
             className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
             required
           />
@@ -55,6 +93,7 @@ const SignUp = () => {
             Sign Up
           </button>
         </form>
+        {error && <p className="text-red-500 mt-4">{error}</p>}
       </div>
     </div>
   );
