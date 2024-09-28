@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { loginUser } from "../firebase/auth"; // Adjust the import path as needed
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify"; // Importing react-toastify
+import "react-toastify/dist/ReactToastify.css"; // Importing styles
 
 const App = () => {
   const [role, setRole] = useState("");
   const [isPageLoaded, setIsPageLoaded] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTimeout(() => {
@@ -16,10 +22,12 @@ const App = () => {
 
   const handleBack = () => {
     setRole("");
+    setError("");
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-blue-200">
+      <ToastContainer /> {/* Adding ToastContainer for toast notifications */}
       <div
         className={`${
           isPageLoaded
@@ -53,30 +61,56 @@ const App = () => {
         ) : (
           <StudentLogin onBack={handleBack} />
         )}
+        {error && <p className="text-red-500 mt-4">{error}</p>}
       </div>
     </div>
   );
 };
 
 const AdminLogin = ({ onBack }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      await loginUser(email, password);
+      toast.success("Admin logged in successfully!"); // Success message
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Failed to login. Please check your credentials."); // Error message
+    }
+  };
+
   return (
     <div className="animate-slideIn">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2 border-gray-300">
         Admin Login
       </h2>
-      <input
-        type="text"
-        placeholder="Admin Username"
-        className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
-      />
-      <input
-        type="password"
-        placeholder="Admin Password"
-        className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
-      />
-      <button className="w-full bg-gray-800 text-white py-3 rounded-lg mt-4 transition-transform transform hover:scale-105 active:scale-95">
-        Login as Admin
-      </button>
+      <form onSubmit={handleLogin}>
+        <input
+          type="email"
+          placeholder="Admin Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
+        />
+        <input
+          type="password"
+          placeholder="Admin Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
+        />
+        <button
+          type="submit"
+          className="w-full bg-gray-800 text-white py-3 rounded-lg mt-4 transition-transform transform hover:scale-105 active:scale-95"
+        >
+          Login as Admin
+        </button>
+      </form>
       <button
         className="w-full bg-gray-800 text-white py-3 mt-4 rounded-lg transition-transform transform hover:scale-105 active:scale-95"
         onClick={onBack}
@@ -88,24 +122,49 @@ const AdminLogin = ({ onBack }) => {
 };
 
 const StudentLogin = ({ onBack }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      await loginUser(email, password);
+      toast.success("Student logged in successfully!"); // Success message
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Failed to login. Please check your credentials."); // Error message
+    }
+  };
+
   return (
     <div className="animate-slideIn">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2 border-gray-300">
         Student Login
       </h2>
-      <input
-        type="text"
-        placeholder="Student ID"
-        className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
-      />
-      <button className="w-full bg-gray-800 text-white py-3 rounded-lg mt-4 transition-transform transform hover:scale-105 active:scale-95">
-        Login as Student
-      </button>
+      <form onSubmit={handleLogin}>
+        <input
+          type="email"
+          placeholder="Student Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
+        />
+        <button
+          type="submit"
+          className="w-full bg-gray-800 text-white py-3 rounded-lg mt-4 transition-transform transform hover:scale-105 active:scale-95"
+        >
+          Login as Student
+        </button>
+      </form>
       <button
         className="w-full bg-gray-800 text-white py-3 mt-4 rounded-lg transition-transform transform hover:scale-105 active:scale-95"
         onClick={onBack}
