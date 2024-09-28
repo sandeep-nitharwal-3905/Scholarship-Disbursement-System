@@ -78,9 +78,11 @@ const AdminLogin = ({ onBack }) => {
       const userData = await loginUser(email, password);
       toast.success("Admin logged in successfully!");
 
-      // Navigate to the dashboard with only uid
+      // Navigate to the admin dashboard with uid
       setTimeout(() => {
-        navigate("/dashboard", { state: { uid: userData.uid } });
+        navigate("/admin-dashboard", {
+          state: { uid: userData.uid, role: "admin" },
+        });
       }, 2000);
     } catch (error) {
       console.error("Login error:", error);
@@ -136,9 +138,11 @@ const StudentLogin = ({ onBack }) => {
       const userData = await loginUser(email, password);
       toast.success("Student logged in successfully!");
 
-      // Navigate to the dashboard with only uid
+      // Navigate to the student dashboard with uid
       setTimeout(() => {
-        navigate("/dashboard", { state: { uid: userData.uid } });
+        navigate("/dashboard", {
+          state: { uid: userData.uid, role: "student" },
+        });
       }, 2000);
     } catch (error) {
       console.error("Login error:", error);

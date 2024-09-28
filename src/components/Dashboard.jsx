@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { Users, GraduationCap, UserPlus } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { fetchUserData } from "../firebase/auth"; // Adjust the import path as needed
 import StatButton from "./StatButton";
 import TrackStat from "./TrackStat";
 import PhotoSlider from "./CursorSlider";
 import NotificationPanel from "./NotificationPanel";
 import SubmissionStatus from "./SubmissionStatus";
-import { Users, GraduationCap, UserPlus } from "lucide-react";
+import { fetchUserData } from "../firebase/auth"; // Adjust the import path as needed
 import { collection, query, where } from "firebase/firestore";
 import { getDatabase, ref, get } from "firebase/database";
 
@@ -26,7 +26,6 @@ const Dashboard = () => {
   //     } else {
   //       navigate("/login");
   //       return;
-  //       console.log("No data available");
   //     }
   //   })
   //   .catch((error) => {
@@ -37,7 +36,7 @@ const Dashboard = () => {
     <div>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">My Dashboard</h1>
-        {userData && <p>Welcome, {userData.name}</p>} {/* Display user data */}
+        {/* {userData && <p>Welcome, {userData.name}</p>}  */}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatButton
