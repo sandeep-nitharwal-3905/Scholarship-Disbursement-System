@@ -22,9 +22,9 @@ const TrackStat = ({ status = "" }) => {
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white  rounded-lg">
-      <h1 className="text-2xl font-bold mb-6 text-center">
+      {/* <h1 className="text-2xl font-bold mb-6 text-center">
         Document Status Tracker
-      </h1>
+      </h1> */}
 
       <div className="flex items-center justify-between relative">
         {orderStatuses.map((orderStatus, index) => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Login.css";
 
 const App = () => {
-  const [role, setRole] = useState(""); // admin or student
+  const [role, setRole] = useState("");
   const [isPageLoaded, setIsPageLoaded] = useState(false);
 
   useEffect(() => {
