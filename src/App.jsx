@@ -9,12 +9,15 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import AdminDashboard from "./components/AdminDashboard";
 import AdminTrack from "./components/AdminTrack";
+import AdminSignup from "./pages/AdminSignup";
 const App = () => {
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/admin" element={<AdminSignup />} />
+
         <Route
           path="*"
           element={

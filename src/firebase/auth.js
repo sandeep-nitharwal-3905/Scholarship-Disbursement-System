@@ -28,7 +28,8 @@ export const registerUser = async (
   password,
   fullName,
   dob,
-  phoneNumber
+  phoneNumber,
+  role = "student" // Default role is 'student'
 ) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
@@ -38,12 +39,13 @@ export const registerUser = async (
     );
     const user = userCredential.user;
 
+    // Save user data to the database with the specified role
     await set(ref(database, "users/" + user.uid), {
       fullName: fullName,
       email: email,
       dob: dob,
       phoneNumber: phoneNumber,
-      role: "student",
+      role: role, // Save the role (admin or student)
     });
 
     return {
@@ -52,7 +54,7 @@ export const registerUser = async (
       fullName: fullName,
       dob: dob,
       phoneNumber: phoneNumber,
-      role: "student",
+      role: role,
     };
   } catch (error) {
     throw error;
