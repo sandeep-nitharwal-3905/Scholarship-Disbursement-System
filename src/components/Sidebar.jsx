@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   ChevronDown,
   ChevronUp,
@@ -14,7 +15,9 @@ import {
 } from "lucide-react";
 import { NavLink } from "react-router-dom"; // Import NavLink for active styling
 
-const Sidebar = () => {
+const Sidebar = (props) => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState({
     documentStatus: true, // Default dropdown open for Document Status
     scholarshipInfo: false,
@@ -31,7 +34,10 @@ const Sidebar = () => {
   };
 
   const handleLogout = () => {
-    // Add your logout logic here, such as redirecting or clearing session
+    localStorage.removeItem("uid");
+
+    // Redirect to the login page
+    navigate("/login");
     console.log("User logged out");
   };
 
@@ -60,7 +66,13 @@ const Sidebar = () => {
     { name: "Guidelines", icon: BookOpen },
     { name: "Settings", icon: Settings },
   ];
-
+  // console.log(localStorage.getItem("uid"));
+  console.log(props.user);
+  const convertToNameFormat = (text) =>
+    text
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   return (
     <div className="w-64 bg-gray-800 text-white h-[calc(100vh-20px)] p-4 overflow-y-auto">
       {/* User Profile Section */}
@@ -71,8 +83,12 @@ const Sidebar = () => {
           className="w-10 h-10 rounded-full mr-3"
         />
         <div>
-          <p className="font-semibold text-lg">UserID123</p>
-          <p className="text-xs text-gray-400">Student</p>
+          <p className="font-semibold text-lg">
+            {convertToNameFormat(props.user.fullName)}
+          </p>
+          <p className="text-xs text-gray-400">
+            {props.user.role == "student" ? "Student" : "Admin"}
+          </p>
         </div>
       </div>
 
