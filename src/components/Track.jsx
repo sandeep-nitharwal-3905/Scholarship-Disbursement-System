@@ -3,7 +3,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import TrackStat from "./TrackStat";
 
 const ShipmentTracker = () => {
-  const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
+  const [expandedHistories, setExpandedHistories] = useState({});
 
   const orderStatuses = [
     { id: "1", label: "All Documents Uploaded" },
@@ -33,7 +33,7 @@ const ShipmentTracker = () => {
       ],
     },
     {
-      id: "1",
+      id: "2",
       status: "3",
       date: "Saturday 12/29/2018 at 11:28 am",
       docstype: "xyz Card",
@@ -51,7 +51,7 @@ const ShipmentTracker = () => {
       ],
     },
     {
-      id: "1",
+      id: "3",
       status: "5",
       date: "Saturday 12/29/2018 at 11:28 am",
       docstype: "Card 69",
@@ -70,8 +70,11 @@ const ShipmentTracker = () => {
     },
   ];
 
-  const toggleHistory = () => {
-    setIsHistoryExpanded(!isHistoryExpanded);
+  const toggleHistory = (id) => {
+    setExpandedHistories((prevState) => ({
+      ...prevState,
+      [id]: !prevState[id],
+    }));
   };
 
   return (
@@ -83,6 +86,8 @@ const ShipmentTracker = () => {
         const statusLabel = orderStatuses.find(
           (status) => status.id === shipment.status
         )?.label;
+
+        const isHistoryExpanded = expandedHistories[shipment.id] || false;
 
         return (
           <div key={shipment.id} className="mb-6 border rounded-lg p-4">
@@ -100,7 +105,7 @@ const ShipmentTracker = () => {
             <div className="mt-4">
               <div
                 className="flex justify-between items-center cursor-pointer"
-                onClick={toggleHistory}
+                onClick={() => toggleHistory(shipment.id)}
               >
                 <h3 className="font-semibold">History</h3>
                 {isHistoryExpanded ? (
@@ -115,7 +120,7 @@ const ShipmentTracker = () => {
                     <div key={index} className="mb-2">
                       <p className="font-semibold">{event.date}</p>
                       <p>
-                        {event.time} - {event.location}
+                        {event.time} - {event.location || "Unknown"}
                       </p>
                     </div>
                   ))}
