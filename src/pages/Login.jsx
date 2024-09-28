@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { loginUser } from "../firebase/auth"; // Adjust the import path as needed
+import { loginUser } from "../firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify"; // Importing react-toastify
-import "react-toastify/dist/ReactToastify.css"; // Importing styles
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const App = () => {
+const Login = () => {
   const [role, setRole] = useState("");
   const [isPageLoaded, setIsPageLoaded] = useState(false);
   const [error, setError] = useState("");
@@ -27,7 +27,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-blue-200">
-      <ToastContainer /> {/* Adding ToastContainer for toast notifications */}
+      <ToastContainer />
       <div
         className={`${
           isPageLoaded
@@ -75,12 +75,16 @@ const AdminLogin = ({ onBack }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await loginUser(email, password);
-      toast.success("Admin logged in successfully!"); // Success message
-      navigate("/dashboard");
+      const userData = await loginUser(email, password);
+      toast.success("Admin logged in successfully!");
+
+      // Navigate to the dashboard with only uid
+      setTimeout(() => {
+        navigate("/dashboard", { state: { uid: userData.uid } });
+      }, 2000);
     } catch (error) {
       console.error("Login error:", error);
-      toast.error("Failed to login. Please check your credentials."); // Error message
+      toast.error("Failed to login. Please check your credentials.");
     }
   };
 
@@ -129,12 +133,16 @@ const StudentLogin = ({ onBack }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await loginUser(email, password);
-      toast.success("Student logged in successfully!"); // Success message
-      navigate("/dashboard");
+      const userData = await loginUser(email, password);
+      toast.success("Student logged in successfully!");
+
+      // Navigate to the dashboard with only uid
+      setTimeout(() => {
+        navigate("/dashboard", { state: { uid: userData.uid } });
+      }, 2000);
     } catch (error) {
       console.error("Login error:", error);
-      toast.error("Failed to login. Please check your credentials."); // Error message
+      toast.error("Failed to login. Please check your credentials.");
     }
   };
 
@@ -175,4 +183,4 @@ const StudentLogin = ({ onBack }) => {
   );
 };
 
-export default App;
+export default Login;

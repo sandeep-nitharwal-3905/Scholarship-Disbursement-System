@@ -5,7 +5,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, ref, set, get } from "firebase/database"; // Import 'get' for retrieving data
 import app from "../Firebase";
 
 const auth = getAuth(app);
@@ -35,22 +35,48 @@ export const registerUser = async (
       role: "student", // Default role for new registrations
     });
 
-    return user;
+    // Return a serializable object with user data
+    return {
+      uid: user.uid,
+      email: user.email,
+      fullName: fullName,
+      dob: dob,
+      phoneNumber: phoneNumber,
+      role: "student",
+    };
   } catch (error) {
-    throw error;
+    throw error; // Rethrow error to handle in the calling function
   }
 };
 
+export const signupUser = async (email, password) => {
+  const auth = getAuth();
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    // User signed up successfully
+    return userCredential.user; // Return the user data
+  } catch (error) {
+    throw error; // Pass the error back to the component
+  }
+};
+
+// Function to handle user login
 export const loginUser = async (email, password) => {
+  const auth = getAuth();
   try {
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
       password
     );
-    return userCredential.user;
+    // User logged in successfully
+    return userCredential.user; // Return the user data
   } catch (error) {
-    throw error;
+    throw error; // Pass the error back to the component
   }
 };
 
@@ -63,5 +89,19 @@ export const logoutUser = async () => {
 };
 
 export const getCurrentUser = () => {
-  return auth.currentUser;
+  return auth.currentUser; // Consider checking if the user exists before using
+};
+
+export const getUserData = async (uid) => {
+  try {
+    const userRef = ref(database, "users/" + uid);
+    const snapshot = await get(userRef);
+    if (snapshot.exists()) {
+      return snapshot.val(); // Returns user data as an object
+    } else {
+      throw new Error("User not found");
+    }
+  } catch (error) {
+    throw error; // Rethrow error to handle in the calling function
+  }
 };
