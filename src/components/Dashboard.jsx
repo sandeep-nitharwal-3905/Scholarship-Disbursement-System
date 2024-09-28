@@ -17,21 +17,21 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const db = getDatabase();
 
-  const uid = location.state.uid;
+  // const uid = location.state.uid;
 
-  get(ref(db, "users/" + uid))
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        console.log(snapshot.val());
-      } else {
-        navigate("/login");
-        return;
-        console.log("No data available");
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  // get(ref(db, "users/" + uid))
+  //   .then((snapshot) => {
+  //     if (snapshot.exists()) {
+  //       console.log(snapshot.val());
+  //     } else {
+  //       navigate("/login");
+  //       return;
+  //       console.log("No data available");
+  //     }
+  //   })
+  //   .catch((error) => {
+  //     console.error(error);
+  //   });
 
   return (
     <div>
