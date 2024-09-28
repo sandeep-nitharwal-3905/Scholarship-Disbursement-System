@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
-import  Home  from "./components/Home";
+import Home from "./components/Home";
 import UploadDocs from "./pages/UploadDocs";
 import Layout from "./components/Layout";
 import Track from "./components/Track";
@@ -10,7 +10,6 @@ import SignUp from "./pages/SignUp";
 const App = () => {
   return (
     <Router>
-
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
@@ -20,6 +19,7 @@ const App = () => {
             <Layout>
               <Routes>
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/home" element={<Home />} />
                 <Route path="/upload" element={<UploadDocs />} />
                 <Route path="/track" element={<Track />} />
               </Routes>
@@ -27,10 +27,8 @@ const App = () => {
           }
         />
       </Routes>
-
     </Router>
   );
-
 };
 
 export default App;
