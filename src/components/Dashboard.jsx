@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { fetchUserData } from "../firebase/auth"; // Adjust the import path as needed
 import StatButton from "./StatButton";
 import TrackStat from "./TrackStat";
 import PhotoSlider from "./CursorSlider";
@@ -10,18 +11,39 @@ import { Users, GraduationCap, UserPlus } from "lucide-react";
 const Dashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [userData, setUserData] = useState(null);
+  const [error, setError] = useState(null);
 
-  // Check if location state is null and redirect to login
-  useEffect(() => {
-    if (!location.state) {
-      navigate("/login");
-    }
-  }, [location, navigate]);
   console.log(location);
+  // useEffect(() => {
+  //   // Check if location state is null and redirect to login
+  //   if (!location.state) {
+  //     navigate("/login");
+  //     return;
+  //   }
+  //   const fetchData = async () => {
+  //     try {
+  //       const uid = location.state.uid; // Get UID from location state
+  //       const data = await fetchUserData(uid);
+  //       setUserData(data);
+  //     } catch (err) {
+  //       console.error("Error fetching user data:", err);
+  //       setError("Failed to fetch user data.");
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [location, navigate]);
+
+  // if (error) {
+  //   return <p className="text-red-500">{error}</p>;
+  // }
+
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">My Dashboard</h1>
+        {userData && <p>Welcome, {userData.name}</p>} {/* Display user data */}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatButton

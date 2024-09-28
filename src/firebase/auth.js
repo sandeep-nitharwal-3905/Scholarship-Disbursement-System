@@ -1,16 +1,26 @@
-// src/firebase/auth.js
 import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { getDatabase, ref, set, get } from "firebase/database"; // Import 'get' for retrieving data
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../Firebase";
+import { getDatabase, ref, set, get } from "firebase/database";
 import app from "../Firebase";
 
 const auth = getAuth(app);
 const database = getDatabase(app);
+export const fetchUserData = async (uid) => {
+  const userRef = doc(db, "users", uid);
+  const userSnap = await getDoc(userRef);
 
+  if (userSnap.exists()) {
+    return userSnap.data();
+  } else {
+    throw new Error("No such document!");
+  }
+};
 export const registerUser = async (
   email,
   password,
