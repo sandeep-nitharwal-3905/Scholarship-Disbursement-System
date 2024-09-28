@@ -4,6 +4,7 @@ import NewTopBar from "./NewTopBar";
 import Sidebar from "./Sidebar";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getDatabase, ref, get } from "firebase/database";
+import AdminSidebar from "./AdminSidebar";
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -49,18 +50,29 @@ const Layout = ({ children }) => {
     // Render a loading state while waiting for user data
     return <p>Loading user data...</p>;
   }
-
-  return (
-    <div className="flex flex-col h-screen bg-white-100">
-      <TopBar isNotification={true} />
-      <NewTopBar />
-      <div className="flex flex-1 overflow-hidden">
-        {/* Only render Sidebar when userData is available */}
-        <Sidebar user={userData} />
-        <div className="flex-1 p-8 overflow-auto">{children}</div>
+  if (userData.role == "stuadent") {
+    return (
+      <div className="flex flex-col h-screen bg-white-100">
+        <TopBar isNotification={true} />
+        <NewTopBar />
+        <div className="flex flex-1 overflow-hidden">
+          <Sidebar user={userData} />
+          <div className="flex-1 p-8 overflow-auto">{children}</div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  } else {
+    return (
+      <div className="flex flex-col h-screen bg-white-100">
+        <TopBar isNotification={true} />
+        <NewTopBar />
+        <div className="flex flex-1 overflow-hidden">
+          <AdminSidebar user={userData} />
+          <div className="flex-1 p-8 overflow-auto">{children}</div>
+        </div>
+      </div>
+    );
+  }
 };
 
 export default Layout;
