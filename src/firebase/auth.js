@@ -11,6 +11,7 @@ import app from "../Firebase";
 
 const auth = getAuth(app);
 const database = getDatabase(app);
+
 export const fetchUserData = async (uid) => {
   const userRef = doc(db, "users", uid);
   const userSnap = await getDoc(userRef);
@@ -21,6 +22,7 @@ export const fetchUserData = async (uid) => {
     throw new Error("No such document!");
   }
 };
+
 export const registerUser = async (
   email,
   password,
@@ -36,16 +38,14 @@ export const registerUser = async (
     );
     const user = userCredential.user;
 
-    // Save additional user data to the database
     await set(ref(database, "users/" + user.uid), {
       fullName: fullName,
       email: email,
       dob: dob,
       phoneNumber: phoneNumber,
-      role: "student", // Default role for new registrations
+      role: "student",
     });
 
-    // Return a serializable object with user data
     return {
       uid: user.uid,
       email: user.email,
@@ -55,38 +55,20 @@ export const registerUser = async (
       role: "student",
     };
   } catch (error) {
-    throw error; // Rethrow error to handle in the calling function
+    throw error;
   }
 };
 
-export const signupUser = async (email, password) => {
-  const auth = getAuth();
-  try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    // User signed up successfully
-    return userCredential.user; // Return the user data
-  } catch (error) {
-    throw error; // Pass the error back to the component
-  }
-};
-
-// Function to handle user login
 export const loginUser = async (email, password) => {
-  const auth = getAuth();
   try {
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
       password
     );
-    // User logged in successfully
-    return userCredential.user; // Return the user data
+    return userCredential.user;
   } catch (error) {
-    throw error; // Pass the error back to the component
+    throw error;
   }
 };
 
@@ -99,7 +81,7 @@ export const logoutUser = async () => {
 };
 
 export const getCurrentUser = () => {
-  return auth.currentUser; // Consider checking if the user exists before using
+  return auth.currentUser;
 };
 
 export const getUserData = async (uid) => {
@@ -107,11 +89,11 @@ export const getUserData = async (uid) => {
     const userRef = ref(database, "users/" + uid);
     const snapshot = await get(userRef);
     if (snapshot.exists()) {
-      return snapshot.val(); // Returns user data as an object
+      return snapshot.val();
     } else {
       throw new Error("User not found");
     }
   } catch (error) {
-    throw error; // Rethrow error to handle in the calling function
+    throw error;
   }
 };
