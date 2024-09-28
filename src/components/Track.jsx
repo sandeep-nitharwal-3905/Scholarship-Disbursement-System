@@ -90,16 +90,16 @@ const ShipmentTracker = () => {
         const isHistoryExpanded = expandedHistories[shipment.id] || false;
 
         return (
-          <div key={shipment.id} className="mb-6 border rounded-lg p-4">
-            <div>
-              <h2 className="text-xl font-semibold">{statusLabel}</h2>
-              <p className="text-gray-600">{shipment.date}</p>
-            </div>
+          <div key={shipment.id} className=" mb-6 border rounded-lg p-4">
             <div className="mt-4 flex justify-between mb-4">
               <div>
-                <p className="font-semibold">Document Name:</p>
-                <p>{shipment.docstype}</p>
+                <p className="text-xl  font-semibold">Document Name:</p>
+                <p className="text-xl">{shipment.docstype}</p>
               </div>
+            </div>
+            <div>
+              <h2 className="font-semibold">{statusLabel}</h2>
+              <p className="text-gray-600">{shipment.date}</p>
             </div>
             <TrackStat status={shipment.status} />
             <div className="mt-4">
