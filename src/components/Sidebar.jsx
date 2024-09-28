@@ -36,6 +36,7 @@ const Sidebar = () => {
   };
 
   const items = [
+    { name: "Home", icon: Home, path: "/home" },
     { name: "Dashboard", icon: BarChart2, path: "/dashboard" },
     {
       name: "Document Status",
@@ -65,7 +66,7 @@ const Sidebar = () => {
       {/* User Profile Section */}
       <div className="flex items-center mb-6">
         <img
-          src="https://via.placeholder.com/40" // Replace with the actual image URL
+          src="https://drive.google.com/file/d/1CJFuZdn4dyvL-GLTovts5A0p9waCHJwt/view?usp=drive_link" // Replace with the actual image URL
           alt="User Avatar"
           className="w-10 h-10 rounded-full mr-3"
         />
