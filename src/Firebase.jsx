@@ -1,8 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth"; // Import getAuth from firebase/auth
-import { getAnalytics } from "firebase/analytics"; // If you plan to use analytics
-import { getDatabase } from "firebase/database"; // If you plan to use the database
-
+import { getAuth } from "firebase/auth";
+import { getAnalytics } from "firebase/analytics";
+import { getDatabase } from "firebase/database";
+import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
   apiKey: "AIzaSyDBuelLIkUgYVAGCXu3QavuHsNDUejF2EA",
   authDomain: "scholarship-disbursement-app.firebaseapp.com",
@@ -15,9 +15,7 @@ const firebaseConfig = {
     "https://scholarship-disbursement-app-default-rtdb.firebaseio.com",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-// Initialize Firebase Authentication
-
+const db = getFirestore(app);
+export { db };
 export default app;
