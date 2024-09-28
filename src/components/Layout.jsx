@@ -50,7 +50,7 @@ const Layout = ({ children }) => {
     // Render a loading state while waiting for user data
     return <p>Loading user data...</p>;
   }
-  if (userData.role == "stuadent") {
+  if (userData.role == "student") {
     return (
       <div className="flex flex-col h-screen bg-white-100">
         <TopBar isNotification={true} />
