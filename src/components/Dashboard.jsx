@@ -7,37 +7,31 @@ import PhotoSlider from "./CursorSlider";
 import NotificationPanel from "./NotificationPanel";
 import SubmissionStatus from "./SubmissionStatus";
 import { Users, GraduationCap, UserPlus } from "lucide-react";
+import { collection, query, where } from "firebase/firestore";
+import { getDatabase, ref, get } from "firebase/database";
 
 const Dashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
+  const db = getDatabase();
 
-  console.log(location);
-  // useEffect(() => {
-  //   // Check if location state is null and redirect to login
-  //   if (!location.state) {
-  //     navigate("/login");
-  //     return;
-  //   }
-  //   const fetchData = async () => {
-  //     try {
-  //       const uid = location.state.uid; // Get UID from location state
-  //       const data = await fetchUserData(uid);
-  //       setUserData(data);
-  //     } catch (err) {
-  //       console.error("Error fetching user data:", err);
-  //       setError("Failed to fetch user data.");
-  //     }
-  //   };
+  const uid = location.state.uid;
 
-  //   fetchData();
-  // }, [location, navigate]);
-
-  // if (error) {
-  //   return <p className="text-red-500">{error}</p>;
-  // }
+  get(ref(db, "users/" + uid))
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        console.log(snapshot.val());
+      } else {
+        navigate("/login");
+        return;
+        console.log("No data available");
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 
   return (
     <div>
