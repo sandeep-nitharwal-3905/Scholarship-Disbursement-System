@@ -16,8 +16,12 @@ const EditScholarship = () => {
     scholarship.requiredDocuments.join(";")
   );
 
+  const [loadingUpdate, setLoadingUpdate] = useState(false); // Loading state for update
+  const [loadingDelete, setLoadingDelete] = useState(false); // Loading state for delete
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoadingUpdate(true); // Start loading for update
     try {
       await Firebase.updateScholarship(scholarship.id, {
         name,
@@ -28,6 +32,23 @@ const EditScholarship = () => {
       navigate("/admin-scholarship-list");
     } catch (error) {
       toast.error(`Error updating scholarship: ${error.message}`);
+    } finally {
+      setLoadingUpdate(false); // Stop loading for update
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this scholarship?")) {
+      setLoadingDelete(true); // Start loading for delete
+      try {
+        await Firebase.deleteScholarship(scholarship.id);
+        toast.success("Scholarship deleted successfully");
+        navigate("/admin-scholarship-list");
+      } catch (error) {
+        toast.error(`Error deleting scholarship: ${error.message}`);
+      } finally {
+        setLoadingDelete(false); // Stop loading for delete
+      }
     }
   };
 
@@ -71,11 +92,21 @@ const EditScholarship = () => {
         </div>
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-200"
+          disabled={loadingUpdate} // Disable button while updating
+          className={`w-full p-2 rounded transition duration-200 ${
+            loadingUpdate ? "bg-gray-500" : "bg-blue-500 hover:bg-blue-600"
+          } text-white mb-2`}
         >
-          Update Scholarship
+          {loadingUpdate ? "Updating..." : "Update Scholarship"}
         </button>
       </form>
+      <button
+        onClick={handleDelete}
+        disabled={loadingDelete} // Disable button while deleting
+        className="w-full bg-red-500 text-white p-2 rounded hover:bg-red-600 transition duration-200"
+      >
+        {loadingDelete ? "Deleting..." : "Delete Scholarship"}
+      </button>
       <ToastContainer />
     </div>
   );

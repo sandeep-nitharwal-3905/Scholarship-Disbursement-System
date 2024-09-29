@@ -46,6 +46,10 @@ const App = () => {
                   element={<ScholarshipList />}
                 />
                 <Route path="/viewScholarships" element={<StudentTrack />} />
+                <Route
+                  path="//admin-add-scholarship"
+                  element={<AddScholarshipForm />}
+                />
               </Routes>
             </Layout>
           }
