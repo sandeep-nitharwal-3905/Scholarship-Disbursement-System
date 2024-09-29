@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { loginUser } from "../firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useFirebase } from "../context/Firebase";
 
 const Login = () => {
   const [role, setRole] = useState("");
   const [isPageLoaded, setIsPageLoaded] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const firebase = useFirebase();
 
   useEffect(() => {
     setTimeout(() => {
@@ -29,11 +30,10 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-blue-200">
       <ToastContainer />
       <div
-        className={`${
-          isPageLoaded
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-12"
-        } transition-all duration-800 ease-out bg-gray-100 p-10 rounded-lg shadow-lg text-center w-[400px]`}
+        className={`${isPageLoaded
+          ? "opacity-100 translate-y-0"
+          : "opacity-0 translate-y-12"
+          } transition-all duration-800 ease-out bg-gray-100 p-10 rounded-lg shadow-lg text-center w-[400px]`}
       >
         <h1 className="text-4xl font-bold text-gray-800 mb-10">
           Scholarship Portal
@@ -71,11 +71,12 @@ const AdminLogin = ({ onBack }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const firebase = useFirebase();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const userData = await loginUser(email, password);
+      const userData = await firebase.loginUser(email, password);
       toast.success("Admin logged in successfully!");
 
       // Navigate to the dashboard with only uid
@@ -129,11 +130,12 @@ const StudentLogin = ({ onBack }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const firebase = useFirebase();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const userData = await loginUser(email, password);
+      const userData = await firebase.loginUser(email, password);
       toast.success("Student logged in successfully!");
 
       // Navigate to the dashboard with only uid

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { fetchUserData } from "../firebase/auth"; // Adjust the import path as needed
+//import { fetchUserData } from "../firebase/auth"; // Adjust the import path as needed
 import StatButton from "./StatButton";
 import TrackStat from "./TrackStat";
 import PhotoSlider from "./CursorSlider";
@@ -9,6 +9,7 @@ import SubmissionStatus from "./SubmissionStatus";
 import { Users, GraduationCap, UserPlus } from "lucide-react";
 import { collection, query, where } from "firebase/firestore";
 import { getDatabase, ref, get } from "firebase/database";
+import { useFirebase } from "../context/Firebase";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -16,6 +17,7 @@ const Dashboard = () => {
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
   const db = getDatabase();
+  const firebase = useFirebase();
 
   // const uid = location.state.uid;
 

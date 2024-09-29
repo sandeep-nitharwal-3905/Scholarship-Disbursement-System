@@ -7,6 +7,8 @@ import Layout from "./components/Layout";
 import Track from "./components/Track";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
+import AddScholarshipForm from "./components/AddScholarshipForm";
+
 const App = () => {
   return (
     <Router>
@@ -22,6 +24,7 @@ const App = () => {
                 <Route path="/home" element={<Home />} />
                 <Route path="/upload" element={<UploadDocs />} />
                 <Route path="/track" element={<Track />} />
+                <Route path="/add" element={<AddScholarshipForm />} />
               </Routes>
             </Layout>
           }
