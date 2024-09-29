@@ -55,7 +55,7 @@ const Sidebar = (props) => {
     {
       name: "Scholarship Info",
       icon: Building,
-      dropdown: ["Eligibility Criteria", "Scholarship Types"],
+      dropdown: ["Eligibility Criteria", { name: "Available Scholarships", path: "/viewScholarships" }],
     },
     {
       name: "User Management",
@@ -106,9 +106,8 @@ const Sidebar = (props) => {
           >
             <NavLink
               to={item.path || "#"}
-              className={`flex items-center py-2 px-4 rounded cursor-pointer ${
-                activeLink === item.name ? "bg-gray-600" : "hover:bg-gray-700"
-              }`}
+              className={`flex items-center py-2 px-4 rounded cursor-pointer ${activeLink === item.name ? "bg-gray-600" : "hover:bg-gray-700"
+                }`}
               onClick={() => {
                 if (!item.dropdown) setActiveLink(item.name); // Set active link if not dropdown
               }}
@@ -134,8 +133,7 @@ const Sidebar = (props) => {
                       key={subIndex}
                       to={subItem.path}
                       className={({ isActive }) =>
-                        `py-2 px-4 rounded cursor-pointer hover:bg-gray-700 text-sm block ${
-                          activeLink === subItem.name ? "bg-gray-600" : ""
+                        `py-2 px-4 rounded cursor-pointer hover:bg-gray-700 text-sm block ${activeLink === subItem.name ? "bg-gray-600" : ""
                         }`
                       }
                       onClick={() => setActiveLink(subItem.name)} // Set active link for dropdown
