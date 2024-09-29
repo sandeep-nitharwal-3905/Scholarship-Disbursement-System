@@ -10,6 +10,8 @@ import SignUp from "./pages/SignUp";
 import AdminDashboard from "./components/AdminDashboard";
 import AdminTrack from "./components/AdminTrack";
 import AdminSignup from "./pages/AdminSignup";
+import AddScholarshipForm from "./components/AddScholarshipForm";
+import ScholarshipList from "./components/ScholarshipList";
 const App = () => {
   return (
     <Router>
@@ -27,8 +29,11 @@ const App = () => {
                 <Route path="/home" element={<Home />} />
                 <Route path="/upload" element={<UploadDocs />} />
                 <Route path="/track" element={<Track />} />
-                <Route path="/admin-dashboard" element={<AdminDashboard />} />
-                <Route path="/admin-track" element={<AdminTrack />} />
+                <Route
+                  path="/admin-dashboard"
+                  element={<AddScholarshipForm />}
+                />
+                <Route path="/admin-track" element={<ScholarshipList />} />
               </Routes>
             </Layout>
           }
