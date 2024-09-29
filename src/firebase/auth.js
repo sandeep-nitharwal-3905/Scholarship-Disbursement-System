@@ -39,13 +39,12 @@ export const registerUser = async (
     );
     const user = userCredential.user;
 
-    // Save user data to the database with the specified role
     await set(ref(database, "users/" + user.uid), {
       fullName: fullName,
       email: email,
       dob: dob,
       phoneNumber: phoneNumber,
-      role: role, // Save the role (admin or student)
+      role: role,
     });
 
     return {
