@@ -34,14 +34,12 @@ const ScholarshipList = () => {
           <p className="text-gray-600">
             Required Documents: {scholarship.requiredDocuments.join(", ")}
           </p>
-          {Firebase.user?.email === "admin@example.com" && (
-            <button
-              onClick={() => handleEdit(scholarship.id)}
-              className="text-blue-500 hover:underline"
-            >
-              Edit
-            </button>
-          )}
+          <button
+            onClick={() => handleEdit(scholarship.id)}
+            className="text-blue-500 hover:underline"
+          >
+            Edit
+          </button>
         </div>
       ))}
     </div>

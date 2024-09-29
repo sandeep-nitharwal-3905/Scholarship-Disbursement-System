@@ -12,6 +12,11 @@ import AdminTrack from "./components/AdminTrack";
 import AdminSignup from "./pages/AdminSignup";
 import AddScholarshipForm from "./components/AddScholarshipForm";
 import ScholarshipList from "./components/ScholarshipList";
+import StudentTrack from "./components/StudentTrack";
+import ScholarshipApplication from "./components/ScholarshipApplication";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import styles for the toast
+
 const App = () => {
   return (
     <Router>
@@ -33,12 +38,15 @@ const App = () => {
                   path="/admin-dashboard"
                   element={<AddScholarshipForm />}
                 />
+                <Route path="/apply" element={<ScholarshipApplication />} />
                 <Route path="/admin-track" element={<ScholarshipList />} />
+                <Route path="/viewScholarships" element={<StudentTrack />} />
               </Routes>
             </Layout>
           }
         />
       </Routes>
+      <ToastContainer />
     </Router>
   );
 };
