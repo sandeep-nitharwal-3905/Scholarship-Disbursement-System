@@ -44,7 +44,10 @@ const AdminSidebar = (props) => {
     {
       name: "Documents Status",
       icon: GraduationCap,
-      dropdown: [{ name: "Track Submission Status", path: "/admin-track" }],
+      dropdown: [
+        { name: "Add Scholarship", path: "/admin-add-scholarship" },
+        { name: "Available Scholarships", path: "/admin-track" },
+      ],
     },
 
     {

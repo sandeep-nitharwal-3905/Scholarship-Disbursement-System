@@ -5,6 +5,7 @@ import {
   getDoc,
   setDoc,
   updateDoc,
+  deleteDoc,
   collection,
   getDocs,
 } from "firebase/firestore";
@@ -55,7 +56,24 @@ export const FirebaseProvider = ({ children }) => {
     }
   };
 
-  // Add fetchScholarships function here
+  const deleteScholarship = async (scholarshipId) => {
+    const user = getCurrentUser();
+    if (user) {
+      const scholarshipRef = doc(db, "scholarships", scholarshipId);
+      const scholarshipSnap = await getDoc(scholarshipRef);
+      if (
+        scholarshipSnap.exists() &&
+        scholarshipSnap.data().createdBy === user.uid
+      ) {
+        await deleteDoc(scholarshipRef); // Delete the scholarship
+      } else {
+        throw new Error("Unauthorized to delete this scholarship");
+      }
+    } else {
+      throw new Error("User not authenticated");
+    }
+  };
+
   const fetchScholarships = async () => {
     const scholarships = [];
     const querySnapshot = await getDocs(collection(db, "scholarships"));
@@ -67,7 +85,12 @@ export const FirebaseProvider = ({ children }) => {
 
   return (
     <FirebaseContext.Provider
-      value={{ createScholarship, updateScholarship, fetchScholarships }} // include fetchScholarships here
+      value={{
+        createScholarship,
+        updateScholarship,
+        fetchScholarships,
+        deleteScholarship,
+      }}
     >
       {children}
     </FirebaseContext.Provider>
