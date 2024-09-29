@@ -27,7 +27,7 @@ const ScholarshipList = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg transition-all duration-300">
+    <div className="w-full mx-auto p-6 bg-white shadow-md rounded-lg transition-all duration-300">
       <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
         Available Scholarships
       </h2>
