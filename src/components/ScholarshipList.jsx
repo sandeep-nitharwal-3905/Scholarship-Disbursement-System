@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useFirebase } from "../firebase/FirebaseContext";
+import { useNavigate } from "react-router-dom";
 
 const ScholarshipList = () => {
   const Firebase = useFirebase();
   const [scholarships, setScholarships] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,9 +19,8 @@ const ScholarshipList = () => {
     fetchData();
   }, [Firebase]);
 
-  const handleEdit = (id) => {
-    // Add logic for editing a scholarship (admin only)
-    console.log(`Edit scholarship with id: ${id}`);
+  const handleEdit = (scholarship) => {
+    navigate("/editScholarship", { state: { scholarship } });
   };
 
   return (
@@ -38,7 +39,7 @@ const ScholarshipList = () => {
             Required Documents: {scholarship.requiredDocuments.join(", ")}
           </p>
           <button
-            onClick={() => handleEdit(scholarship.id)}
+            onClick={() => handleEdit(scholarship)}
             className="mt-2 text-blue-500 hover:underline transition duration-200"
           >
             Edit

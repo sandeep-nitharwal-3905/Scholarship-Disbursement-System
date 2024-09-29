@@ -16,7 +16,7 @@ import StudentTrack from "./components/StudentTrack";
 import ScholarshipApplication from "./components/ScholarshipApplication";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import styles for the toast
-
+import EditScholarship from "./components/EditScholarship";
 const App = () => {
   return (
     <Router>
@@ -34,12 +34,17 @@ const App = () => {
                 <Route path="/home" element={<Home />} />
                 <Route path="/upload" element={<UploadDocs />} />
                 <Route path="/track" element={<Track />} />
+                <Route path="/editScholarship" element={<EditScholarship />} />
                 <Route
                   path="/admin-dashboard"
                   element={<AddScholarshipForm />}
                 />
                 <Route path="/apply" element={<ScholarshipApplication />} />
                 <Route path="/admin-track" element={<ScholarshipList />} />
+                <Route
+                  path="/admin-scholarship-list"
+                  element={<ScholarshipList />}
+                />
                 <Route path="/viewScholarships" element={<StudentTrack />} />
               </Routes>
             </Layout>
