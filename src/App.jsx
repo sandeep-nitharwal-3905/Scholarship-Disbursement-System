@@ -32,8 +32,8 @@ const App = () => {
                 <Route path="/admin-dashboard" element={<AdminDashboard />} />
                 <Route path="/admin-track" element={<AdminTrack />} />
                 <Route path="/add" element={<AddScholarshipForm />} />
-              </Routes >
-            </Layout >
+              </Routes>
+            </Layout>
           }
         />
       </Routes >

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Users, GraduationCap, UserPlus } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+//import { fetchUserData } from "../firebase/auth"; // Adjust the import path as needed
 import StatButton from "./StatButton";
 import TrackStat from "./TrackStat";
 import PhotoSlider from "./CursorSlider";
