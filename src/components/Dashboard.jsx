@@ -9,6 +9,7 @@ import SubmissionStatus from "./SubmissionStatus";
 import { fetchUserData } from "../firebase/auth"; // Adjust the import path as needed
 import { collection, query, where } from "firebase/firestore";
 import { getDatabase, ref, get } from "firebase/database";
+import { useFirebase } from "../context/Firebase";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -16,6 +17,7 @@ const Dashboard = () => {
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
   const db = getDatabase();
+  const firebase = useFirebase();
 
   // const uid = location.state.uid;
 

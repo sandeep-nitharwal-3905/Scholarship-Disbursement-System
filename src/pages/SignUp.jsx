@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { registerUser } from "../firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useFirebase } from "../context/Firebase";
 
 const Signup = () => {
   const [fullName, setFullName] = useState("");
@@ -12,11 +12,13 @@ const Signup = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const firebase = useFirebase();
 
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      await registerUser(email, password, fullName, dob, phoneNumber);
+      await firebase.registerUser(email, password, fullName, dob, phoneNumber);
+      await firebase.signupUser(email, password);
       toast.success("Sign up successful!");
       setTimeout(() => {
         navigate("/login");
