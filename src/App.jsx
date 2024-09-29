@@ -15,7 +15,7 @@ import ScholarshipList from "./components/ScholarshipList";
 import StudentTrack from "./components/StudentTrack";
 import ScholarshipApplication from "./components/ScholarshipApplication";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Import styles for the toast
+import "react-toastify/dist/ReactToastify.css";
 import EditScholarship from "./components/EditScholarship";
 const App = () => {
   return (
