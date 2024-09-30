@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Users, GraduationCap, UserPlus } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import StatButton from "./StatButton";
@@ -6,9 +6,7 @@ import TrackStat from "./TrackStat";
 import PhotoSlider from "./CursorSlider";
 import NotificationPanel from "./NotificationPanel";
 import SubmissionStatus from "./SubmissionStatus";
-import { fetchUserData } from "../firebase/auth"; // Adjust the import path as needed
-import { collection, query, where } from "firebase/firestore";
-import { getDatabase, ref, get } from "firebase/database";
+import { getDatabase } from "firebase/database";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -34,6 +32,7 @@ const Dashboard = () => {
 
   return (
     <div>
+      <PhotoSlider />
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">My Dashboard</h1>
         {/* {userData && <p>Welcome, {userData.name}</p>}  */}
@@ -64,8 +63,6 @@ const Dashboard = () => {
           icon={Users}
         />
       </div>
-      <TrackStat status="3" />
-      <PhotoSlider />
       <SubmissionStatus />
       <NotificationPanel />
     </div>
