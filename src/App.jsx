@@ -1,5 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./components/Dashboard";
 import Home from "./components/Home";
 import UploadDocs from "./pages/UploadDocs";
@@ -14,7 +16,6 @@ import AddScholarshipForm from "./components/AddScholarshipForm";
 import ScholarshipList from "./components/ScholarshipList";
 import StudentTrack from "./components/StudentTrack";
 import ScholarshipApplication from "./components/ScholarshipApplication";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import EditScholarship from "./components/EditScholarship";
 const App = () => {
