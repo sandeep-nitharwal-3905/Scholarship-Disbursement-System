@@ -40,25 +40,25 @@ const Dashboard = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatButton
-          count={15}
+          count={2}
           title="Documents Submitted"
           color="red"
           icon={Users}
         />
         <StatButton
-          count={11}
+          count={3}
           title="Documents Verified"
           color="green"
           icon={GraduationCap}
         />
         <StatButton
-          count={69}
+          count={0}
           title="Notifications"
           color="blue"
           icon={UserPlus}
         />
         <StatButton
-          count={2}
+          count={1}
           title="Scholarship Status"
           color="blue-100"
           icon={Users}
