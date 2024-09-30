@@ -69,7 +69,7 @@ const AdminSidebar = (props) => {
       {/* User Profile Section */}
       <div className="flex items-center mb-6">
         <img
-          src="https://drive.google.com/file/d/1CJFuZdn4dyvL-GLTovts5A0p9waCHJwt/view?usp=drive_link" // Replace with the actual image URL
+          src="https://thumbs.dreamstime.com/b/half-body-father-avatar-vector-stock-illustration-isolated-blue-background-312576179.jpg" // Replace with the actual image URL
           alt="User Avatar"
           className="w-10 h-10 rounded-full mr-3"
         />
