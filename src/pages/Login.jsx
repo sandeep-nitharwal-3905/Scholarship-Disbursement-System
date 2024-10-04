@@ -29,11 +29,10 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-blue-200">
       <ToastContainer />
       <div
-        className={`${
-          isPageLoaded
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-12"
-        } transition-all duration-800 ease-out bg-gray-100 p-10 rounded-lg shadow-lg text-center w-[400px]`}
+        className={`${isPageLoaded
+          ? "opacity-100 translate-y-0"
+          : "opacity-0 translate-y-12"
+          } transition-all duration-800 ease-out bg-gray-100 p-10 rounded-lg shadow-lg text-center w-[400px]`}
       >
         <h1 className="text-4xl font-bold text-gray-800 mb-10">
           Scholarship Portal
@@ -117,6 +116,14 @@ const AdminLogin = ({ onBack }) => {
           Login as Admin
         </button>
       </form>
+
+      {/* Sample credentials box */}
+      <div className="bg-gray-100 p-4 rounded-lg mt-6 border border-gray-300 text-gray-700">
+        <h3 className="font-semibold mb-2">Sample Login Credentials:</h3>
+        <p>Email: Admin@gmail.com</p>
+        <p>Password: 123456</p>
+      </div>
+
       <button
         className="w-full bg-gray-800 text-white py-3 mt-4 rounded-lg transition-transform transform hover:scale-105 active:scale-95"
         onClick={onBack}
@@ -126,6 +133,7 @@ const AdminLogin = ({ onBack }) => {
     </div>
   );
 };
+
 
 const StudentLogin = ({ onBack }) => {
   const [email, setEmail] = useState("");
@@ -183,6 +191,13 @@ const StudentLogin = ({ onBack }) => {
       >
         Back
       </button>
+      {/* Sample credentials box */}
+      <div className="bg-gray-100 p-4 rounded-lg mt-6 border border-gray-300 text-gray-700">
+        <h3 className="font-semibold mb-2">Sample Login Credentials:</h3>
+        <p>Email: Student@gmail.com</p>
+        <p>Password: 123456</p>
+      </div>
+
     </div>
   );
 };
