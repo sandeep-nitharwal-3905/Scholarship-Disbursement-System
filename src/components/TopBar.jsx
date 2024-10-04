@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from "react";
 import { Bell, BellDot } from "lucide-react";
 
@@ -7,6 +8,7 @@ const TopBar = (props) => {
 
   const dropdownRef = useRef(null);
   const bellDropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
@@ -36,13 +38,11 @@ const TopBar = (props) => {
   }, []);
 
   const handleLogin = () => {
-    // Implement login action, e.g., redirect to login page
-    console.log("Login clicked");
+    navigate('/login')
   };
 
   const handleRegister = () => {
-    // Implement registration action, e.g., redirect to registration page
-    console.log("Register clicked");
+    navigate('/signup')
   };
 
   return (
@@ -55,9 +55,9 @@ const TopBar = (props) => {
           onClick={handleLogin}
           className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
         >
-          Applicant Login
+          Login
         </button>
-        
+
         {/* New Registration Button */}
         <button
           onClick={handleRegister}
