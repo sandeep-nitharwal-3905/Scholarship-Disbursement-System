@@ -3,14 +3,48 @@ import { useDropzone } from "react-dropzone";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getDatabase, ref, get } from "firebase/database";
-const cloudName = "dmqzrmtsf";
 import { useFirebase } from "../firebase/FirebaseContext";
+const cloudName = "dmqzrmtsf";
 
 const UploadDocs = () => {
+  const { user } = useFirebase();
   const [selectedDocType, setSelectedDocType] = useState("aadhar_card");
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useFirebase();
+  const location = useLocation();
+  const [userData, setUserData] = useState(null);
+  const navigate = useNavigate();
+  const [error, setError] = useState(null);
+  const db = getDatabase();
+  useEffect(() => {
+    // Retrieve uid from location.state or localStorage
+    let uid = location.state?.uid || localStorage.getItem("uid");
+
+    if (!uid) {
+      // If no uid is found, navigate to login
+      navigate("/login");
+      return;
+    }
+
+    // Store the UID in localStorage to persist across pages
+    localStorage.setItem("uid", uid);
+
+    // Fetch user data from Firebase Realtime Database
+    get(ref(db, "users/" + uid))
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          setUserData(snapshot.val()); // Set user data if it exists
+        } else {
+          navigate("/login"); // Navigate to login if user data doesn't exist
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        setError("An error occurred while fetching user data.");
+        navigate("/login");
+      }); // Navigate to login on error
+  }, [location.state, navigate, db]);
+
   const onDrop = (acceptedFiles) => {
     const filesWithType = acceptedFiles.map((file) => ({
       file,
@@ -32,8 +66,9 @@ const UploadDocs = () => {
     setSelectedDocType(e.target.value);
   };
 
+  console.log(userData);
+  console.log(user.uid);
   const handleUpload = async () => {
-    console.log(user);
     if (uploadedFiles.length === 0) {
       alert("Please select some files first!");
       return;
@@ -55,7 +90,7 @@ const UploadDocs = () => {
           `Uploaded ${fileObj.file.name} successfully: ${uploadedUrl}`
         );
       }
-      console.log(user);
+
       alert("Files uploaded successfully!");
       setUploadedFiles([]);
     } catch (error) {

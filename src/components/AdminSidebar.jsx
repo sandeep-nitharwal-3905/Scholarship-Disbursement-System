@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
-import { useFirebase } from "../firebase/FirebaseContext";
-
 import {
   ChevronDown,
   ChevronUp,
@@ -19,7 +16,6 @@ import {
 import { NavLink } from "react-router-dom"; // Import NavLink for active styling
 
 const AdminSidebar = (props) => {
-  const { user, logout } = useFirebase();
   const location = useLocation();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState({
@@ -37,15 +33,10 @@ const AdminSidebar = (props) => {
     }));
   };
 
-  const handleLogout = async () => {
-    try {
-      localStorage.removeItem("uid");
-      await logout();
-      navigate("/");
-      console.log("You are logged out");
-    } catch (e) {
-      console.log(e.message);
-    }
+  const handleLogout = () => {
+    localStorage.removeItem("uid");
+    navigate("/login");
+    console.log("User logged out");
   };
 
   const items = [
@@ -67,7 +58,7 @@ const AdminSidebar = (props) => {
     { name: "Payment History", icon: UserPlus },
     { name: "Settings", icon: Settings },
   ];
-
+  console.log(props.user);
   const convertToNameFormat = (text) =>
     text
       .split(" ")

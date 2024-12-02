@@ -8,13 +8,42 @@ import AdminSidebar from "./AdminSidebar";
 import { useFirebase } from "../firebase/FirebaseContext";
 
 const Layout = ({ children }) => {
-  const { user, logout, fetchScholarships } = useFirebase();
+  const { user, logout } = useFirebase();
   const location = useLocation();
   const navigate = useNavigate();
-  const db = getDatabase();
+
   const [userData, setUserData] = useState(null);
-  // setUserData(fetchScholarships());
-  // console.log(fetchScholarships());
+  const [error, setError] = useState(null);
+  const db = getDatabase();
+
+  useEffect(() => {
+    // Retrieve uid from location.state or localStorage
+    let uid = location.state?.uid || localStorage.getItem("uid");
+
+    if (!uid) {
+      // If no uid is found, navigate to login
+      navigate("/login");
+      return;
+    }
+
+    // Store the UID in localStorage to persist across pages
+    localStorage.setItem("uid", uid);
+
+    // Fetch user data from Firebase Realtime Database
+    get(ref(db, "users/" + uid))
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          setUserData(snapshot.val()); // Set user data if it exists
+        } else {
+          navigate("/login"); // Navigate to login if user data doesn't exist
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        setError("An error occurred while fetching user data.");
+        navigate("/login"); // Navigate to login on error
+      });
+  }, [location.state, navigate, db]);
 
   if (!userData) {
     // Render a loading state while waiting for user data
