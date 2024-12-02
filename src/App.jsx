@@ -19,6 +19,7 @@ import StudentTrack from "./components/StudentTrack";
 import ScholarshipApplication from "./components/ScholarshipApplication";
 import "react-toastify/dist/ReactToastify.css";
 import EditScholarship from "./components/EditScholarship";
+import DocsTrack from "./components/DocsTrack";
 const App = () => {
   return (
     <>
@@ -39,6 +40,7 @@ const App = () => {
                   <Route path="/home" element={<Home />} />
                   <Route path="/upload" element={<UploadDocs />} />
                   <Route path="/track" element={<Track />} />
+                  <Route path="/docs-track" element={<DocsTrack />} />
                   <Route
                     path="/editScholarship"
                     element={<EditScholarship />}
