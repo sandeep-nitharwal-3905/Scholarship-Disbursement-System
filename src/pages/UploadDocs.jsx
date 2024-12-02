@@ -7,6 +7,7 @@ const cloudName = "dmqzrmtsf";
 function UploadDocs() {
   const [selectedDocType, setSelectedDocType] = useState("aadhar_card");
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const onDrop = (acceptedFiles) => {
     const filesWithType = acceptedFiles.map((file) => ({
@@ -35,11 +36,12 @@ function UploadDocs() {
       return;
     }
 
-    for (const fileObj of uploadedFiles) {
-      const formData = new FormData();
-      formData.append("file", fileObj.file);
+    setIsLoading(true);
+    try {
+      for (const fileObj of uploadedFiles) {
+        const formData = new FormData();
+        formData.append("file", fileObj.file);
 
-      try {
         const response = await axios.post(
           "http://localhost:5000/upload",
           formData
@@ -49,14 +51,16 @@ function UploadDocs() {
         console.log(
           `Uploaded ${fileObj.file.name} successfully: ${uploadedUrl}`
         );
-      } catch (error) {
-        console.error("Error uploading file:", error);
-        alert("Upload failed.");
       }
-    }
 
-    alert("Files uploaded successfully!");
-    setUploadedFiles([]);
+      alert("Files uploaded successfully!");
+      setUploadedFiles([]);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      alert("Upload failed.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -66,7 +70,6 @@ function UploadDocs() {
           Upload Your Documents
         </h2>
 
-        {/* Document Type Selection */}
         <div className="mb-6">
           <label
             htmlFor="docType"
@@ -94,7 +97,6 @@ function UploadDocs() {
           </select>
         </div>
 
-        {/* Dropzone Area */}
         <div
           {...getRootProps()}
           className={`border-dashed border-4 rounded-lg p-8 transition duration-300 
@@ -116,7 +118,6 @@ function UploadDocs() {
           </p>
         </div>
 
-        {/* Uploaded Files List */}
         {uploadedFiles.length > 0 && (
           <div className="mt-6">
             <h3 className="text-xl font-semibold text-gray-700 mb-4">
@@ -168,22 +169,20 @@ function UploadDocs() {
           </div>
         )}
 
-        {/* Upload Button */}
         <button
           type="button"
           className={`mt-6 w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-200 ${
             uploadedFiles.length === 0 ? "opacity-50 cursor-not-allowed" : ""
           }`}
           onClick={handleUpload}
-          disabled={uploadedFiles.length === 0}
+          disabled={uploadedFiles.length === 0 || isLoading}
         >
-          Upload Files
+          {isLoading ? "Uploading..." : "Upload Files"}
         </button>
       </div>
     </div>
   );
 
-  // Helper function to format document type labels
   function formatDocType(docType) {
     switch (docType) {
       case "aadhar_card":
