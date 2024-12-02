@@ -1,6 +1,8 @@
-// UploadDocs.jsx
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
+import axios from "axios";
+
+const cloudName = "dmqzrmtsf";
 
 function UploadDocs() {
   const [selectedDocType, setSelectedDocType] = useState("aadhar_card");
@@ -25,6 +27,36 @@ function UploadDocs() {
 
   const handleDocTypeChange = (e) => {
     setSelectedDocType(e.target.value);
+  };
+
+  const handleUpload = async () => {
+    if (uploadedFiles.length === 0) {
+      alert("Please select some files first!");
+      return;
+    }
+
+    for (const fileObj of uploadedFiles) {
+      const formData = new FormData();
+      formData.append("file", fileObj.file);
+
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/upload",
+          formData
+        );
+        console.log(response);
+        const uploadedUrl = response.data.file.url;
+        console.log(
+          `Uploaded ${fileObj.file.name} successfully: ${uploadedUrl}`
+        );
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        alert("Upload failed.");
+      }
+    }
+
+    alert("Files uploaded successfully!");
+    setUploadedFiles([]);
   };
 
   return (
@@ -55,7 +87,9 @@ function UploadDocs() {
             <option value="school_marksheet">School Marksheet</option>
             <option value="driving_licence">Driving Licence</option>
             <option value="passing_certificate">Passing Certificate</option>
-            <option value="medical_fitness_certificate">Medical Fitness Certificate</option>
+            <option value="medical_fitness_certificate">
+              Medical Fitness Certificate
+            </option>
             <option value="other">Other Document</option>
           </select>
         </div>
@@ -128,27 +162,6 @@ function UploadDocs() {
                       </p>
                     </div>
                   </div>
-                  {/* Optional: Add remove functionality */}
-                  <button
-                    className="text-red-500 hover:text-red-700"
-                    onClick={() => removeFile(index)}
-                    aria-label="Remove file"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
                 </li>
               ))}
             </ul>
@@ -194,26 +207,6 @@ function UploadDocs() {
       default:
         return docType.replace(/_/g, " ");
     }
-  }
-
-  // Handler to remove a file from the list
-  function removeFile(index) {
-    setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
-  }
-
-  // Handler for upload button click
-  function handleUpload() {
-    // Implement your upload logic here.
-    // This could involve sending the files to a server via an API.
-    // For demonstration, we'll just log the files and reset the state.
-
-    uploadedFiles.forEach((fileObj) => {
-      console.log(`Uploading ${fileObj.file.name} as ${fileObj.type}`);
-      // Example: FormData and fetch/Axios to upload
-    });
-
-    alert("Files uploaded successfully!");
-    setUploadedFiles([]);
   }
 }
 
