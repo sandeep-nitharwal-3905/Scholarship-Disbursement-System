@@ -1,20 +1,17 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-// Cloudinary configuration (only the cloud name is needed for client-side)
-const cloudName = "dmqzrmtsf"; // replace with your cloud name
+const cloudName = "dmqzrmtsf";
 
 const CloudinaryUpload = () => {
   const [file, setFile] = useState(null);
   const [fileUrl, setFileUrl] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Handle file selection
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
-  // Upload file to backend
   const handleUpload = async () => {
     if (!file) {
       alert("Please select a file first!");
@@ -27,7 +24,7 @@ const CloudinaryUpload = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:5000/upload", // Endpoint to your backend
+        "http://localhost:5000/upload",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
