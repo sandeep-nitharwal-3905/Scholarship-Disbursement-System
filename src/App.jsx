@@ -19,52 +19,58 @@ import StudentTrack from "./components/StudentTrack";
 import ScholarshipApplication from "./components/ScholarshipApplication";
 import "react-toastify/dist/ReactToastify.css";
 import EditScholarship from "./components/EditScholarship";
+import { FirebaseProvider } from "./firebase/FirebaseContext";
 const App = () => {
   return (
     <>
-      <Analytics />
-      <Router>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/admin" element={<AdminSignup />} />
+      <FirebaseProvider>
+        <Analytics />
+        <Router>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/admin" element={<AdminSignup />} />
 
-          <Route
-            path="*"
-            element={
-              <Layout>
-                <Routes>
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/home" element={<Home />} />
-                  <Route path="/upload" element={<UploadDocs />} />
-                  <Route path="/track" element={<Track />} />
-                  <Route
-                    path="/editScholarship"
-                    element={<EditScholarship />}
-                  />
-                  <Route
-                    path="/admin-dashboard"
-                    element={<AddScholarshipForm />}
-                  />
-                  <Route path="/apply" element={<ScholarshipApplication />} />
-                  <Route path="/admin-track" element={<ScholarshipList />} />
-                  <Route
-                    path="/admin-scholarship-list"
-                    element={<ScholarshipList />}
-                  />
-                  <Route path="/viewScholarships" element={<StudentTrack />} />
-                  <Route
-                    path="//admin-add-scholarship"
-                    element={<AddScholarshipForm />}
-                  />
-                </Routes>
-              </Layout>
-            }
-          />
-        </Routes>
-        <ToastContainer />
-      </Router>
+            <Route
+              path="*"
+              element={
+                <Layout>
+                  <Routes>
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/home" element={<Home />} />
+                    <Route path="/upload" element={<UploadDocs />} />
+                    <Route path="/track" element={<Track />} />
+                    <Route
+                      path="/editScholarship"
+                      element={<EditScholarship />}
+                    />
+                    <Route
+                      path="/admin-dashboard"
+                      element={<AddScholarshipForm />}
+                    />
+                    <Route path="/apply" element={<ScholarshipApplication />} />
+                    <Route path="/admin-track" element={<ScholarshipList />} />
+                    <Route
+                      path="/admin-scholarship-list"
+                      element={<ScholarshipList />}
+                    />
+                    <Route
+                      path="/viewScholarships"
+                      element={<StudentTrack />}
+                    />
+                    <Route
+                      path="//admin-add-scholarship"
+                      element={<AddScholarshipForm />}
+                    />
+                  </Routes>
+                </Layout>
+              }
+            />
+          </Routes>
+          <ToastContainer />
+        </Router>
+      </FirebaseProvider>
     </>
   );
 };
