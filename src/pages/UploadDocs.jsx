@@ -88,6 +88,7 @@ const UploadDocs = () => {
     try {
       const userDocRef = doc(firestore, "usersDocs", user.uid);
 
+      // Fetch existing data or initialize with an empty object
       const userData = (await getDoc(userDocRef)).data() || {};
 
       const newData = { ...userData };
@@ -95,20 +96,39 @@ const UploadDocs = () => {
       for (const fileObj of uploadedFiles) {
         const formData = new FormData();
         formData.append("file", fileObj.file);
+
+        // Upload file and get the URL
         const response = await axios.post(
           "http://localhost:5000/upload",
           formData
         );
         const uploadedUrl = response.data.file.url;
+
+        // Get the current date and time
+        const timestamp = new Date().toISOString();
+
+        // Determine the document type and update the data
         const docTypeKey = fileObj.type;
+
         if (docTypeKey === "other") {
+          // Handle 'Other Docs' as an array of objects
           newData.other_docs = newData.other_docs || [];
-          newData.other_docs.push(uploadedUrl);
+          newData.other_docs.push({
+            url: uploadedUrl,
+            timestamp,
+          });
         } else {
-          newData[docTypeKey] = uploadedUrl;
+          // Handle single document fields
+          newData[docTypeKey] = {
+            url: uploadedUrl,
+            timestamp,
+          };
         }
-        console.log(`Uploaded and added ${fileObj.file.name} to Firestore.`);
+
+        console.log(`Uploaded and added ${fileObj.file.name} with timestamp.`);
       }
+
+      // Save the updated data to Firestore
       await setDoc(userDocRef, newData);
 
       alert("Files uploaded and metadata saved successfully!");
