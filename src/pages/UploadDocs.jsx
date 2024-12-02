@@ -5,6 +5,15 @@ import axios from "axios";
 import { getDatabase, ref, get } from "firebase/database";
 import { useFirebase } from "../firebase/FirebaseContext";
 const cloudName = "dmqzrmtsf";
+import app from "../Firebase";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  collection,
+  Firestore,
+  getDoc,
+} from "firebase/firestore";
 
 const UploadDocs = () => {
   const { user } = useFirebase();
@@ -16,6 +25,7 @@ const UploadDocs = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const db = getDatabase();
+  const firestore = getFirestore(app);
   useEffect(() => {
     // Retrieve uid from location.state or localStorage
     let uid = location.state?.uid || localStorage.getItem("uid");
@@ -76,25 +86,35 @@ const UploadDocs = () => {
 
     setIsLoading(true);
     try {
+      const userDocRef = doc(firestore, "usersDocs", user.uid);
+
+      const userData = (await getDoc(userDocRef)).data() || {};
+
+      const newData = { ...userData };
+
       for (const fileObj of uploadedFiles) {
         const formData = new FormData();
         formData.append("file", fileObj.file);
-
         const response = await axios.post(
           "http://localhost:5000/upload",
           formData
         );
-        console.log(response);
         const uploadedUrl = response.data.file.url;
-        console.log(
-          `Uploaded ${fileObj.file.name} successfully: ${uploadedUrl}`
-        );
+        const docTypeKey = fileObj.type;
+        if (docTypeKey === "other") {
+          newData.other_docs = newData.other_docs || [];
+          newData.other_docs.push(uploadedUrl);
+        } else {
+          newData[docTypeKey] = uploadedUrl;
+        }
+        console.log(`Uploaded and added ${fileObj.file.name} to Firestore.`);
       }
+      await setDoc(userDocRef, newData);
 
-      alert("Files uploaded successfully!");
+      alert("Files uploaded and metadata saved successfully!");
       setUploadedFiles([]);
     } catch (error) {
-      console.error("Error uploading file:", error);
+      console.error("Error uploading file or saving metadata:", error);
       alert("Upload failed.");
     } finally {
       setIsLoading(false);
