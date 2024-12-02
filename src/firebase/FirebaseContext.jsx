@@ -1,5 +1,14 @@
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { auth } from "../Firebase"; // Auth instance
 import { db } from "../Firebase"; // Firestore instance
+
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+} from "firebase/auth";
+
 import {
   doc,
   getDoc,
@@ -9,7 +18,8 @@ import {
   collection,
   getDocs,
 } from "firebase/firestore";
-import { getCurrentUser } from "./auth"; // From your auth.js
+
+import { getCurrentUser } from "./auth";
 
 const FirebaseContext = createContext();
 
@@ -18,6 +28,29 @@ export const useFirebase = () => {
 };
 
 export const FirebaseProvider = ({ children }) => {
+  const [user, setUser] = useState({});
+  const createUser = (email, password) => {
+    return createUserWithEmailAndPassword(auth, email, password);
+  };
+
+  const signIn = (email, password) => {
+    return signInWithEmailAndPassword(auth, email, password);
+  };
+
+  const logout = () => {
+    return signOut(auth);
+  };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      console.log(currentUser);
+      setUser(currentUser);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   const createScholarship = async (scholarshipData) => {
     const user = getCurrentUser();
     if (user) {
@@ -90,6 +123,10 @@ export const FirebaseProvider = ({ children }) => {
         updateScholarship,
         fetchScholarships,
         deleteScholarship,
+        createUser,
+        user,
+        logout,
+        signIn,
       }}
     >
       {children}
