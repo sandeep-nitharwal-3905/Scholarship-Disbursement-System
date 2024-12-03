@@ -4,8 +4,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getDatabase, ref, get } from "firebase/database";
 import { useFirebase } from "../firebase/FirebaseContext";
-const cloudName = "dmqzrmtsf";
 import app from "../Firebase";
+const cloudName = "dmqzrmtsf";
 import {
   getFirestore,
   doc,
@@ -115,13 +115,15 @@ const UploadDocs = () => {
           newData.other_docs = newData.other_docs || [];
           newData.other_docs.push({
             url: uploadedUrl,
-            timestamp,
+            uploadTimestamp: timestamp,
+            status: 1,
           });
         } else {
           // Handle single document fields
           newData[docTypeKey] = {
             url: uploadedUrl,
-            timestamp,
+            uploadTimestamp: timestamp,
+            status: 1,
           };
         }
 
