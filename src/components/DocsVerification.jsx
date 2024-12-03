@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { getDatabase, ref, get } from "firebase/database";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import app from "../Firebase";
+import { useNavigate } from "react-router-dom";
 
 const DocsVerification = () => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchCollectionData = async () => {
       try {
@@ -134,7 +135,7 @@ const DocsVerification = () => {
                   <td className="px-4 py-2">
                     <button
                       className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 transition"
-                      onClick={() => alert(`Viewing details for ${doc.id}`)}
+                      onClick={() => navigate(`/details/${doc.id}`)}
                     >
                       View Details
                     </button>

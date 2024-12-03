@@ -21,6 +21,8 @@ import "react-toastify/dist/ReactToastify.css";
 import EditScholarship from "./components/EditScholarship";
 import DocsTrack from "./components/DocsTrack";
 import DocsVerification from "./components/DocsVerification";
+import DocDetails from "./components/DocsDetails";
+
 const App = () => {
   return (
     <>
@@ -46,6 +48,7 @@ const App = () => {
                     path="/docs-verification"
                     element={<DocsVerification />}
                   />
+                  <Route path="/details/:id" element={<DocDetails />} />
                   <Route
                     path="/editScholarship"
                     element={<EditScholarship />}
