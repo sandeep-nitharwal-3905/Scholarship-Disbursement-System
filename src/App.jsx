@@ -20,6 +20,7 @@ import ScholarshipApplication from "./components/ScholarshipApplication";
 import "react-toastify/dist/ReactToastify.css";
 import EditScholarship from "./components/EditScholarship";
 import DocsTrack from "./components/DocsTrack";
+import DocsVerification from "./components/DocsVerification";
 const App = () => {
   return (
     <>
@@ -41,6 +42,10 @@ const App = () => {
                   <Route path="/upload" element={<UploadDocs />} />
                   <Route path="/track" element={<Track />} />
                   <Route path="/docs-track" element={<DocsTrack />} />
+                  <Route
+                    path="/docs-verification"
+                    element={<DocsVerification />}
+                  />
                   <Route
                     path="/editScholarship"
                     element={<EditScholarship />}
