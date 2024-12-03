@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getDatabase, ref, get } from "firebase/database";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import app from "../Firebase";
 
@@ -10,13 +11,28 @@ const DocsVerification = () => {
     const fetchCollectionData = async () => {
       try {
         const firestore = getFirestore(app);
+        const realtimeDb = getDatabase(app);
+
         const collectionRef = collection(firestore, "usersDocs");
         const querySnapshot = await getDocs(collectionRef);
 
-        const fetchedDocs = querySnapshot.docs.map((doc) => ({
-          id: doc.id, // Document ID
-          ...doc.data(), // Document data
-        }));
+        const fetchedDocs = await Promise.all(
+          querySnapshot.docs.map(async (docSnapshot) => {
+            const uid = docSnapshot.id;
+            const userDocs = docSnapshot.data();
+
+            const userRef = ref(realtimeDb, `users/${uid}`);
+            const userSnapshot = await get(userRef);
+            console.log(userSnapshot.val());
+            const userData = userSnapshot.exists() ? userSnapshot.val() : {};
+
+            return {
+              id: uid,
+              name: userData.fullName || "ERROR: Name not found",
+              ...userDocs,
+            };
+          })
+        );
 
         setDocuments(fetchedDocs);
       } catch (error) {
@@ -30,7 +46,9 @@ const DocsVerification = () => {
   }, []);
 
   const getPendingDocsCount = (doc) => {
-    const keys = Object.keys(doc).filter((key) => key !== "id");
+    const keys = Object.keys(doc).filter(
+      (key) => key !== "id" && key !== "name"
+    );
     return keys.filter((key) => {
       const item = doc[key];
       return (
@@ -42,7 +60,7 @@ const DocsVerification = () => {
 
   const getLastUpdatedDetails = (doc) => {
     const timestamps = Object.keys(doc)
-      .filter((key) => key !== "id")
+      .filter((key) => key !== "id" && key !== "name")
       .map((key) => {
         const item = doc[key];
         if (Array.isArray(item)) {
@@ -77,6 +95,7 @@ const DocsVerification = () => {
             <tr className="bg-gray-100">
               <th className="px-4 py-2 text-left text-gray-600">S.No</th>
               <th className="px-4 py-2 text-left text-gray-600">UID</th>
+              <th className="px-4 py-2 text-left text-gray-600">Name</th>
               <th className="px-4 py-2 text-left text-gray-600">
                 Pending Docs
               </th>
@@ -102,6 +121,7 @@ const DocsVerification = () => {
                 >
                   <td className="px-4 py-2">{index + 1}</td>
                   <td className="px-4 py-2">{doc.id}</td>
+                  <td className="px-4 py-2">{doc.name}</td>
                   <td className="px-4 py-2">{pendingDocs}</td>
                   <td className="px-4 py-2">{lastUpdated}</td>
                   <td
