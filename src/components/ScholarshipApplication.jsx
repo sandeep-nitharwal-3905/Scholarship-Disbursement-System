@@ -5,6 +5,11 @@ import "react-toastify/dist/ReactToastify.css";
 import { ArrowLeft, Upload } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { doc, setDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+// Adjust path if firebase.js is in a different folder
+import app from "../Firebase";
+import { db } from "../Firebase";
 
 const ScholarshipApplication = () => {
   const location = useLocation();
@@ -47,6 +52,8 @@ const ScholarshipApplication = () => {
     }));
   };
 
+
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -58,10 +65,40 @@ const ScholarshipApplication = () => {
       }
     }
 
-    // Implement submission logic here (e.g., API call)
+    try {
+      // Reference Firestore document
+      const docRef = doc(db, "scholarshipApplications", formData.email);
 
-    toast.success("Application submitted successfully");
-    navigate("/dashboard");
+      // Convert file objects to base64 for storage
+      const documentsBase64 = {};
+      for (const [docName, file] of Object.entries(formData.documents)) {
+        documentsBase64[docName] = await convertFileToBase64(file);
+      }
+
+      // Save form data to Firestore
+      await setDoc(docRef, {
+        ...formData,
+        documents: documentsBase64,
+        dateOfBirth: formData.dateOfBirth?.toISOString(),
+        submittedAt: new Date().toISOString(),
+      });
+
+      toast.success("Application submitted successfully!");
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error submitting application:", error);
+      toast.error("Failed to submit application. Please try again.");
+    }
+  };
+
+  // Helper function to convert file to base64
+  const convertFileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
   };
 
   // Split the requiredDocuments string into an array and add more documents
@@ -255,9 +292,9 @@ const ScholarshipApplication = () => {
                           <span>
                             {formData.documents[documentName].name.length > 20
                               ? `${formData.documents[documentName].name.slice(
-                                  0,
-                                  17
-                                )}...`
+                                0,
+                                17
+                              )}...`
                               : formData.documents[documentName].name}
                           </span>
                         ) : (
