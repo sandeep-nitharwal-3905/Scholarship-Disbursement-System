@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getDatabase, ref, get } from "firebase/database";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
-import app from "../Firebase";
+import app from "../../Firebase";
 import { useNavigate } from "react-router-dom";
 
 const DocsVerification = () => {
