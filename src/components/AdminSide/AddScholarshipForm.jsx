@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FirebaseProvider, useFirebase } from "../firebase/FirebaseContext";
+import { FirebaseProvider, useFirebase } from "../../firebase/FirebaseContext";
 
 import { Plus } from "lucide-react";
 

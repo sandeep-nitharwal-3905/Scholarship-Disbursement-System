@@ -4,7 +4,7 @@ import NewTopBar from "./NewTopBar";
 import Sidebar from "./Sidebar";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getDatabase, ref, get } from "firebase/database";
-import AdminSidebar from "./AdminSidebar";
+import AdminSidebar from "./AdminSide/AdminSidebar";
 import { useFirebase } from "../firebase/FirebaseContext";
 
 const Layout = ({ children }) => {
