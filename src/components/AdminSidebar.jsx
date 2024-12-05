@@ -48,7 +48,6 @@ const AdminSidebar = (props) => {
         { name: "Documents Verification", path: "/docs-verification" },
         { name: "Add Scholarship", path: "/admin-add-scholarship" },
         { name: "Available Scholarships", path: "/admin-track" },
-        { name: "Application Check", path: "/applications-check" },
       ],
     },
 
