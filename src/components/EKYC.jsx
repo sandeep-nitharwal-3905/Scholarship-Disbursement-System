@@ -1,14 +1,31 @@
 import React, { useState } from 'react';
 import './EKYC.css';
-
+import { getDatabase, ref, get } from "firebase/database";
+import { useFirebase } from "../firebase/FirebaseContext";
+import app from "../Firebase";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  collection,
+  Firestore,
+  getDoc,
+} from "firebase/firestore";
 const EKYC = () => {
+  const { user } = useFirebase();
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [kycKey, setKycKey] = useState('');
+  const [userData, setUserData] = useState(null);
+  const navigate = useNavigate();
+  const [error, setError] = useState(null);
+  const db = getDatabase();
+  const firestore = getFirestore(app);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [step, setStep] = useState(1);
   const [successMessage, setSuccessMessage] = useState('');
+
 
   const handleGenerateOTP = async () => {
     try {
@@ -42,7 +59,7 @@ const EKYC = () => {
     try {
       setLoading(true);
       setError('');
-
+  
       const response = await fetch('http://localhost:5000/verify-otp', {
         method: 'POST',
         headers: {
@@ -50,15 +67,31 @@ const EKYC = () => {
         },
         body: JSON.stringify({ email, otp }),
       });
-
+  
       const data = await response.json();
-
+  
       if (!response.ok) {
         throw new Error(data.error || 'Failed to verify OTP');
       }
-
-      setKycKey(data.kycKey);
-      setSuccessMessage('OTP verified successfully');
+  
+      const kycKey = data.kycKey;
+  
+      // Save to Firestore
+      const userUid = user?.uid; // Assuming `user` contains the logged-in user's details
+      if (!userUid) {
+        throw new Error('User not authenticated');
+      }
+  
+      const kycData = {
+        email,
+        kycKey,
+        generatedAt: new Date().toISOString(),
+      };
+  
+      await setDoc(doc(firestore, 'kyc', userUid), kycData);
+  
+      setKycKey(kycKey);
+      setSuccessMessage('OTP verified successfully, and KYC Key saved!');
       setStep(3);
     } catch (err) {
       setError(err.message);
@@ -66,7 +99,7 @@ const EKYC = () => {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="ekyc-container">
     
