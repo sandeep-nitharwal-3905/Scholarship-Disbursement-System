@@ -7,11 +7,13 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { doc, setDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-// Adjust path if firebase.js is in a different folder
+import { useFirebase } from "../firebase/FirebaseContext";
 import app from "../Firebase";
 import { db } from "../Firebase";
 
 const ScholarshipApplication = () => {
+  const { user } = useFirebase();
+  // console.log(user.uid);
   const location = useLocation();
   const navigate = useNavigate();
   const { scholarship } = location.state || {};
@@ -67,7 +69,8 @@ const ScholarshipApplication = () => {
 
     try {
       // Reference Firestore document
-      const docRef = doc(db, "scholarshipApplications", formData.email);
+     
+      const docRef = doc(db, "scholarshipApplications", user.uid);
 
       // Convert file objects to base64 for storage
       const documentsBase64 = {};
