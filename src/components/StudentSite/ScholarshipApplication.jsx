@@ -8,8 +8,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { doc, setDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 // Adjust path if firebase.js is in a different folder
-import app from "../Firebase";
-import { db } from "../Firebase";
+import app from "../../Firebase";
+import { db } from "../../Firebase";
 
 const ScholarshipApplication = () => {
   const location = useLocation();
@@ -75,12 +75,41 @@ const ScholarshipApplication = () => {
         documentsBase64[docName] = await convertFileToBase64(file);
       }
 
-      // Save form data to Firestore
+      // Initialize the stages with their respective checked status
+      const reviewStages = {
+        academicReview: { checked: false },
+        documentAuthentication: { checked: false },
+        eligibilityVerification: { checked: false },
+        finalApproval: { checked: false },
+        financialNeedAssessment: { checked: false },
+        interviewAssessment: { checked: false },
+        personalStatementReview: { checked: false },
+        preliminaryScreening: { checked: false },
+        referenceCheck: { checked: false },
+      };
+
+      // Initialize reviewNotes with empty strings
+      const reviewNotes = {
+        academicReview: "",
+        documentAuthentication: "",
+        eligibilityVerification: "",
+        finalApproval: "",
+        financialNeedAssessment: "",
+        interviewAssessment: "",
+        personalStatementReview: "",
+        preliminaryScreening: "",
+        referenceCheck: "",
+      };
+
+      // Save form data to Firestore along with stages and review info
       await setDoc(docRef, {
         ...formData,
         documents: documentsBase64,
         dateOfBirth: formData.dateOfBirth?.toISOString(),
         submittedAt: new Date().toISOString(),
+        reviewNotes, // Store empty notes for each stage
+        reviewStages, // Store stages and their checked status
+        reviewStatus: "pending", // Initial review status
       });
 
       toast.success("Application submitted successfully!");
@@ -90,6 +119,7 @@ const ScholarshipApplication = () => {
       toast.error("Failed to submit application. Please try again.");
     }
   };
+
 
   // Helper function to convert file to base64
   const convertFileToBase64 = (file) => {
