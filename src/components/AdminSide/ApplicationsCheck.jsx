@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
 import { db } from "../../Firebase";
-import { 
-  ClipboardList, 
-  Eye, 
-  Check, 
-  X, 
-  FileText, 
-  Clock, 
-  Search, 
-  Filter 
+import {
+  ClipboardList,
+  Eye,
+  Check,
+  X,
+  FileText,
+  Clock,
+  Search,
+  Filter,
+  AlertTriangle
 } from "lucide-react";
 
 const ReviewModal = ({ application, onClose, onReviewComplete }) => {
   const [reviewStages, setReviewStages] = useState({});
   const [activeStage, setActiveStage] = useState(null);
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [isRejecting, setIsRejecting] = useState(false);
 
   // Initialize reviewStages from application data
   useEffect(() => {
@@ -34,11 +37,25 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
   };
 
   const handleFinalReview = () => {
+    // If all stages are checked, mark as approved
+    const allStagesChecked = Object.values(reviewStages).every((stage) => stage.checked);
+
     onReviewComplete({
       reviewStages,
-      reviewStatus: Object.values(reviewStages).every((stage) => stage.checked)
-        ? "approved"
-        : "pending",
+      reviewStatus: allStagesChecked ? "approved" : "pending",
+    });
+  };
+
+  const handleReject = () => {
+    if (!rejectionReason.trim()) {
+      alert("Please provide a reason for rejection");
+      return;
+    }
+
+    onReviewComplete({
+      reviewStages: reviewStages,
+      reviewStatus: "rejected",
+      rejectionReason: rejectionReason.trim(),
     });
   };
 
@@ -60,7 +77,7 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
         {/* Left Side - Application Details */}
         <div className="w-1/2 p-8 overflow-y-auto bg-gray-50 border-r">
           <h2 className="text-3xl font-bold mb-6 text-blue-700 flex items-center">
-            <FileText className="mr-3 text-blue-500" /> 
+            <FileText className="mr-3 text-blue-500" />
             Application Details
           </h2>
           <div className="space-y-4">
@@ -94,15 +111,14 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
             {stages.map((stage) => {
               const stageData = reviewStages[stage.key] || {};
               return (
-                <div 
-                  key={stage.key} 
-                  className={`p-4 rounded-lg transition-all ${
-                    activeStage === stage.key 
-                      ? 'bg-blue-50 border-blue-300' 
+                <div
+                  key={stage.key}
+                  className={`p-4 rounded-lg transition-all ${activeStage === stage.key
+                      ? 'bg-blue-50 border-blue-300'
                       : 'bg-gray-50 hover:bg-gray-100'
-                  } border`}
+                    } border`}
                 >
-                  <div 
+                  <div
                     className="flex items-center justify-between cursor-pointer"
                     onClick={() => setActiveStage(activeStage === stage.key ? null : stage.key)}
                   >
@@ -136,19 +152,54 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
               );
             })}
           </div>
+
+          {/* Rejection Section */}
+          {isRejecting ? (
+            <div className="mt-6 bg-red-50 p-4 rounded-lg">
+              <div className="flex items-center mb-4 text-red-600">
+                <AlertTriangle className="mr-2" />
+                <h3 className="font-semibold">Reject Application</h3>
+              </div>
+              <textarea
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                placeholder="Provide a detailed reason for rejecting the application..."
+                className="w-full p-2 border rounded focus:ring-red-500"
+                rows={4}
+              />
+            </div>
+          ) : null}
+
           <div className="flex justify-between mt-6">
-            <button 
-              onClick={onClose} 
+            <button
+              onClick={onClose}
               className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
             >
               Cancel
             </button>
-            <button 
-              onClick={handleFinalReview} 
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Save Review
-            </button>
+            <div className="space-x-4">
+              {!isRejecting ? (
+                <button
+                  onClick={() => setIsRejecting(true)}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Reject
+                </button>
+              ) : (
+                <button
+                  onClick={handleReject}
+                  className="px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition-colors"
+                >
+                  Confirm Rejection
+                </button>
+              )}
+              <button
+                onClick={handleFinalReview}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Save Review
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -187,7 +238,7 @@ const AdminDashboard = () => {
 
     // Filter by search term
     if (searchTerm) {
-      result = result.filter(app => 
+      result = result.filter(app =>
         app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         app.email.toLowerCase().includes(searchTerm.toLowerCase())
       );
@@ -269,7 +320,7 @@ const AdminDashboard = () => {
               <div className="p-6">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-xl font-bold text-blue-700">{application.name}</h2>
-                  <span 
+                  <span
                     className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(application.reviewStatus)}`}
                   >
                     {application.reviewStatus || 'Pending'}
