@@ -10,18 +10,17 @@ import Layout from "./components/Layout";
 import Track from "./components/Track";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import AdminDashboard from "./components/AdminDashboard";
-import AdminTrack from "./components/AdminTrack";
 import AdminSignup from "./pages/AdminSignup";
-import AddScholarshipForm from "./components/AddScholarshipForm";
+import AddScholarshipForm from "./components/AdminSide/AddScholarshipForm";
 import ScholarshipList from "./components/ScholarshipList";
 import StudentTrack from "./components/StudentTrack";
 import ScholarshipApplication from "./components/ScholarshipApplication";
 import "react-toastify/dist/ReactToastify.css";
 import EditScholarship from "./components/EditScholarship";
-import DocsTrack from "./components/DocsTrack";
-import DocsVerification from "./components/DocsVerification";
+import DocsTrack from "./components/AdminSide/DocsTrack";
+import DocsVerification from "./components/AdminSide/DocsVerification";
 import DocDetails from "./components/DocsDetails";
+import ApplicationsCheck from "./components/AdminSide/ApplicationsCheck";
 
 const App = () => {
   return (
@@ -47,6 +46,10 @@ const App = () => {
                   <Route
                     path="/docs-verification"
                     element={<DocsVerification />}
+                  />
+                  <Route
+                    path="/applications-check"
+                    element={<ApplicationsCheck/>}
                   />
                   <Route path="/details/:id" element={<DocDetails />} />
                   <Route
