@@ -1,19 +1,17 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { ArrowLeft, Upload } from "lucide-react";
+import 'react-toastify/dist/ReactToastify.css';
+
+
+import { ArrowLeft } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { doc, setDoc } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { useFirebase } from "../firebase/FirebaseContext";
-import app from "../Firebase";
-import { db } from "../Firebase";
+import { doc, setDoc, collection } from "firebase/firestore";
+import { getAuth } from "firebase/auth"; // Import Firebase Authentication
+import { db } from "../../Firebase";
 
 const ScholarshipApplication = () => {
-  const { user } = useFirebase();
-  // console.log(user.uid);
   const location = useLocation();
   const navigate = useNavigate();
   const { scholarship } = location.state || {};
@@ -54,10 +52,17 @@ const ScholarshipApplication = () => {
     }));
   };
 
-
-
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // Get the current user UID from Firebase Authentication
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      toast.error("User not logged in. Please log in to submit your application.");
+      return;
+    }
 
     // Validate required documents
     for (let doc of requiredDocuments) {
@@ -68,9 +73,8 @@ const ScholarshipApplication = () => {
     }
 
     try {
-      // Reference Firestore document
-     
-      const docRef = doc(db, "scholarshipApplications", user.uid);
+      // Generate a unique ID for this application
+      const applicationRef = doc(collection(db, "scholarshipApplications"));
 
       // Convert file objects to base64 for storage
       const documentsBase64 = {};
@@ -78,12 +82,41 @@ const ScholarshipApplication = () => {
         documentsBase64[docName] = await convertFileToBase64(file);
       }
 
-      // Save form data to Firestore
-      await setDoc(docRef, {
+      // Initialize review stages and review notes
+      const reviewStages = {
+        academicReview: { checked: false },
+        documentAuthentication: { checked: false },
+        eligibilityVerification: { checked: false },
+        finalApproval: { checked: false },
+        financialNeedAssessment: { checked: false },
+        interviewAssessment: { checked: false },
+        personalStatementReview: { checked: false },
+        preliminaryScreening: { checked: false },
+        referenceCheck: { checked: false },
+      };
+
+      const reviewNotes = {
+        academicReview: "",
+        documentAuthentication: "",
+        eligibilityVerification: "",
+        finalApproval: "",
+        financialNeedAssessment: "",
+        interviewAssessment: "",
+        personalStatementReview: "",
+        preliminaryScreening: "",
+        referenceCheck: "",
+      };
+
+      // Save form data to Firestore with unique application ID
+      await setDoc(applicationRef, {
         ...formData,
         documents: documentsBase64,
         dateOfBirth: formData.dateOfBirth?.toISOString(),
         submittedAt: new Date().toISOString(),
+        reviewNotes, // Store empty notes for each stage
+        reviewStages, // Store stages and their checked status
+        reviewStatus: "pending", // Initial review status
+        userId: user.uid, // Store the UID of the logged-in user
       });
 
       toast.success("Application submitted successfully!");
@@ -254,103 +287,65 @@ const ScholarshipApplication = () => {
                       name="extracurriculars"
                       value={formData.extracurriculars}
                       onChange={handleInputChange}
-                      required
+                      rows="4"
                       className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                      rows={4}
-                      placeholder="Describe your extracurricular activities"
-                    ></textarea>
+                    />
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Required Documents */}
+            {/* Documents Upload */}
             <div>
-              <h3 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
-                <Upload className="mr-2" size={20} /> Required Documents
+              <h3 className="text-xl font-semibold text-gray-700 mb-4">
+                Upload Required Documents
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {requiredDocuments.map((documentName, index) => (
-                  <div key={index} className="flex flex-col space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      {documentName}
+              <div className="space-y-4">
+                {requiredDocuments.map((doc, index) => (
+                  <div key={index} className="flex items-center space-x-4">
+                    <input
+                      type="file"
+                      onChange={(event) => handleFileChange(event, doc)}
+                      className="hidden"
+                      id={`file-${doc}`}
+                    />
+                    <label
+                      htmlFor={`file-${doc}`}
+                      className="cursor-pointer text-blue-600 hover:text-blue-800"
+                    >
+                      {doc}
                     </label>
-                    <div className="relative">
-                      <input
-                        type="file"
-                        onChange={(event) =>
-                          handleFileChange(event, documentName)
-                        }
-                        required
-                        accept=".pdf,.doc,.docx,image/*"
-                        className="sr-only"
-                        id={`file-${index}`}
-                      />
-                      <label
-                        htmlFor={`file-${index}`}
-                        className="w-full cursor-pointer bg-blue-50 border border-blue-200 text-blue-600 rounded-md px-4 py-2 flex items-center justify-center hover:bg-blue-100 transition duration-200"
-                      >
-                        <Upload className="mr-2" size={18} />
-                        {formData.documents[documentName] ? (
-                          <span>
-                            {formData.documents[documentName].name.length > 20
-                              ? `${formData.documents[documentName].name.slice(
-                                0,
-                                17
-                              )}...`
-                              : formData.documents[documentName].name}
-                          </span>
-                        ) : (
-                          "Choose File"
-                        )}
-                      </label>
-                    </div>
+                    {formData.documents[doc] && (
+                      <span className="text-sm text-green-600">
+                        {formData.documents[doc].name}
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Submit Button */}
-            <div>
+            <div className="flex justify-end">
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center space-x-2"
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
               >
-                <Upload size={20} />
-                <span>Submit Application</span>
+                Submit Application
               </button>
             </div>
           </form>
         </div>
       </div>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-      />
+
+      <ToastContainer />
     </div>
   );
 };
 
-const InputField = ({
-  label,
-  name,
-  type = "text",
-  value,
-  onChange,
-  required,
-  textarea = false,
-  ...props
-}) => (
-  <div className="flex flex-col space-y-2">
-    <label htmlFor={name} className="text-sm font-medium text-gray-700">
+const InputField = ({ label, name, value, onChange, required, type = "text", textarea }) => (
+  <div>
+    <label htmlFor={name} className="block text-sm font-medium text-gray-700">
       {label}
     </label>
     {textarea ? (
@@ -359,20 +354,18 @@ const InputField = ({
         name={name}
         value={value}
         onChange={onChange}
-        required={required}
-        {...props}
         className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-      ></textarea>
+        required={required}
+      />
     ) : (
       <input
-        type={type}
         id={name}
         name={name}
+        type={type}
         value={value}
         onChange={onChange}
-        required={required}
-        {...props}
         className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+        required={required}
       />
     )}
   </div>

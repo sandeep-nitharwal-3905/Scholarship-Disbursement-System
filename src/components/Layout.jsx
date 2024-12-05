@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import TopBar from "./TopBar";
 import NewTopBar from "./NewTopBar";
-import Sidebar from "./Sidebar";
+import Sidebar from "./StudentSite/Sidebar";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getDatabase, ref, get } from "firebase/database";
 import AdminSidebar from "./AdminSide/AdminSidebar";

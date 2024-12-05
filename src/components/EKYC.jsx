@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css"; // Required for basic calendar styles
+import "react-calendar/dist/Calendar.css"; 
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 import app from "../Firebase";
 import { useFirebase } from "../firebase/FirebaseContext";
@@ -29,7 +29,7 @@ const EKYC = () => {
   ];
 
   useEffect(() => {
-    if (!user) return; // User not logged in
+    if (!user) return; 
     const checkExistingSlot = async () => {
       try {
         const userUid = user?.uid;
@@ -37,14 +37,13 @@ const EKYC = () => {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          // User already has a KYC slot
           const data = docSnap.data();
           setKycKey(data.kycKey);
           setSelectedDate(new Date(data.slot.date));
           setSelectedSlot(data.slot.time);
-          setStep(4); // Move to Step 4 if already has a slot
+          setStep(4); 
         } else {
-          setStep(1); // Step 1 for new users
+          setStep(1); 
         }
       } catch (err) {
         setError(err.message);
@@ -147,7 +146,7 @@ const EKYC = () => {
 
   const isDisabledDate = (date) => {
     const day = date.getDay();
-    return day === 0 || day === 6; // Disable Sundays (0) and Saturdays (6)
+    return day === 0 || day === 6; 
   };
 
   const isDisabledSlot = (slot) => {
@@ -155,7 +154,7 @@ const EKYC = () => {
     const [hours, minutes] = slot.split(":");
     const slotDate = new Date(selectedDate);
     slotDate.setHours(parseInt(hours), parseInt(minutes.split(" ")[0]), 0, 0);
-    return slotDate < now; // Disable past slots
+    return slotDate < now; 
   };
 
   return (
@@ -238,7 +237,7 @@ const EKYC = () => {
                           : "bg-gray-200"
                       } hover:bg-blue-400`}
                       onClick={() => setSelectedSlot(slot)}
-                      disabled={isDisabledSlot(slot)} // Disable past slots
+                      disabled={isDisabledSlot(slot)} 
                     >
                       {slot}
                     </button>
