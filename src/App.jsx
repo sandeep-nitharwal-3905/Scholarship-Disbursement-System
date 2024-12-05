@@ -14,13 +14,14 @@ import AdminSignup from "./pages/AdminSignup";
 import AddScholarshipForm from "./components/AdminSide/AddScholarshipForm";
 import ScholarshipList from "./components/ScholarshipList";
 import StudentTrack from "./components/StudentTrack";
-import ScholarshipApplication from "./components/ScholarshipApplication";
+import ScholarshipApplication from "./components/StudentSite/ScholarshipApplication";
 import "react-toastify/dist/ReactToastify.css";
 import EditScholarship from "./components/EditScholarship";
 import DocsTrack from "./components/AdminSide/DocsTrack";
 import DocsVerification from "./components/AdminSide/DocsVerification";
 import DocDetails from "./components/DocsDetails";
 import ApplicationsCheck from "./components/AdminSide/ApplicationsCheck";
+import UpdatedDashboard from "./components/StudentSite/UpdatedDashboard";
 import EKYC from "./components/EKYC";
 const App = () => {
   return (
@@ -48,10 +49,20 @@ const App = () => {
                     path="/docs-verification"
                     element={<DocsVerification />}
                   />
+
+
+
                   <Route
                     path="/applications-check"
                     element={<ApplicationsCheck/>}
                   />
+
+                  <Route
+                    path="/updatedDashboard"
+                    element={<UpdatedDashboard/>}
+                  />
+
+
                   <Route path="/details/:id" element={<DocDetails />} />
                   <Route
                     path="/editScholarship"
