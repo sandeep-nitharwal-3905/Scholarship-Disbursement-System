@@ -21,7 +21,7 @@ import DocsTrack from "./components/AdminSide/DocsTrack";
 import DocsVerification from "./components/AdminSide/DocsVerification";
 import DocDetails from "./components/DocsDetails";
 import ApplicationsCheck from "./components/AdminSide/ApplicationsCheck";
-
+import EKYC from "./components/EKYC";
 const App = () => {
   return (
     <>
@@ -42,6 +42,7 @@ const App = () => {
                   <Route path="/home" element={<Home />} />
                   <Route path="/upload" element={<UploadDocs />} />
                   <Route path="/track" element={<Track />} />
+                  <Route path="/ekyc0" element={<EKYC />} />
                   <Route path="/docs-track" element={<DocsTrack />} />
                   <Route
                     path="/docs-verification"
