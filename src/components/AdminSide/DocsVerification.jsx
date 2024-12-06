@@ -8,6 +8,7 @@ const DocsVerification = () => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchCollectionData = async () => {
       try {
@@ -24,7 +25,6 @@ const DocsVerification = () => {
 
             const userRef = ref(realtimeDb, `users/${uid}`);
             const userSnapshot = await get(userRef);
-            console.log(userSnapshot.val());
             const userData = userSnapshot.exists() ? userSnapshot.val() : {};
 
             return {
@@ -46,6 +46,50 @@ const DocsVerification = () => {
     fetchCollectionData();
   }, []);
 
+  const calculateDocumentStatus = (doc) => {
+    const keys = Object.keys(doc).filter(
+      (key) => key !== "id" && key !== "name"
+    );
+
+    // Calculate status for each document type
+    const documentStatuses = keys.map(key => {
+      const item = doc[key];
+      
+      // Handle array of documents (like other_docs)
+      if (Array.isArray(item)) {
+        // If any doc is pending, return pending
+        // If all docs are approved, return approved
+        // If any doc is rejected, return rejected
+        if (item.some(doc => doc.status === 1)) return 1; // Pending
+        if (item.every(doc => doc.status === 2)) return 2; // Approved
+        if (item.some(doc => doc.status === 3)) return 3; // Rejected
+      }
+      
+      // Handle single documents
+      if (typeof item === 'object' && item.status) {
+        return item.status;
+      }
+      
+      return 1; // Default to pending
+    });
+
+    // Determine overall status
+    if (documentStatuses.some(status => status === 1)) return 1; // Pending
+    if (documentStatuses.every(status => status === 2)) return 2; // Approved
+    if (documentStatuses.some(status => status === 3)) return 3; // Rejected
+
+    return 1; // Default to pending
+  };
+
+  const getStatusLabel = (status) => {
+    const statusMap = {
+      1: { label: "Pending", color: "text-yellow-600" },
+      2: { label: "Approved", color: "text-green-600" },
+      3: { label: "Rejected", color: "text-red-600" }
+    };
+    return statusMap[status] || { label: "Unknown", color: "text-gray-600" };
+  };
+
   const getPendingDocsCount = (doc) => {
     const keys = Object.keys(doc).filter(
       (key) => key !== "id" && key !== "name"
@@ -53,8 +97,8 @@ const DocsVerification = () => {
     return keys.filter((key) => {
       const item = doc[key];
       return (
-        item?.status !== 4 ||
-        (Array.isArray(item) && item.some((i) => i.status !== 1))
+        item?.status === 1 ||
+        (Array.isArray(item) && item.some((i) => i.status === 1))
       );
     }).length;
   };
@@ -111,7 +155,8 @@ const DocsVerification = () => {
             {documents.map((doc, index) => {
               const pendingDocs = getPendingDocsCount(doc);
               const lastUpdated = getLastUpdatedDetails(doc);
-              const status = pendingDocs === 0 ? "Complete" : "Pending";
+              const overallStatus = calculateDocumentStatus(doc);
+              const { label: statusLabel, color: statusColor } = getStatusLabel(overallStatus);
 
               return (
                 <tr
@@ -125,12 +170,8 @@ const DocsVerification = () => {
                   <td className="px-4 py-2">{doc.name}</td>
                   <td className="px-4 py-2">{pendingDocs}</td>
                   <td className="px-4 py-2">{lastUpdated}</td>
-                  <td
-                    className={`px-4 py-2 font-medium ${
-                      status === "Complete" ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {status}
+                  <td className={`px-4 py-2 font-medium ${statusColor}`}>
+                    {statusLabel}
                   </td>
                   <td className="px-4 py-2">
                     <button
