@@ -23,9 +23,10 @@ import DocDetails from "./components/DocsDetails";
 import ApplicationsCheck from "./components/AdminSide/ApplicationsCheck";
 import UpdatedDashboard from "./components/StudentSite/UpdatedDashboard";
 import EKYC from "./components/EKYC";
+import FAQ from "./pages/FAQ";
 import DocumentDownload from './components/DocsDownload';
-
 import AdminPanel from "./components/AdminSide/AdminPanel";
+
 const App = () => {
   return (
     <>
@@ -43,7 +44,9 @@ const App = () => {
               <Layout>
                 <Routes>
                   <Route path="/dashboard" element={<Dashboard />} />
+                  
                   <Route path="/home" element={<Home />} />
+                  <Route path="/faq" element={<FAQ />} />
                   <Route path="/upload" element={<UploadDocs />} />
                   <Route path="/track" element={<Track />} />
                   <Route path="/ekyc0" element={<EKYC />} />
