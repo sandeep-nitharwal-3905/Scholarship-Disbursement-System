@@ -9,12 +9,15 @@ import {
   FileText, 
   Clock, 
   Search, 
-  Filter 
+  Filter,
+  AlertTriangle 
 } from "lucide-react";
 
 const ReviewModal = ({ application, onClose, onReviewComplete }) => {
   const [reviewStages, setReviewStages] = useState({});
   const [activeStage, setActiveStage] = useState(null);
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [isRejecting, setIsRejecting] = useState(false);
 
   // Initialize reviewStages from application data
   useEffect(() => {
@@ -34,11 +37,25 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
   };
 
   const handleFinalReview = () => {
+    // If all stages are checked, mark as approved
+    const allStagesChecked = Object.values(reviewStages).every((stage) => stage.checked);
+    
     onReviewComplete({
       reviewStages,
-      reviewStatus: Object.values(reviewStages).every((stage) => stage.checked)
-        ? "approved"
-        : "pending",
+      reviewStatus: allStagesChecked ? "approved" : "pending",
+    });
+  };
+
+  const handleReject = () => {
+    if (!rejectionReason.trim()) {
+      alert("Please provide a reason for rejection");
+      return;
+    }
+
+    onReviewComplete({
+      reviewStages: reviewStages,
+      reviewStatus: "rejected",
+      rejectionReason: rejectionReason.trim(),
     });
   };
 
@@ -136,6 +153,24 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
               );
             })}
           </div>
+
+          {/* Rejection Section */}
+          {isRejecting ? (
+            <div className="mt-6 bg-red-50 p-4 rounded-lg">
+              <div className="flex items-center mb-4 text-red-600">
+                <AlertTriangle className="mr-2" />
+                <h3 className="font-semibold">Reject Application</h3>
+              </div>
+              <textarea
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                placeholder="Provide a detailed reason for rejecting the application..."
+                className="w-full p-2 border rounded focus:ring-red-500"
+                rows={4}
+              />
+            </div>
+          ) : null}
+
           <div className="flex justify-between mt-6">
             <button 
               onClick={onClose} 
@@ -143,18 +178,37 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
             >
               Cancel
             </button>
-            <button 
-              onClick={handleFinalReview} 
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Save Review
-            </button>
+            <div className="space-x-4">
+              {!isRejecting ? (
+                <button 
+                  onClick={() => setIsRejecting(true)} 
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Reject
+                </button>
+              ) : (
+                <button 
+                  onClick={handleReject} 
+                  className="px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition-colors"
+                >
+                  Confirm Rejection
+                </button>
+              )}
+              <button 
+                onClick={handleFinalReview} 
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Save Review
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+
 
 const AdminDashboard = () => {
   const [applications, setApplications] = useState([]);
