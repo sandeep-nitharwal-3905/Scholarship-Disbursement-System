@@ -42,16 +42,23 @@ const AdminSidebar = (props) => {
   const items = [
     { name: "Dashboard", icon: BarChart2, path: "/admin-dashboard" },
     {
-      name: "Documents Status",
+      name: "Documents Section",
       icon: GraduationCap,
       dropdown: [
         { name: "Documents Verification", path: "/docs-verification" },
-        { name: "Add Scholarship", path: "/admin-add-scholarship" },
-        { name: "Available Scholarships", path: "/admin-track" },
-        { name: "Application Check", path: "/applications-check" },
       ],
     },
-
+    {
+      name: "Scholarship Section",
+      icon: GraduationCap,
+      dropdown: [
+        { name: "Add Scholarship", path: "/admin-add-scholarship" },
+        { name: "Edit Scholarship", path: "/admin-track" },
+        { name: "Applications Verification", path: "/applications-check" },
+      ],
+    },
+    
+    { name: "E-KYC", icon: BarChart2, path: "/ekyc1" },
     {
       name: "User Management",
       icon: Users,

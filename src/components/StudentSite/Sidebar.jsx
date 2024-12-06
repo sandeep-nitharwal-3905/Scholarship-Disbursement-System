@@ -49,17 +49,19 @@ const Sidebar = (props) => {
       icon: GraduationCap,
       dropdown: [
         { name: "Upload Documents", path: "/upload" },
-        { name: "Track Submission Status", path: "/track" },
-        { name: "Track Documents Status", path: "/docs-track" },
-        { name: "Your Dashboard", path: "/updatedDashboard" },
+        // { name: "Track Submission Status", path: "/track" },
+        { name: "Documents Status", path: "/docs-track" },
+        {name : "Download Your Documents", path : "/download-documents"}
+        
       ],
     },
     {
-      name: "Scholarship Info",
+      name: "Scholarship Status",
       icon: Building,
       dropdown: [
-        "Eligibility Criteria",
+        // "Eligibility Criteria",
         { name: "Available Scholarships", path: "/viewScholarships" },
+        { name: "Applications Status", path: "/updatedDashboard" },
       ],
     },
     {
