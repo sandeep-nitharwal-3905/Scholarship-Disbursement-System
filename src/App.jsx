@@ -23,6 +23,8 @@ import DocDetails from "./components/DocsDetails";
 import ApplicationsCheck from "./components/AdminSide/ApplicationsCheck";
 import UpdatedDashboard from "./components/StudentSite/UpdatedDashboard";
 import EKYC from "./components/EKYC";
+import DocumentDownload from './components/DocsDownload';
+
 const App = () => {
   return (
     <>
@@ -50,16 +52,17 @@ const App = () => {
                     element={<DocsVerification />}
                   />
 
-
+                  <Route path="/download-documents" element={<DocumentDownload />} />
 
                   <Route
                     path="/applications-check"
-                    element={<ApplicationsCheck/>}
+                    element={<ApplicationsCheck />}
                   />
+
 
                   <Route
                     path="/updatedDashboard"
-                    element={<UpdatedDashboard/>}
+                    element={<UpdatedDashboard />}
                   />
 
 
