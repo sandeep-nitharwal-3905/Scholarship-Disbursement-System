@@ -51,7 +51,8 @@ const AdminSidebar = (props) => {
         { name: "Application Check", path: "/applications-check" },
       ],
     },
-
+    
+    { name: "E-KYC", icon: BarChart2, path: "/ekyc1" },
     {
       name: "User Management",
       icon: Users,
