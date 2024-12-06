@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getFirestore, collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import app from '../../Firebase';
 
 const AdminPanel = () => {
@@ -92,6 +92,9 @@ const AdminPanel = () => {
         case 'disconnected':
           handlePeerDisconnection(data.role);
           break;
+          
+        default:
+          console.log('Unknown message type:', data.type);
       }
     } catch (err) {
       setError('Error handling WebRTC signal: ' + err.message);
@@ -161,8 +164,13 @@ const AdminPanel = () => {
         localVideoRef.current.srcObject = stream;
       }
 
-      await setupPeerConnection();
+      const peerConnection = await setupPeerConnection();
       
+      // Add local stream tracks to peer connection
+      stream.getTracks().forEach(track => {
+        peerConnection.addTrack(track, stream);
+      });
+
       setLoading(false);
     } catch (err) {
       setError('Failed to start call: ' + err.message);
@@ -199,18 +207,57 @@ const AdminPanel = () => {
     cleanup();
   };
 
+  const handleKYCAction = async (id, status) => {
+    try {
+      const kycRef = doc(firestore, 'kyc', id);
+      await updateDoc(kycRef, {
+        status: status,
+        reviewedAt: new Date().toISOString(),
+        reviewedBy: 'admin', // You might want to use actual admin ID here
+        comments: status === 'rejected' ? 'KYC verification rejected' : 'KYC verification approved'
+      });
+
+      // Update local state
+      setPendingKYC((prev) => 
+        prev.map((item) => 
+          item.id === id ? { ...item, status } : item
+        )
+      );
+
+      // Optional: Remove from pending list after action
+      setPendingKYC((prev) => prev.filter((item) => item.id !== id));
+
+      // Show success message
+      setError(null);
+    } catch (err) {
+      setError(`Error ${status === 'approved' ? 'approving' : 'rejecting'} KYC: ${err.message}`);
+    }
+  };
+
   const handleDeleteKYC = async (id) => {
     try {
       await deleteDoc(doc(firestore, 'kyc', id));
       setPendingKYC((prev) => prev.filter((item) => item.id !== id));
+      setError(null);
     } catch (err) {
       setError('Error deleting KYC record: ' + err.message);
     }
   };
 
+  const getStatusBadgeClass = (status) => {
+    switch (status) {
+      case 'approved':
+        return 'bg-green-100 text-green-800';
+      case 'rejected':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-yellow-100 text-yellow-800';
+    }
+  };
+
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Admin Panel - Pending KYC</h1>
+      <h1 className="text-2xl font-bold mb-4">Admin Panel - KYC Verification</h1>
       
       {error && (
         <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
@@ -229,7 +276,7 @@ const AdminPanel = () => {
       </div>
 
       {pendingKYC.length === 0 ? (
-        <p>No pending KYC requests.</p>
+        <p className="text-gray-600">No pending KYC requests.</p>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="space-y-4">
@@ -238,21 +285,38 @@ const AdminPanel = () => {
                 <div className="mb-3">
                   <p><strong>Email:</strong> {user.email}</p>
                   <p><strong>Slot:</strong> {user.slot.date} at {user.slot.time}</p>
+                  <p className="mt-2">
+                    <span className={`inline-block px-2 py-1 rounded text-sm ${getStatusBadgeClass(user.status)}`}>
+                      {user.status || 'pending'}
+                    </span>
+                  </p>
                 </div>
-                <div className="flex space-x-2">
+                <div className="flex flex-wrap gap-2">
                   <button
                     className={`flex-1 py-2 px-4 rounded ${
                       selectedUser?.id === user.id
                         ? 'bg-gray-400 cursor-not-allowed'
                         : 'bg-blue-500 hover:bg-blue-600'
-                    } text-white`}
+                    } text-white transition-colors`}
                     onClick={() => handleStartCall(user)}
                     disabled={loading || selectedUser?.id === user.id}
                   >
                     {loading && selectedUser?.id === user.id ? "Connecting..." : "Start Call"}
                   </button>
                   <button
-                    className="flex-1 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+                    className="flex-1 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors"
+                    onClick={() => handleKYCAction(user.id, 'approved')}
+                  >
+                    Approve
+                  </button>
+                  <button
+                    className="flex-1 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition-colors"
+                    onClick={() => handleKYCAction(user.id, 'rejected')}
+                  >
+                    Reject
+                  </button>
+                  <button
+                    className="flex-1 bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 transition-colors"
                     onClick={() => handleDeleteKYC(user.id)}
                   >
                     Delete
