@@ -54,6 +54,7 @@ app.post("/send-application-update-email", async (req, res) => {
       subject: subject,
       text: body
     };
+    console.log(mailOptions);
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
