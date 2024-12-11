@@ -58,16 +58,16 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
       rejectionReason: rejectionReason.trim(),
     });
   };
-
+  console.log(application);
   const stages = [
     { key: 'preliminaryScreening', label: 'Preliminary Screening' },
     { key: 'eligibilityVerification', label: 'Eligibility Verification' },
     { key: 'documentAuthentication', label: 'Document Authentication' },
-    { key: 'personalStatementReview', label: 'Personal Statement Review' },
-    { key: 'referenceCheck', label: 'Reference Check' },
+    // { key: 'personalStatementReview', label: 'Personal Statement Review' },
+    // { key: 'referenceCheck', label: 'Reference Check' },
     { key: 'academicReview', label: 'Academic Review' },
-    { key: 'financialNeedAssessment', label: 'Financial Need Assessment' },
-    { key: 'interviewAssessment', label: 'Interview Assessment' },
+    // { key: 'financialNeedAssessment', label: 'Financial Need Assessment' },
+    // { key: 'interviewAssessment', label: 'Interview Assessment' },
     { key: 'finalApproval', label: 'Final Approval' }
   ];
 
@@ -140,7 +140,7 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
                       <Clock className="text-gray-400" />
                     )}
                   </div>
-                  {activeStage === stage.key && (
+                  {/* {activeStage === stage.key && (
                     <textarea
                       value={stageData.notes || ''}
                       onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
@@ -148,7 +148,92 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
                       className="w-full mt-4 p-2 border rounded focus:ring-blue-500"
                       rows={3}
                     />
-                  )}
+                  )} */}
+                  {activeStage === stage.key && (
+  <div className="mt-4">
+    {(() => {
+      switch (stage.key) {
+        case 'preliminaryScreening':
+          return (
+            <div>
+            <div className="p-4 bg-gray-100 rounded-md">
+            <h3 className="text-lg font-semibold">Basic Details</h3>
+            <p><strong>Applicant Name:</strong> {application.name} </p>
+            <p><strong>Email:</strong> {application.email} </p>
+            <p><strong>Application Date:</strong> {new Date(application.submittedAt).toLocaleString()}</p>
+            <p><strong>Date Of Birth</strong> {new Date(application.dateOfBirth).toLocaleDateString()}</p>
+            <p><strong>Contact Number: </strong> {application.contactNumber}</p>
+            <p><strong>School Name : </strong> {application.schoolName}</p>
+
+          </div>
+
+            <textarea
+              value={stageData.notes || ''}
+              onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
+              placeholder="Add preliminary screening notes..."
+              className="w-full p-2 border rounded focus:ring-blue-500"
+              rows={3}
+            />
+            </div>
+          );
+        case 'eligibilityVerification':
+          return (
+            <textarea
+              value={stageData.notes || ''}
+              onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
+              placeholder="Provide Eligibility Verification notes..."
+              className="w-full p-2 border rounded focus:ring-blue-500"
+              rows={3}
+            />
+          );
+        case 'documentAuthentication':
+          return (
+            <textarea
+              value={stageData.notes || ''}
+              onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
+              placeholder="Provide Document Authentication notes..."
+              className="w-full p-2 border rounded focus:ring-blue-500"
+              rows={3}
+            />
+          );
+        case 'academicReview':
+          return (
+            <div>
+            <div className="p-4 bg-gray-100 rounded-md">
+            <h3 className="text-lg font-semibold">Academic Details</h3>
+            <p><strong>Course Of Study:</strong> {application.courseOfStudy} </p>
+            <p><strong>Registration Number:</strong> {application.registrationNumber} </p>
+            <p><strong>Roll Number:</strong> {application.rollNumber}</p>
+            <p><strong>School Name: </strong> {application.schoolName}</p>
+            <p><strong>GPA: </strong> {application.gpa}</p>
+                      </div>
+
+            <textarea
+              value={stageData.notes || ''}
+              onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
+              placeholder="Add Academic Review notes..."
+              className="w-full p-2 border rounded focus:ring-blue-500"
+              rows={3}
+            />
+            </div>
+          );
+        case 'finalApproval':
+          return (
+            <textarea
+              value={stageData.notes || ''}
+              onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
+              placeholder="Provide Final Approval notes..."
+              className="w-full p-2 border rounded focus:ring-blue-500"
+              rows={3}
+            />
+          );
+        default:
+          return null;
+      }
+    })()}
+  </div>
+)}
+
                 </div>
               );
             })}
@@ -309,11 +394,11 @@ const AdminDashboard = () => {
       preliminaryScreening: "Preliminary Screening",
       eligibilityVerification: "Eligibility Verification",
       documentAuthentication: "Document Authentication",
-      personalStatementReview: "Personal Statement Review",
-      referenceCheck: "Reference Check",
+      // personalStatementReview: "Personal Statement Review",
+      // referenceCheck: "Reference Check",
       academicReview: "Academic Review",
-      financialNeedAssessment: "Financial Need Assessment",
-      interviewAssessment: "Interview Assessment",
+      // financialNeedAssessment: "Financial Need Assessment",
+      // interviewAssessment: "Interview Assessment",
       finalApproval: "Final Approval"
     };
   
