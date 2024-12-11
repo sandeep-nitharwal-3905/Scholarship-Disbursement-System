@@ -16,20 +16,22 @@ const ScholarshipData = () => {
     const [error, setError] = useState(null);
 
     const db = getFirestore();
-
+    
     useEffect(() => {
         const fetchAllScholarshipData = async () => {
             try {
                 // Get all documents from the "scholarshipApplications" collection
                 const scholarshipRef = collection(db, "scholarshipApplications");
                 const querySnapshot = await getDocs(scholarshipRef);
-
                 const applications = [];
                 querySnapshot.forEach((doc) => {
-                    applications.push({
+                    if (doc.data().userId == user.uid) {
+                      applications.push({
                         id: doc.id,
                         ...doc.data(), // This will include all fields of the scholarship application
                     });
+                    }
+                    
                 });
 
                 setScholarshipData(applications);
@@ -135,7 +137,7 @@ const ScholarshipData = () => {
             </div>
         );
     }
-console.log(scholarshipData);
+// console.log(scholarshipData);
 return (
     <div className="min-h-screen bg-gray-50 p-8">
         <div className="container mx-auto max-w-4xl">
