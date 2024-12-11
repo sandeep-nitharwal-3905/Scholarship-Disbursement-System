@@ -1,46 +1,51 @@
 import React, { useState } from "react";
-import { registerUser } from "../firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Calendar, FileUp, User, Lock } from "lucide-react";
+import { 
+  User, Mail, Phone, Calendar, Lock, MapPin, 
+  Upload, CheckCircle, XCircle 
+} from "lucide-react";
 
-const Signup = () => {
+
+
+const ScholarshipSignup = () => {
   // Personal Information State
-  const [firstName, setFirstName] = useState("");
-  const [middleName, setMiddleName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [fatherName, setFatherName] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [dob, setDob] = useState("");
   const [age, setAge] = useState(null);
-
-  // Contact Information State
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
-
-  // Academic and Financial Information State
-  const [institution, setInstitution] = useState("");
-  const [course, setCourse] = useState("");
-  const [cgpa, setCgpa] = useState("");
-  const [income, setIncome] = useState("");
+  const [gender, setGender] = useState("");
 
   // Address State
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState({
+    street: "",
+    city: "",
+    state: "",
+    zipCode: ""
+  });
 
-  // Document Upload State
-  const [aadharNumber, setAadharNumber] = useState("");
-  const [panNumber, setPanNumber] = useState("");
-  const [aadharFile, setAadharFile] = useState(null);
-  const [panFile, setPanFile] = useState(null);
-  const [incomeProofFile, setIncomeProofFile] = useState(null);
-  const [collegeIdFile, setCollegeIdFile] = useState(null);
+  // Authentication State
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  // Error and Navigation
-  const [error, setError] = useState("");
+  // Additional Information State
+  const [profilePicture, setProfilePicture] = useState(null);
+  const [income, setIncome] = useState("");
+  const [collegeInfo, setCollegeInfo] = useState({
+    institutionName: "",
+    course: "",
+    cgpa: ""
+  });
+
+  // Terms and Conditions
+  const [agreeTerms, setAgreeTerms] = useState(false);
+
   const navigate = useNavigate();
 
-  // Age Calculation and Validation
+  // Age Calculation Function
   const calculateAge = (birthDate) => {
     const today = new Date();
     const birthDateObj = new Date(birthDate);
@@ -57,6 +62,7 @@ const Signup = () => {
     return age;
   };
 
+  // Date of Birth Change Handler
   const handleDobChange = (e) => {
     const selectedDate = e.target.value;
     setDob(selectedDate);
@@ -64,87 +70,81 @@ const Signup = () => {
     setAge(calculatedAge);
   };
 
-  const handleFileUpload = (e, setFileFunction) => {
+  // Profile Picture Upload Handler
+  const handleProfilePictureUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Enhanced file validation
       const maxSize = 5 * 1024 * 1024; // 5MB
-      const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
+      const allowedTypes = ["image/jpeg", "image/png"];
 
       if (file.size > maxSize) {
-        toast.error("File size should be less than 5MB");
-        e.target.value = null; // Reset file input
+        toast.error("Profile picture should be less than 5MB");
         return;
       }
 
       if (!allowedTypes.includes(file.type)) {
-        toast.error("Only JPG, PNG, and PDF files are allowed");
-        e.target.value = null; // Reset file input
+        toast.error("Only JPG and PNG files are allowed");
         return;
       }
 
-      setFileFunction(file);
+      setProfilePicture(file);
     }
   };
 
+  // Form Validation
   const validateForm = () => {
-    // Comprehensive form validation
-    if (age < 16) {
+    if (!fullName) {
+      toast.error("Please enter your full name");
+      return false;
+    }
+
+    if (age && age < 16) {
       toast.error("You must be at least 16 years old to register");
       return false;
     }
 
-    if (!aadharNumber || !panNumber) {
-      toast.error("Please provide Aadhar and PAN card numbers");
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
       return false;
     }
 
-    if (!/^\d{10}$/.test(mobileNumber)) {
-      toast.error("Mobile number must be 10 digits");
+    if (password.length < 8) {
+      toast.error("Password must be at least 8 characters long");
       return false;
     }
 
-    if (!/^\d{12}$/.test(aadharNumber)) {
-      toast.error("Aadhar number must be 12 digits");
-      return false;
-    }
-
-    if (!/^[A-Z]{5}\d{4}[A-Z]{1}$/.test(panNumber)) {
-      toast.error("Invalid PAN card number format");
+    if (!agreeTerms) {
+      toast.error("Please agree to the Terms and Conditions");
       return false;
     }
 
     return true;
   };
+  
 
+  // Signup Handler
   const handleSignup = async (e) => {
     e.preventDefault();
 
-    // Validate form before submission
     if (!validateForm()) {
       return;
     }
 
     try {
-      // Prepare document upload logic 
-      const documentUrls = await uploadDocuments();
-
-      await registerUser(email, password, {
-        firstName,
-        middleName,
-        lastName,
-        fatherName,
+      // Placeholder for actual signup logic
+      // In a real app, you'd call your authentication service here
+      console.log("Signup Data:", {
+        fullName,
+        username,
+        email,
+        phoneNumber,
         dob,
         age,
-        mobileNumber,
-        institution,
-        course,
-        cgpa,
-        income,
+        gender,
         address,
-        aadharNumber,
-        panNumber,
-        documentUrls,
+        income,
+        collegeInfo,
+        profilePicture
       });
 
       toast.success("Sign up successful!");
@@ -152,186 +152,168 @@ const Signup = () => {
         navigate("/login");
       }, 2000);
     } catch (error) {
-      console.error("Signup error:", error);
-      toast.error("Failed to sign up. Please check your credentials.");
-      setError("Signup failed. " + error.message);
+      toast.error("Signup failed: " + error.message);
     }
   };
 
-  const uploadDocuments = async () => {
-    // Enhanced document upload logic with error handling
-    try {
-      return {
-        aadharUrl: aadharFile ? await uploadFile(aadharFile, "aadhar") : null,
-        panUrl: panFile ? await uploadFile(panFile, "pan") : null,
-        incomeProofUrl: incomeProofFile
-          ? await uploadFile(incomeProofFile, "income-proof")
-          : null,
-        collegeIdUrl: collegeIdFile
-          ? await uploadFile(collegeIdFile, "college-id")
-          : null,
-      };
-    } catch (error) {
-      toast.error("Document upload failed");
-      throw error;
-    }
-  };
-
-  const uploadFile = async (file, fileType) => {
-    // Improved file upload placeholder
-    // Replace with actual Firebase or cloud storage upload logic
-    if (!file) {
-      throw new Error(`No ${fileType} file provided`);
-    }
-    
-    // Simulate async upload 
-    return new Promise((resolve) => {
-      // Simulated upload delay
-      setTimeout(() => {
-        resolve(`placeholder-url-for-${fileType}`);
-      }, 1000);
-    });
+  // Reset Form
+  const handleReset = () => {
+    setFullName("");
+    setUsername("");
+    setEmail("");
+    setPhoneNumber("");
+    setDob("");
+    setAge(null);
+    setGender("");
+    setAddress({ street: "", city: "", state: "", zipCode: "" });
+    setPassword("");
+    setConfirmPassword("");
+    setProfilePicture(null);
+    setIncome("");
+    setCollegeInfo({ institutionName: "", course: "", cgpa: "" });
+    setAgreeTerms(false);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-blue-50 p-4">
       <ToastContainer />
-      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-2xl">
+      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-3xl">
         <h1 className="text-3xl font-bold text-center text-blue-800 mb-6">
           Scholarship Portal Signup
         </h1>
 
         <form onSubmit={handleSignup} className="space-y-6">
-          {/* Login Section */}
+          {/* Personal Information Section */}
           <div className="border-b pb-4">
             <h2 className="text-xl font-semibold text-blue-700 mb-4 flex items-center">
-              <Lock className="mr-2" /> Login Information
+              <User className="mr-2" /> Personal Information
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input
+                type="text"
+                placeholder="Full Name *"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full p-3 rounded-lg border border-gray-300"
+                required
+              />
+            {/* </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4"> */}
+              <select
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                className="w-full p-3 rounded-lg border border-gray-300"
+              >
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+              <input
+                type="date"
+                value={dob}
+                onChange={handleDobChange}
+                className="w-full p-3 rounded-lg border border-gray-300"
+                required
+              />
+              {age !== null && (
+                <p className="p-3 text-gray-600">Age: {age} years</p>
+              )}
+            </div>
+          </div>
+
+          {/* Contact Information Section */}
+          <div className="border-b pb-4">
+            <h2 className="text-xl font-semibold text-blue-700 mb-4 flex items-center">
+              <Mail className="mr-2" /> Contact Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 type="email"
-                placeholder="Email Address"
+                placeholder="Email Address *"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full p-3 rounded-lg border border-gray-300"
                 required
                 pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                title="Please enter a valid email address"
               />
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 rounded-lg border border-gray-300"
-                required
-                minLength="8"
-                title="Password must be at least 8 characters long"
-              />
-            </div>
-          </div>
-          <div className="border-b pb-4">
-            <h2 className="text-xl font-semibold text-blue-700 mb-4 flex items-center">
-              <User className="mr-2" /> Personal Information
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <input
-                type="text"
-                placeholder="First Name *"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                className="w-full p-3 rounded-lg border border-gray-300"
-                required
-              />
-              <input
-                type="text"
-                placeholder="Middle Name"
-                value={middleName}
-                onChange={(e) => setMiddleName(e.target.value)}
-                className="w-full p-3 rounded-lg border border-gray-300"
-              />
-              <input
-                type="text"
-                placeholder="Last Name *"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                className="w-full p-3 rounded-lg border border-gray-300"
-                required
-              />
-            </div>
-            <input
-              type="text"
-              placeholder="Father's Name"
-              value={fatherName}
-              onChange={(e) => setFatherName(e.target.value)}
-              className="w-full p-3 mt-4 rounded-lg border border-gray-300"
-            />
-          </div>
-
-          {/* Contact and Age Section */}
-          <div className="border-b pb-4">
-            <h2 className="text-xl font-semibold text-blue-700 mb-4 flex items-center">
-              <Calendar className="mr-2" /> Date of Birth and Contact
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                {/* <label className="block text-sm mb-2">Date of Birth</label> */}
-                <input
-                  type="date"
-                  value={dob}
-                  onChange={handleDobChange}
-                  className="w-full p-3 rounded-lg border border-gray-300"
-                  required
-                />
-                {age !== null && (
-                  <p className="text-sm text-gray-600 mt-2">
-                    Your Age: {age} years
-                  </p>
-                )}
-              </div>
               <input
                 type="tel"
-                placeholder="Mobile Number"
-                value={mobileNumber}
-                onChange={(e) => setMobileNumber(e.target.value)}
+                placeholder="Phone Number *"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
                 className="w-full p-3 rounded-lg border border-gray-300"
                 required
               />
             </div>
           </div>
 
-          {/* Academic Information Section */}
+          {/* Address Section */}
           <div className="border-b pb-4">
             <h2 className="text-xl font-semibold text-blue-700 mb-4 flex items-center">
-              <FileUp className="mr-2" /> Academic & Financial Details
+              <MapPin className="mr-2" /> Address Details
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input
+                type="text"
+                placeholder="Street Address"
+                value={address.street}
+                onChange={(e) => setAddress({...address, street: e.target.value})}
+                className="w-full p-3 rounded-lg border border-gray-300"
+              />
+              <input
+                type="text"
+                placeholder="City"
+                value={address.city}
+                onChange={(e) => setAddress({...address, city: e.target.value})}
+                className="w-full p-3 rounded-lg border border-gray-300"
+              />
+              <input
+                type="text"
+                placeholder="State"
+                value={address.state}
+                onChange={(e) => setAddress({...address, state: e.target.value})}
+                className="w-full p-3 rounded-lg border border-gray-300"
+              />
+              <input
+                type="text"
+                placeholder="Zip Code"
+                value={address.zipCode}
+                onChange={(e) => setAddress({...address, zipCode: e.target.value})}
+                className="w-full p-3 rounded-lg border border-gray-300"
+              />
+            </div>
+          </div>
+
+          {/* College and Income Information */}
+          <div className="border-b pb-4">
+            <h2 className="text-xl font-semibold text-blue-700 mb-4">
+              Educational & Financial Details
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <input
                 type="text"
-                placeholder="School/College Name"
-                value={institution}
-                onChange={(e) => setInstitution(e.target.value)}
+                placeholder="College/Institution Name"
+                value={collegeInfo.institutionName}
+                onChange={(e) => setCollegeInfo({...collegeInfo, institutionName: e.target.value})}
                 className="w-full p-3 rounded-lg border border-gray-300"
-                required
               />
               <input
                 type="text"
                 placeholder="Course of Study"
-                value={course}
-                onChange={(e) => setCourse(e.target.value)}
+                value={collegeInfo.course}
+                onChange={(e) => setCollegeInfo({...collegeInfo, course: e.target.value})}
                 className="w-full p-3 rounded-lg border border-gray-300"
-                required
               />
               <input
                 type="number"
                 placeholder="CGPA"
-                value={cgpa}
-                onChange={(e) => setCgpa(e.target.value)}
+                value={collegeInfo.cgpa}
+                onChange={(e) => setCollegeInfo({...collegeInfo, cgpa: e.target.value})}
                 step="0.01"
                 min="0"
                 max="10"
                 className="w-full p-3 rounded-lg border border-gray-300"
-                required
               />
             </div>
             <input
@@ -340,98 +322,87 @@ const Signup = () => {
               value={income}
               onChange={(e) => setIncome(e.target.value)}
               className="w-full p-3 mt-4 rounded-lg border border-gray-300"
-              required
             />
           </div>
 
-          {/* Address Section */}
+          {/* Authentication Section */}
           <div className="border-b pb-4">
-            <h2 className="text-xl font-semibold text-blue-700 mb-4">
-              Address Details
-            </h2>
-            <textarea
-              placeholder="Full Address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              className="w-full p-3 rounded-lg border border-gray-300"
-              required
-            />
-          </div>
-
-          {/* Document Upload Section */}
-          <div>
-            <h2 className="text-xl font-semibold text-blue-700 mb-4">
-              Document Uploads
+            <h2 className="text-xl font-semibold text-blue-700 mb-4 flex items-center">
+              <Lock className="mr-2" /> Account Security
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <input
-                  type="text"
-                  placeholder="Aadhar Card Number"
-                  value={aadharNumber}
-                  onChange={(e) => setAadharNumber(e.target.value)}
-                  className="w-full p-3 mb-2 rounded-lg border border-gray-300"
-                  required
-                />
-                <input
-                  type="file"
-                  onChange={(e) => handleFileUpload(e, setAadharFile)}
-                  accept=".jpg,.jpeg,.png,.pdf"
-                  className="w-full p-2 rounded-lg border border-gray-300"
-                />
-              </div>
-              <div>
-                <input
-                  type="text"
-                  placeholder="PAN Card Number"
-                  value={panNumber}
-                  onChange={(e) => setPanNumber(e.target.value)}
-                  className="w-full p-3 mb-2 rounded-lg border border-gray-300"
-                  required
-                />
-                <input
-                  type="file"
-                  onChange={(e) => handleFileUpload(e, setPanFile)}
-                  accept=".jpg,.jpeg,.png,.pdf"
-                  className="w-full p-2 rounded-lg border border-gray-300"
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <div>
-                <label className="block mb-2">Income Proof</label>
-                <input
-                  type="file"
-                  onChange={(e) => handleFileUpload(e, setIncomeProofFile)}
-                  accept=".jpg,.jpeg,.png,.pdf"
-                  className="w-full p-2 rounded-lg border border-gray-300"
-                />
-              </div>
-              <div>
-                <label className="block mb-2">College ID</label>
-                <input
-                  type="file"
-                  onChange={(e) => handleFileUpload(e, setCollegeIdFile)}
-                  accept=".jpg,.jpeg,.png,.pdf"
-                  className="w-full p-2 rounded-lg border border-gray-300"
-                />
-              </div>
+              <input
+                type="password"
+                placeholder="Password *"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-3 rounded-lg border border-gray-300"
+                required
+                minLength="8"
+              />
+              <input
+                type="password"
+                placeholder="Confirm Password *"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full p-3 rounded-lg border border-gray-300"
+                required
+              />
             </div>
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full bg-blue-700 text-white py-3 rounded-lg mt-6 hover:bg-blue-800 transition-colors"
-          >
-            Create Scholarship Account
-          </button>
-        </form>
+          {/* Profile Picture Upload */}
+          <div className="border-b pb-4">
+            <h2 className="text-xl font-semibold text-blue-700 mb-4 flex items-center">
+              <Upload className="mr-2" /> Profile Picture
+            </h2>
+            <input
+              type="file"
+              onChange={handleProfilePictureUpload}
+              accept=".jpg,.jpeg,.png"
+              className="w-full p-2 rounded-lg border border-gray-300"
+            />
+            {profilePicture && (
+              <p className="text-sm text-green-600 mt-2">
+                {profilePicture.name} uploaded
+              </p>
+            )}
+          </div>
 
-        {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
+          {/* Terms and Conditions */}
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="terms"
+              checked={agreeTerms}
+              onChange={() => setAgreeTerms(!agreeTerms)}
+              className="mr-2"
+            />
+            <label htmlFor="terms" className="text-sm">
+              I agree to the Terms and Conditions
+            </label>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex space-x-4">
+            <button
+              type="submit"
+              className="flex-1 bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 transition-colors flex items-center justify-center"
+            >
+              <CheckCircle className="mr-2" /> Create Account
+            </button>
+            <button
+              type="button"
+              onClick={handleReset}
+              className="flex-1 bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center"
+            >
+              <XCircle className="mr-2" /> Reset
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
 };
 
-export default Signup;
+export default ScholarshipSignup;
