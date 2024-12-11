@@ -22,6 +22,7 @@ const database = getDatabase(app);
 const ScholarshipSignup = () => {
   // Personal Information State
   const [fullName, setFullName] = useState("");
+  const [kyc, setKyc] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [dob, setDob] = useState("");
@@ -34,6 +35,7 @@ const ScholarshipSignup = () => {
   const [isOtpSent, setIsOtpSent] = useState(false)
   const [error, setError] = useState("");
   const [verificationId, setVerificationId] = useState("");
+  const [role, setRole] = useState("student");
 
   // Address State
   const [address, setAddress] = useState({
@@ -140,6 +142,8 @@ const ScholarshipSignup = () => {
         income,
         collegeInfo,
         createdAt: new Date(),
+        kyc,
+        role
       });
       toast.success("Sign up successful!");
       setTimeout(() => {
