@@ -19,6 +19,7 @@
     "multer-storage-cloudinary": "^4.0.0",
     "nodemailer": "^6.9.16",
     "streamifier": "^0.1.1",
+    "twilio": "^5.3.7",
     "ws": "^8.18.0"
   }
 }
