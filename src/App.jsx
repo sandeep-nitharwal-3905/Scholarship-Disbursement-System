@@ -38,10 +38,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin" element={<AdminSignup />} />
-<<<<<<< HEAD
           <Route path="/registration" element={<Registration_ />} />
-=======
->>>>>>> 364f37aadab7549b64b47ed76ed33c659a2ebb59
           <Route
             path="*"
             element={
