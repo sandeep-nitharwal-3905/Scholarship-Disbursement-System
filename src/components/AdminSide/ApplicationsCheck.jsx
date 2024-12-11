@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios"; // Make sure to install axios
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
 import { db } from "../../Firebase";
-import { 
-  ClipboardList, 
-  Eye, 
-  Check, 
-  X, 
-  FileText, 
-  Clock, 
-  Search, 
+import {
+  ClipboardList,
+  Eye,
+  Check,
+  X,
+  FileText,
+  Clock,
+  Search,
   Filter,
-  AlertTriangle 
+  AlertTriangle
 } from "lucide-react";
 
 const ReviewModal = ({ application, onClose, onReviewComplete }) => {
@@ -19,7 +20,6 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
   const [rejectionReason, setRejectionReason] = useState('');
   const [isRejecting, setIsRejecting] = useState(false);
 
-  // Initialize reviewStages from application data
   useEffect(() => {
     if (application?.reviewStages) {
       setReviewStages(application.reviewStages);
@@ -37,9 +37,7 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
   };
 
   const handleFinalReview = () => {
-    // If all stages are checked, mark as approved
     const allStagesChecked = Object.values(reviewStages).every((stage) => stage.checked);
-    
     onReviewComplete({
       reviewStages,
       reviewStatus: allStagesChecked ? "approved" : "pending",
@@ -77,7 +75,7 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
         {/* Left Side - Application Details */}
         <div className="w-1/2 p-8 overflow-y-auto bg-gray-50 border-r">
           <h2 className="text-3xl font-bold mb-6 text-blue-700 flex items-center">
-            <FileText className="mr-3 text-blue-500" /> 
+            <FileText className="mr-3 text-blue-500" />
             Application Details
           </h2>
           <div className="space-y-4">
@@ -208,8 +206,7 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
   );
 };
 
-
-
+// Admin Dashboard
 const AdminDashboard = () => {
   const [applications, setApplications] = useState([]);
   const [filteredApplications, setFilteredApplications] = useState([]);
@@ -258,8 +255,20 @@ const AdminDashboard = () => {
   const handleReviewComplete = async (reviewData) => {
     try {
       const applicationRef = doc(db, "scholarshipApplications", selectedApplication.id);
+
+      // Prepare email details
+      const emailDetails = prepareEmailDetails(reviewData, selectedApplication);
+
+      // Send email via your existing server endpoint
+      await axios.post('http://localhost:5000/send-application-update-email', {
+        email: selectedApplication.email,
+        ...emailDetails
+      });
+
+      // Update Firestore document
       await updateDoc(applicationRef, reviewData);
 
+      // Update local state
       setApplications((prev) =>
         prev.map((app) =>
           app.id === selectedApplication.id ? { ...app, ...reviewData } : app
@@ -268,7 +277,41 @@ const AdminDashboard = () => {
       setIsReviewModalOpen(false);
     } catch (error) {
       console.error("Error updating application:", error);
+      alert("Failed to update application. Please try again.");
     }
+  };
+
+  // Helper function to prepare email details
+  const prepareEmailDetails = (reviewData, application) => {
+    let subject = "Scholarship Application Status Update";
+    let body = `Dear ${application.name},\n\n`;
+
+    if (reviewData.reviewStatus === 'approved') {
+      body += `We are pleased to inform you that your scholarship application has been approved.\n\n`;
+
+      // Add details about review stages
+      if (reviewData.reviewStages) {
+        body += "Review Stages Completed:\n";
+        Object.entries(reviewData.reviewStages).forEach(([stage, stageData]) => {
+          if (stageData.checked) {
+            body += `- ${stage.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}\n`;
+          }
+        });
+      }
+    } else if (reviewData.reviewStatus === 'rejected') {
+      subject = "Scholarship Application Rejection";
+      body += `We regret to inform you that your scholarship application has been rejected.\n\n`;
+
+      if (reviewData.rejectionReason) {
+        body += `Reason for Rejection: ${reviewData.rejectionReason}\n`;
+      }
+    } else {
+      body += `Your application is currently under review.\n`;
+    }
+
+    body += "\nBest regards,\nScholarship Committee";
+
+    return { subject, body };
   };
 
   const getStatusColor = (status) => {
@@ -302,44 +345,50 @@ const AdminDashboard = () => {
               onChange={(e) => setFilterStatus(e.target.value)}
               className="px-4 py-2 border rounded-lg"
             >
-              <option value="all">All Statuses</option>
-              <option value="pending">Pending</option>
+              <option value="all">All</option>
               <option value="approved">Approved</option>
               <option value="rejected">Rejected</option>
+              <option value="pending">Pending</option>
             </select>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredApplications.map((application) => (
-            <div
-              key={application.id}
-              className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow overflow-hidden"
-              onClick={() => {
-                setSelectedApplication(application);
-                setIsReviewModalOpen(true);
-              }}
-            >
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-bold text-blue-700">{application.name}</h2>
-                  <span 
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(application.reviewStatus)}`}
-                  >
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="px-4 py-2 text-left text-gray-700">Name</th>
+                <th className="px-4 py-2 text-left text-gray-700">Status</th>
+                <th className="px-4 py-2 text-left text-gray-700">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredApplications.map((application) => (
+                <tr key={application.id}>
+                  <td className="px-4 py-2 text-gray-700">{application.name}</td>
+                  <td className={`px-4 py-2 ${getStatusColor(application.reviewStatus)}`}>
                     {application.reviewStatus || 'Pending'}
-                  </span>
-                </div>
-                <div className="text-gray-600">
-                  <p><strong>Email:</strong> {application.email}</p>
-                  <p><strong>Course:</strong> {application.courseOfStudy}</p>
-                </div>
-              </div>
-            </div>
-          ))}
+                  </td>
+                  <td className="px-4 py-2">
+                    <button
+                      onClick={() => {
+                        setSelectedApplication(application);
+                        setIsReviewModalOpen(true);
+                      }}
+                      className="text-blue-500 hover:underline"
+                    >
+                      Review
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      {isReviewModalOpen && selectedApplication && (
+      {/* Review Modal */}
+      {isReviewModalOpen && (
         <ReviewModal
           application={selectedApplication}
           onClose={() => setIsReviewModalOpen(false)}
