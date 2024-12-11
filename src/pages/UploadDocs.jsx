@@ -171,7 +171,7 @@ const UploadDocs = () => {
   
         // Check for blur using Python API
         const blurCheckResponse = await axios.post(
-          "http://localhost:5001/analyze-blur",
+          "http://172.16.11.157:5001/analyze-blur",
           {
             image_url: uploadedUrl
           }
