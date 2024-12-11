@@ -8,7 +8,7 @@ const nodemailer = require("nodemailer");
 const axios = require("axios");
 const twilio = require("twilio");
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5007;
 
 
 app.use(express.json());
@@ -395,7 +395,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0',() => {
   console.log(`Server is running on http://localhost:${PORT}`);
 
 });

@@ -91,5 +91,4 @@ function handleDisconnection(socket) {
   clients.delete(socket.clientId);
 }
 
-console.log('WebSocket server running on ws://localhost::3000');
-
+console.log('WebSocket server running on ws://localhost:3000');
