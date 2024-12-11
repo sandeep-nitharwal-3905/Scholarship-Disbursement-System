@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios"; // Make sure to install axios
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
 import { db } from "../../Firebase";
+import { useFirebase } from "../../firebase/FirebaseContext";
 import {
   ClipboardList,
   Eye,
@@ -13,13 +13,16 @@ import {
   Filter,
   AlertTriangle
 } from "lucide-react";
+import axios from "axios";
 
 const ReviewModal = ({ application, onClose, onReviewComplete }) => {
   const [reviewStages, setReviewStages] = useState({});
   const [activeStage, setActiveStage] = useState(null);
   const [rejectionReason, setRejectionReason] = useState('');
   const [isRejecting, setIsRejecting] = useState(false);
+  const Firebase = useFirebase();
 
+  // Initialize reviewStages from application data
   useEffect(() => {
     if (application?.reviewStages) {
       setReviewStages(application.reviewStages);
@@ -35,9 +38,10 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
       },
     }));
   };
-
   const handleFinalReview = () => {
+    // If all stages are checked, mark as approved
     const allStagesChecked = Object.values(reviewStages).every((stage) => stage.checked);
+
     onReviewComplete({
       reviewStages,
       reviewStatus: allStagesChecked ? "approved" : "pending",
@@ -99,6 +103,22 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
           </div>
         </div>
 
+        {/*scholarship details*/}
+        {/* <div>
+          <p className="text-gray-700 mb-1">
+            <strong>Eligibility: </strong>
+            {scholarship.eligibility}
+          </p>
+          <p className="text-gray-600 mb-3">
+            <strong>Required Documents: </strong>
+            {scholarship.requiredDocuments.join(", ")}
+          </p>
+        </div> */}
+        
+        <div>
+          
+        </div>
+
         {/* Right Side - Review Stages */}
         <div className="w-1/2 p-8 overflow-y-auto">
           <h2 className="text-3xl font-bold mb-6 text-blue-700 flex items-center">
@@ -109,15 +129,14 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
             {stages.map((stage) => {
               const stageData = reviewStages[stage.key] || {};
               return (
-                <div 
-                  key={stage.key} 
-                  className={`p-4 rounded-lg transition-all ${
-                    activeStage === stage.key 
-                      ? 'bg-blue-50 border-blue-300' 
-                      : 'bg-gray-50 hover:bg-gray-100'
-                  } border`}
+                <div
+                  key={stage.key}
+                  className={`p-4 rounded-lg transition-all ${activeStage === stage.key
+                    ? 'bg-blue-50 border-blue-300'
+                    : 'bg-gray-50 hover:bg-gray-100'
+                    } border`}
                 >
-                  <div 
+                  <div
                     className="flex items-center justify-between cursor-pointer"
                     onClick={() => setActiveStage(activeStage === stage.key ? null : stage.key)}
                   >
@@ -170,30 +189,30 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
           ) : null}
 
           <div className="flex justify-between mt-6">
-            <button 
-              onClick={onClose} 
+            <button
+              onClick={onClose}
               className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
             >
               Cancel
             </button>
             <div className="space-x-4">
               {!isRejecting ? (
-                <button 
-                  onClick={() => setIsRejecting(true)} 
+                <button
+                  onClick={() => setIsRejecting(true)}
                   className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                 >
                   Reject
                 </button>
               ) : (
-                <button 
-                  onClick={handleReject} 
+                <button
+                  onClick={handleReject}
                   className="px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition-colors"
                 >
                   Confirm Rejection
                 </button>
               )}
-              <button 
-                onClick={handleFinalReview} 
+              <button
+                onClick={handleFinalReview}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Save Review
@@ -206,7 +225,8 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
   );
 };
 
-// Admin Dashboard
+
+
 const AdminDashboard = () => {
   const [applications, setApplications] = useState([]);
   const [filteredApplications, setFilteredApplications] = useState([]);
@@ -236,15 +256,13 @@ const AdminDashboard = () => {
   useEffect(() => {
     let result = applications;
 
-    // Filter by search term
     if (searchTerm) {
-      result = result.filter(app => 
+      result = result.filter(app =>
         app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         app.email.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
-    // Filter by status
     if (filterStatus !== 'all') {
       result = result.filter(app => app.reviewStatus === filterStatus);
     }
@@ -258,7 +276,7 @@ const AdminDashboard = () => {
 
       // Prepare email details
       const emailDetails = prepareEmailDetails(reviewData, selectedApplication);
-
+      // console.log(emailDetails);
       // Send email via your existing server endpoint
       await axios.post('http://localhost:5000/send-application-update-email', {
         email: selectedApplication.email,
@@ -282,38 +300,82 @@ const AdminDashboard = () => {
   };
 
   // Helper function to prepare email details
-  const prepareEmailDetails = (reviewData, application) => {
+  const prepareEmailDetails = (reviewData, application, previousReviewData) => {
     let subject = "Scholarship Application Status Update";
     let body = `Dear ${application.name},\n\n`;
 
+    // Status update section
     if (reviewData.reviewStatus === 'approved') {
       body += `We are pleased to inform you that your scholarship application has been approved.\n\n`;
-
-      // Add details about review stages
-      if (reviewData.reviewStages) {
-        body += "Review Stages Completed:\n";
-        Object.entries(reviewData.reviewStages).forEach(([stage, stageData]) => {
-          if (stageData.checked) {
-            body += `- ${stage.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}\n`;
-          }
-        });
-      }
     } else if (reviewData.reviewStatus === 'rejected') {
-      subject = "Scholarship Application Rejection";
+      subject = "Scholarship Application Status Update - Action Required";
       body += `We regret to inform you that your scholarship application has been rejected.\n\n`;
-
       if (reviewData.rejectionReason) {
-        body += `Reason for Rejection: ${reviewData.rejectionReason}\n`;
+        body += `Reason for Rejection: ${reviewData.rejectionReason}\n\n`;
       }
     } else {
-      body += `Your application is currently under review.\n`;
+      body += `Your application is currently under review. Here's the latest update on your application:\n\n`;
     }
 
-    body += "\nBest regards,\nScholarship Committee";
+    // Review stages section
+    body += "Review Stages Status:\n";
+
+    const stageLabels = {
+      preliminaryScreening: "Preliminary Screening",
+      eligibilityVerification: "Eligibility Verification",
+      documentAuthentication: "Document Authentication",
+      personalStatementReview: "Personal Statement Review",
+      referenceCheck: "Reference Check",
+      academicReview: "Academic Review",
+      financialNeedAssessment: "Financial Need Assessment",
+      interviewAssessment: "Interview Assessment",
+      finalApproval: "Final Approval"
+    };
+
+    if (reviewData.reviewStages) {
+      Object.entries(stageLabels).forEach(([stageKey, stageLabel]) => {
+        const stageData = reviewData.reviewStages[stageKey];
+        const previousStageData = previousReviewData?.reviewStages?.[stageKey];
+
+        let stageStatus = "⌛ Pending";
+        if (stageData?.checked) {
+          stageStatus = "✅ Approved";
+        }
+
+        body += `\n${stageLabel}: ${stageStatus}`;
+
+        // Add stage notes if they exist
+        if (stageData?.notes) {
+          body += `\n   Notes: ${stageData.notes}`;
+        }
+
+      });
+    }
+
+    // Overall changes section
+    if (previousReviewData?.reviewStatus !== reviewData.reviewStatus) {
+      body += "\n\nIMPORTANT: Your application status has changed from " +
+        `'${previousReviewData?.reviewStatus || "pending"}' to '${reviewData.reviewStatus}'.`;
+    }
+
+    // Next steps section
+    body += "\n\nNext Steps:";
+    if (reviewData.reviewStatus === 'approved') {
+      body += "\n- You will receive additional information about scholarship disbursement soon.";
+      body += "\n- Please ensure your bank details are up to date in your profile.";
+    } else if (reviewData.reviewStatus === 'rejected') {
+      body += "\n- You may appeal this decision within 14 days.";
+      body += "\n- Contact our support team for guidance on the appeal process.";
+    } else {
+      body += "\n- Continue to monitor your email for further updates.";
+      body += "\n- Ensure all requested documents are submitted and up to date.";
+    }
+
+    body += "\n\nIf you have any questions, please don't hesitate to contact our support team.";
+    body += "\n\nBest regards,\nScholarship Committee";
 
     return { subject, body };
   };
-
   const getStatusColor = (status) => {
     switch (status) {
       case 'approved': return 'bg-green-100 text-green-800';
@@ -345,50 +407,44 @@ const AdminDashboard = () => {
               onChange={(e) => setFilterStatus(e.target.value)}
               className="px-4 py-2 border rounded-lg"
             >
-              <option value="all">All</option>
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending</option>
               <option value="approved">Approved</option>
               <option value="rejected">Rejected</option>
-              <option value="pending">Pending</option>
             </select>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-4 py-2 text-left text-gray-700">Name</th>
-                <th className="px-4 py-2 text-left text-gray-700">Status</th>
-                <th className="px-4 py-2 text-left text-gray-700">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredApplications.map((application) => (
-                <tr key={application.id}>
-                  <td className="px-4 py-2 text-gray-700">{application.name}</td>
-                  <td className={`px-4 py-2 ${getStatusColor(application.reviewStatus)}`}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredApplications.map((application) => (
+            <div
+              key={application.id}
+              className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow overflow-hidden"
+              onClick={() => {
+                setSelectedApplication(application);
+                setIsReviewModalOpen(true);
+              }}
+            >
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-bold text-blue-700">{application.name}</h2>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(application.reviewStatus)}`}
+                  >
                     {application.reviewStatus || 'Pending'}
-                  </td>
-                  <td className="px-4 py-2">
-                    <button
-                      onClick={() => {
-                        setSelectedApplication(application);
-                        setIsReviewModalOpen(true);
-                      }}
-                      className="text-blue-500 hover:underline"
-                    >
-                      Review
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </span>
+                </div>
+                <div className="text-gray-600">
+                  <p><strong>Email:</strong> {application.email}</p>
+                  <p><strong>Course:</strong> {application.courseOfStudy}</p>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Review Modal */}
-      {isReviewModalOpen && (
+      {isReviewModalOpen && selectedApplication && (
         <ReviewModal
           application={selectedApplication}
           onClose={() => setIsReviewModalOpen(false)}

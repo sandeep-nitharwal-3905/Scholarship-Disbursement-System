@@ -69,7 +69,7 @@ const Sidebar = (props) => {
       icon: Users,
       dropdown: ["Manage Users", "User Roles"],
     },
-    { name: "E-KYC Portal", icon: UserPlus, path: "/ekyc0"  },
+    { name: "Video Verification", icon: UserPlus, path: "/ekyc0"  },
     { name: "FAQ", icon: UserPlus, path: "/FAQ"  },
     { name: "Payment History", icon: UserPlus },
     { name: "Guidelines", icon: BookOpen },

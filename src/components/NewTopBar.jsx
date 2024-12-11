@@ -1,27 +1,29 @@
 import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 
 const NewTopBar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const location = useLocation();
 
   const menuItems = [
-    { label: "Home", items: [] },
-    { label: "About", items: [] },
-    { label: "How To Apply", items: [] },
+    { label: "Home", items: [], path: "/" },
+    { label: "About", items: [], path: "/about" },
+    { label: "How To Apply", items: [], path: "/how-to-apply" },
     {
       label: "Downloads",
       items: [
-        "Income Certificate",
-        "User Manual",
-        "User Manual For Non-NET",
-        "HDI Forwarding Letter Format(For Board Toppers)",
-        "GUIDELINES",
-        "TR FORM 7",
+        { label: "Income Certificate", path: "/downloads/income-certificate" },
+        { label: "User Manual", path: "/downloads/user-manual" },
+        { label: "User Manual For Non-NET", path: "/downloads/non-net-manual" },
+        { label: "HDI Forwarding Letter", path: "/downloads/hdi-letter" },
+        { label: "GUIDELINES", path: "/downloads/guidelines" },
+        { label: "TR FORM 7", path: "/downloads/tr-form" },
       ],
     },
-    { label: "Contacts", items: [] },
-    { label: "Weblinks", items: [] },
-    { label: "Emergency Relief Fund", items: [] },
+    { label: "Contacts", items: [], path: "/contacts" },
+    { label: "Weblinks", items: [], path: "/weblinks" },
+    { label: "Emergency Relief Fund", items: [], path: "/emergency-fund" },
   ];
 
   return (
@@ -35,9 +37,11 @@ const NewTopBar = () => {
               onMouseEnter={() => setActiveDropdown(index)}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <a
-                href="#"
-                className="block px-5 py-4 text-lg font-semibold hover:bg-gray-800 transition-colors duration-200 group-hover:text-blue-300 rounded-md"
+              <Link
+                to={item.path}
+                className={`block px-5 py-4 text-lg font-semibold hover:bg-gray-800 transition-colors duration-200 group-hover:text-blue-300 rounded-md ${
+                  location.pathname === item.path ? "text-blue-300" : ""
+                }`}
               >
                 {item.label}
                 {item.items.length > 0 && (
@@ -46,17 +50,19 @@ const NewTopBar = () => {
                     size={16}
                   />
                 )}
-              </a>
+              </Link>
               {item.items.length > 0 && activeDropdown === index && (
                 <ul className="absolute left-0 mt-1 w-56 bg-white text-gray-800 shadow-lg rounded-md overflow-hidden z-10">
                   {item.items.map((subItem, subIndex) => (
                     <li key={subIndex}>
-                      <a
-                        href="#"
-                        className="block px-5 py-3 text-md hover:bg-gray-100 hover:text-blue-600 transition-colors duration-200"
+                      <Link
+                        to={subItem.path}
+                        className={`block px-5 py-3 text-md hover:bg-gray-100 hover:text-blue-600 transition-colors duration-200 ${
+                          location.pathname === subItem.path ? "text-blue-600" : ""
+                        }`}
                       >
-                        {subItem}
-                      </a>
+                        {subItem.label}
+                      </Link>
                     </li>
                   ))}
                 </ul>
