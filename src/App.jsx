@@ -38,14 +38,16 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin" element={<AdminSignup />} />
+<<<<<<< HEAD
           <Route path="/registration" element={<Registration_ />} />
+=======
+>>>>>>> 364f37aadab7549b64b47ed76ed33c659a2ebb59
           <Route
             path="*"
             element={
               <Layout>
                 <Routes>
                   <Route path="/dashboard" element={<Dashboard />} />
-                  
                   <Route path="/home" element={<Home />} />
                   <Route path="/faq" element={<FAQ />} />
                   <Route path="/upload" element={<UploadDocs />} />
@@ -57,21 +59,15 @@ const App = () => {
                     path="/docs-verification"
                     element={<DocsVerification />}
                   />
-
                   <Route path="/download-documents" element={<DocumentDownload />} />
-
                   <Route
                     path="/applications-check"
                     element={<ApplicationsCheck />}
                   />
-
-
                   <Route
                     path="/updatedDashboard"
                     element={<UpdatedDashboard />}
                   />
-
-
                   <Route path="/details/:id" element={<DocDetails />} />
                   <Route
                     path="/editScholarship"

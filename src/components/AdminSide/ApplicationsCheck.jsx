@@ -12,6 +12,7 @@ import {
   Filter,
   AlertTriangle 
 } from "lucide-react";
+import axios from "axios";
 
 const ReviewModal = ({ application, onClose, onReviewComplete }) => {
   const [reviewStages, setReviewStages] = useState({});
@@ -35,7 +36,6 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
       },
     }));
   };
-
   const handleFinalReview = () => {
     // If all stages are checked, mark as approved
     const allStagesChecked = Object.values(reviewStages).every((stage) => stage.checked);
@@ -258,8 +258,20 @@ const AdminDashboard = () => {
   const handleReviewComplete = async (reviewData) => {
     try {
       const applicationRef = doc(db, "scholarshipApplications", selectedApplication.id);
+      
+      // Prepare email details
+      const emailDetails = prepareEmailDetails(reviewData, selectedApplication);
+      // console.log(emailDetails);
+      // Send email via your existing server endpoint
+      await axios.post('http://localhost:5000/send-application-update-email', {
+        email: selectedApplication.email,
+        ...emailDetails
+      });
+
+      // Update Firestore document
       await updateDoc(applicationRef, reviewData);
 
+      // Update local state
       setApplications((prev) =>
         prev.map((app) =>
           app.id === selectedApplication.id ? { ...app, ...reviewData } : app
@@ -268,9 +280,87 @@ const AdminDashboard = () => {
       setIsReviewModalOpen(false);
     } catch (error) {
       console.error("Error updating application:", error);
+      alert("Failed to update application. Please try again.");
     }
   };
 
+  // Helper function to prepare email details
+  const prepareEmailDetails = (reviewData, application, previousReviewData) => {
+    let subject = "Scholarship Application Status Update";
+    let body = `Dear ${application.name},\n\n`;
+    
+    // Status update section
+    if (reviewData.reviewStatus === 'approved') {
+      body += `We are pleased to inform you that your scholarship application has been approved.\n\n`;
+    } else if (reviewData.reviewStatus === 'rejected') {
+      subject = "Scholarship Application Status Update - Action Required";
+      body += `We regret to inform you that your scholarship application has been rejected.\n\n`;
+      if (reviewData.rejectionReason) {
+        body += `Reason for Rejection: ${reviewData.rejectionReason}\n\n`;
+      }
+    } else {
+      body += `Your application is currently under review. Here's the latest update on your application:\n\n`;
+    }
+  
+    // Review stages section
+    body += "Review Stages Status:\n";
+    
+    const stageLabels = {
+      preliminaryScreening: "Preliminary Screening",
+      eligibilityVerification: "Eligibility Verification",
+      documentAuthentication: "Document Authentication",
+      personalStatementReview: "Personal Statement Review",
+      referenceCheck: "Reference Check",
+      academicReview: "Academic Review",
+      financialNeedAssessment: "Financial Need Assessment",
+      interviewAssessment: "Interview Assessment",
+      finalApproval: "Final Approval"
+    };
+  
+    if (reviewData.reviewStages) {
+      Object.entries(stageLabels).forEach(([stageKey, stageLabel]) => {
+        const stageData = reviewData.reviewStages[stageKey];
+        const previousStageData = previousReviewData?.reviewStages?.[stageKey];
+        
+        let stageStatus = "⌛ Pending";
+        if (stageData?.checked) {
+          stageStatus = "✅ Approved";
+        }
+  
+        body += `\n${stageLabel}: ${stageStatus}`;
+        
+        // Add stage notes if they exist
+        if (stageData?.notes) {
+          body += `\n   Notes: ${stageData.notes}`;
+        }
+  
+      });
+    }
+  
+    // Overall changes section
+    if (previousReviewData?.reviewStatus !== reviewData.reviewStatus) {
+      body += "\n\nIMPORTANT: Your application status has changed from " +
+              `'${previousReviewData?.reviewStatus || "pending"}' to '${reviewData.reviewStatus}'.`;
+    }
+  
+    // Next steps section
+    body += "\n\nNext Steps:";
+    if (reviewData.reviewStatus === 'approved') {
+      body += "\n- You will receive additional information about scholarship disbursement soon.";
+      body += "\n- Please ensure your bank details are up to date in your profile.";
+    } else if (reviewData.reviewStatus === 'rejected') {
+      body += "\n- You may appeal this decision within 14 days.";
+      body += "\n- Contact our support team for guidance on the appeal process.";
+    } else {
+      body += "\n- Continue to monitor your email for further updates.";
+      body += "\n- Ensure all requested documents are submitted and up to date.";
+    }
+  
+    body += "\n\nIf you have any questions, please don't hesitate to contact our support team.";
+    body += "\n\nBest regards,\nScholarship Committee";
+  
+    return { subject, body };
+  };
   const getStatusColor = (status) => {
     switch (status) {
       case 'approved': return 'bg-green-100 text-green-800';
