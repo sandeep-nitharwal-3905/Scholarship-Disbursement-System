@@ -181,6 +181,7 @@ const EKYC = () => {
 
     const connectSignalingServer = () => {
       const socket = new WebSocket('ws://localhost:3000');
+      // const socket = new WebSocket('ws://172.20.10.4:3000');
       signalingSocketRef.current = socket;
 
       socket.onopen = () => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   ChevronDown,
@@ -12,19 +12,20 @@ import {
   Home,
   BarChart2,
   LogOut,
+  Menu,
+  X,
 } from "lucide-react";
-import { NavLink } from "react-router-dom"; // Import NavLink for active styling
+import { NavLink } from "react-router-dom";
 
-const AdminSidebar = (props) => {
+const Sidebar = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState({
-    documentStatus: true, // Default dropdown open for Document Status
+    documentStatus: true,
     scholarshipInfo: false,
     userManagement: false,
   });
-
-  const [activeLink, setActiveLink] = useState("Dashboard"); // Set initial active link to Dashboard
 
   const toggleDropdown = (section) => {
     setDropdownOpen((prev) => ({
@@ -40,136 +41,117 @@ const AdminSidebar = (props) => {
   };
 
   const items = [
-    { name: "Dashboard", icon: BarChart2, path: "/admin-dashboard" },
+    { name: "Home", icon: Home, path: "/home" },
+    { name: "Dashboard", icon: BarChart2, path: "/dashboard" },
     {
-      name: "Documents Section",
+      name: "Document Status",
       icon: GraduationCap,
       dropdown: [
-        { name: "Documents Verification", path: "/docs-verification" },
+        { name: "Upload Documents", path: "/upload" },
+        { name: "Documents Status", path: "/docs-track" },
+        { name: "Download Your Documents", path: "/download-documents" },
       ],
     },
     {
-      name: "Scholarship Section",
-      icon: GraduationCap,
+      name: "Scholarship Status",
+      icon: Building,
       dropdown: [
-        { name: "Add Scholarship", path: "/admin-add-scholarship" },
-        { name: "Edit Scholarship", path: "/admin-track" },
-        { name: "Applications Verification", path: "/applications-check" },
+        { name: "Available Scholarships", path: "/viewScholarships" },
+        { name: "Applications Status", path: "/updatedDashboard" },
       ],
     },
-    
-    { name: "E-KYC", icon: BarChart2, path: "/ekyc1" },
-    {
-      name: "User Management",
-      icon: Users,
-      dropdown: ["Manage Users", "User Roles"],
-    },
-    { name: "Payment History", icon: UserPlus },
+    { name: "Video Verification", icon: UserPlus, path: "/ekyc0" },
+    { name: "FAQ", icon: BookOpen, path: "/FAQ" },
     { name: "Settings", icon: Settings },
   ];
-  console.log(props.user);
-  const convertToNameFormat = (text) =>
-    text
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
+
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <div className="w-64 bg-gray-800 text-white h-[calc(100vh-20px)] p-4 overflow-y-auto">
-      {/* User Profile Section */}
-      <div className="flex items-center mb-6">
-        <img
-          src="https://thumbs.dreamstime.com/b/half-body-father-avatar-vector-stock-illustration-isolated-blue-background-312576179.jpg" // Replace with the actual image URL
-          alt="User Avatar"
-          className="w-10 h-10 rounded-full mr-3"
-        />
-        <div>
-          <p className="font-semibold text-lg">
-            {convertToNameFormat(props.user.fullName)}
-          </p>
-          <p className="text-xs text-gray-400">
-            {props.user.role == "student" ? "Student" : "Admin"}
-          </p>
-        </div>
+    <>
+      {/* Mobile Toggle Button */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <button
+          onClick={toggleSidebar}
+          className="p-2 bg-gray-800 text-white rounded-md shadow-md focus:outline-none"
+        >
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
 
-      {items.map((item, index) => (
-        <div key={index}>
-          {/* Main Item */}
-          <div
-            onClick={() => {
-              if (item.dropdown) {
-                toggleDropdown(item.name);
-              } else {
-                setActiveLink(item.name); // Set active link
-              }
-            }}
-          >
-            <NavLink
-              to={item.path || "#"}
-              className={`flex items-center py-2 px-4 rounded cursor-pointer ${
-                activeLink === item.name ? "bg-gray-600" : "hover:bg-gray-700"
-              }`}
-              onClick={() => {
-                if (!item.dropdown) setActiveLink(item.name); // Set active link if not dropdown
-              }}
-            >
-              <item.icon size={20} className="mr-2" />
-              <span className="text-base">{item.name}</span>
-              {item.dropdown &&
-                (dropdownOpen[item.name] ? (
-                  <ChevronUp size={20} className="ml-auto" />
-                ) : (
-                  <ChevronDown size={20} className="ml-auto" />
-                ))}
-            </NavLink>
+      {/* Sidebar */}
+      <div
+        className={`fixed top-0 left-0 h-full w-80 bg-gray-900 text-white shadow-2xl transition-transform duration-300 ease-in-out z-50
+          ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
+      >
+        <div className="flex items-center p-6 border-b border-gray-700 bg-gray-800/50">
+          <img
+            src="https://via.placeholder.com/48"
+            alt="User Avatar"
+            className="w-12 h-12 rounded-full mr-4"
+          />
+          <div>
+            <p className="font-bold">{props.user.fullName || "User Name"}</p>
+            <p className="text-sm text-gray-400">{props.user.role || "Role"}</p>
           </div>
-
-          {/* Dropdown handling */}
-          {item.dropdown && dropdownOpen[item.name] && (
-            <div className="ml-8">
-              {item.dropdown.map((subItem, subIndex) => {
-                if (typeof subItem === "object") {
-                  return (
+        </div>
+        <nav className="py-4">
+          {items.map((item, index) => (
+            <div key={index} className="group">
+              <div
+                onClick={() =>
+                  item.dropdown ? toggleDropdown(item.name) : setIsOpen(false)
+                }
+              >
+                <NavLink
+                  to={item.path || "#"}
+                  className={({ isActive }) => `
+                    flex items-center py-3 px-6 cursor-pointer 
+                    transition-all duration-300
+                    ${isActive ? "bg-gray-700 text-white" : "text-gray-300"}
+                  `}
+                >
+                  <item.icon size={24} className="mr-4" />
+                  <span>{item.name}</span>
+                  {item.dropdown && (
+                    <span className="ml-auto">
+                      {dropdownOpen[item.name] ? <ChevronUp /> : <ChevronDown />}
+                    </span>
+                  )}
+                </NavLink>
+              </div>
+              {item.dropdown && dropdownOpen[item.name] && (
+                <div className="pl-12">
+                  {item.dropdown.map((subItem, subIndex) => (
                     <NavLink
                       key={subIndex}
                       to={subItem.path}
-                      className={({ isActive }) =>
-                        `py-2 px-4 rounded cursor-pointer hover:bg-gray-700 text-sm block ${
-                          activeLink === subItem.name ? "bg-gray-600" : ""
-                        }`
-                      }
-                      onClick={() => setActiveLink(subItem.name)} // Set active link for dropdown
+                      className={({ isActive }) => `
+                        block py-2 text-sm
+                        ${isActive ? "text-white" : "text-gray-300"}
+                      `}
                     >
                       {subItem.name}
                     </NavLink>
-                  );
-                }
-                return (
-                  <div
-                    key={subIndex}
-                    className="py-2 px-4 rounded cursor-pointer hover:bg-gray-700 text-sm"
-                  >
-                    {subItem}
-                  </div>
-                );
-              })}
+                  ))}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      ))}
-
-      {/* Logout Button Container */}
-      <div className="mt-4 bg-gray-700 rounded-lg">
-        <div
-          className="flex items-center py-2 px-4 rounded cursor-pointer hover:bg-red-600 transition duration-200"
-          onClick={handleLogout}
-        >
-          <LogOut size={20} className="mr-2" />
-          <span className="text-base font-semibold">Logout</span>
+          ))}
+        </nav>
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gray-800">
+          <button
+            onClick={handleLogout}
+            className="w-full py-2 bg-red-600 text-white rounded-lg"
+          >
+            Logout
+          </button>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
-export default AdminSidebar;
+export default Sidebar;
