@@ -8,7 +8,6 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { name } = location.state || {};
-  const [role, setRole] = useState(name);
   const [isPageLoaded, setIsPageLoaded] = useState(false);
   const [error, setError] = useState("");
 
@@ -23,10 +22,6 @@ const Login = () => {
     setRole(selectedRole);
   };
 
-  const handleBack = () => {
-    setRole("");
-    setError("");
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-blue-200">
@@ -40,28 +35,10 @@ const Login = () => {
         <h1 className="text-4xl font-bold text-gray-800 mb-10">
           Scholarship Portal
         </h1>
-        {role === "" ? (
-          <div className="animate-fadeIn">
-            <h2 className="text-2xl font-bold text-gray-800 mb-8 border-b pb-2 border-gray-300">
-              Select your role:
-            </h2>
-            <button
-              className="w-full bg-gray-800 text-white py-3 mt-4 rounded-lg transition-transform transform hover:scale-105 active:scale-95"
-              onClick={() => handleSelectRole("admin")}
-            >
-              Admin
-            </button>
-            <button
-              className="w-full bg-gray-800 text-white py-3 mt-4 rounded-lg transition-transform transform hover:scale-105 active:scale-95"
-              onClick={() => handleSelectRole("student")}
-            >
-              Student
-            </button>
-          </div>
-        ) : name === "admin" ? (
-          <AdminLogin onBack={handleBack} />
+        {name === "admin" ? (
+          <AdminLogin/>
         ) : (
-          <StudentLogin onBack={handleBack} />
+          <StudentLogin/>
         )}
         {error && <p className="text-red-500 mt-4">{error}</p>}
       </div>
@@ -126,13 +103,6 @@ const AdminLogin = ({ onBack }) => {
         <p>Email: Admin@gmail.com</p>
         <p>Password: 123456</p>
       </div>
-
-      <button
-        className="w-full bg-gray-800 text-white py-3 mt-4 rounded-lg transition-transform transform hover:scale-105 active:scale-95"
-        onClick={onBack}
-      >
-        Back
-      </button>
     </div>
   );
 };
@@ -188,12 +158,6 @@ const StudentLogin = ({ onBack }) => {
           Login as Student
         </button>
       </form>
-      <button
-        className="w-full bg-gray-800 text-white py-3 mt-4 rounded-lg transition-transform transform hover:scale-105 active:scale-95"
-        onClick={onBack}
-      >
-        Back
-      </button>
       {/* Sample credentials box */}
       <div className="bg-gray-100 p-4 rounded-lg mt-6 border border-gray-300 text-gray-700">
         <h3 className="font-semibold mb-2">Sample Login Credentials:</h3>
