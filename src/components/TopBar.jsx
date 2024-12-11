@@ -38,7 +38,7 @@ const TopBar = (props) => {
   }, []);
 
   return (
-    <div className="bg-[#000000FF] text-white p-4 shadow-md overflow-x-auto">
+    <div className="bg-[#000000FF] text-white p-4 shadow-md">
       <div className="flex justify-between items-center min-w-[800px]">
         <h1 className="text-xl font-bold whitespace-nowrap pr-4">Scholarship Disbursement System</h1>
 

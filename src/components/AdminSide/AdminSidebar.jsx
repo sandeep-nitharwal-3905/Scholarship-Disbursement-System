@@ -95,7 +95,6 @@ const AdminSidebar = (props) => {
       ],
     },
     { name: "Video Verification", icon: BarChart2, path: "/ekyc1" },
-    { name: "SAG HomePage", icon: UserPlus, path: "/sag-home-page" },
     { name: "Settings", icon: Settings },
   ];
 
