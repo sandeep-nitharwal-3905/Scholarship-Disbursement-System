@@ -27,6 +27,7 @@ import FAQ from "./pages/FAQ";
 import DocumentDownload from './components/DocsDownload';
 import AdminPanel from "./components/AdminSide/AdminPanel";
 import SAGHomePage  from "./components/SAG/SAGHomePage";
+import Home_ from "./pages/Home_";
 import Registration_ from "./pages/Registration_";
 
 const App = () => {
@@ -35,7 +36,7 @@ const App = () => {
       <Analytics />
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<Home_ />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin" element={<AdminSignup />} />

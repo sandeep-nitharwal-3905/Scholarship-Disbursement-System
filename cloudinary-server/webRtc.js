@@ -2,6 +2,8 @@ const WebSocket = require('ws');
 const { v4: uuidv4 } = require('uuid');
 
 const server = new WebSocket.Server({ port: 3000 });
+// const server = new WebSocket.Server({ host: '0.0.0.0', port: 3000 });
+
 const sessions = new Map();
 const clients = new Map();
 
@@ -89,5 +91,5 @@ function handleDisconnection(socket) {
   clients.delete(socket.clientId);
 }
 
-console.log('WebSocket server running on ws://localhost:3000');
+console.log('WebSocket server running on ws://localhost::3000');
 
