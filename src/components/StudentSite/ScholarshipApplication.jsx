@@ -52,16 +52,16 @@ const ScholarshipApplication = () => {
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     // Get the current user UID from Firebase Authentication
     const auth = getAuth();
     const user = auth.currentUser;
-  
+
     if (!user) {
       toast.error("User not logged in. Please log in to submit your application.");
       return;
     }
-  
+
     // Validate required documents
     for (let doc of requiredDocuments) {
       if (!formData.documents[doc.trim()]) {
@@ -69,11 +69,11 @@ const ScholarshipApplication = () => {
         return;
       }
     }
-  
+
     try {
       // Generate a unique ID for this application
       const applicationRef = doc(collection(db, "scholarshipApplications"));
-  
+
 
       // Process documents
       const processedDocuments = {};
@@ -87,7 +87,7 @@ const ScholarshipApplication = () => {
             formData
           );
           const uploadedUrl = cloudinaryResponse.data.file.url;
-  
+
           // Check for blur using Python API
           const blurCheckResponse = await axios.post(
             "http://localhost:5001/analyze-blur",
@@ -95,12 +95,12 @@ const ScholarshipApplication = () => {
               image_url: uploadedUrl
             }
           );
-  
+
           if (blurCheckResponse.data.is_blurry === "True") {
             alert(`${docName} is too blurry. Please upload a clearer image.`);
             return;
           }
-  
+
           // Store processed document information
           processedDocuments[docName] = {
             url: uploadedUrl,
@@ -114,7 +114,7 @@ const ScholarshipApplication = () => {
           return;
         }
       }
-  
+
       // Initialize review stages and review notes
       const reviewStages = {
         academicReview: { checked: false },
@@ -127,7 +127,7 @@ const ScholarshipApplication = () => {
         preliminaryScreening: { checked: false },
         referenceCheck: { checked: false },
       };
-  
+
       const reviewNotes = {
         academicReview: "",
         documentAuthentication: "",
@@ -139,7 +139,7 @@ const ScholarshipApplication = () => {
         preliminaryScreening: "",
         referenceCheck: "",
       };
-  
+
       // Save form data to Firestore with unique application ID
       await setDoc(applicationRef, {
         ...formData,
@@ -150,6 +150,7 @@ const ScholarshipApplication = () => {
         reviewStages,
         reviewStatus: "pending",
         userId: user.uid,
+        phoneNumber: user.phoneNumber
       });
       alert("Application submitted successfully!");
       toast.success("Application submitted successfully!");
@@ -170,7 +171,7 @@ const ScholarshipApplication = () => {
   };
   // Split the requiredDocuments string into an array and add more documents
   const additionalDocuments = [
-    
+
     "Transcript",
     "Recommendation Letter",
     "Personal Statement",
@@ -180,7 +181,7 @@ const ScholarshipApplication = () => {
       .split(";")
       .map((doc) => doc.trim())
       .concat(additionalDocuments) || [];
-    console.log("Required Documents:", requiredDocuments);
+  console.log("Required Documents:", requiredDocuments);
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
