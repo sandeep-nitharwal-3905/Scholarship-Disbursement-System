@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 
 
 import { ArrowLeft } from "lucide-react";
@@ -54,6 +55,7 @@ const ScholarshipApplication = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const newData = {  };
 
     // Get the current user UID from Firebase Authentication
     const auth = getAuth();
@@ -79,8 +81,39 @@ const ScholarshipApplication = () => {
       // Convert file objects to base64 for storage
       const documentsBase64 = {};
       for (const [docName, file] of Object.entries(formData.documents)) {
-        documentsBase64[docName] = await convertFileToBase64(file);
+        // documentsBase64[docName] = await convertFileToBase64(file);
+        const formData = new FormData();
+        formData.append("file", file);
+        const cloudinaryResponse = await axios.post(
+          "http://localhost:5000/upload",
+          formData
+        );
+        const uploadedUrl = cloudinaryResponse.data.file.url;
+        console.log("Uploaded URL:", uploadedUrl);
+        // Check for blur using Python API
+        const blurCheckResponse = await axios.post(
+          "http://localhost:5001/analyze-blur",
+          {
+            image_url: uploadedUrl
+          }
+        );
+
+        if (blurCheckResponse.data.is_blurry === "True") {
+          // If image is blurry, show error and skip this file
+          alert(`${docName} is too blurry. Please upload a clearer image.`);
+          return;
+        }
+
+        // If image is not blurry, proceed with Firebase upload
+        const timestamp = new Date().toISOString();
+        newData[docName] = {
+          url: uploadedUrl,
+          uploadTimestamp: timestamp,
+          status: 1,
+          blurScore: blurCheckResponse.data.blur_score
+        };
       }
+      const timestamp = new Date().toISOString();
 
       // Initialize review stages and review notes
       const reviewStages = {
@@ -107,10 +140,15 @@ const ScholarshipApplication = () => {
         referenceCheck: "",
       };
 
+
       // Save form data to Firestore with unique application ID
       await setDoc(applicationRef, {
         ...formData,
         documents: documentsBase64,
+        "aadhar-card": newData["Aadhar Card"],
+        "transcript": newData["Transcript"],
+        "recommendation-letter": newData["Recommendation Letter"],
+        "personal-statement": newData["Personal Statement"],
         dateOfBirth: formData.dateOfBirth?.toISOString(),
         submittedAt: new Date().toISOString(),
         reviewNotes, // Store empty notes for each stage
@@ -118,7 +156,8 @@ const ScholarshipApplication = () => {
         reviewStatus: "pending", // Initial review status
         userId: user.uid, // Store the UID of the logged-in user
       });
-
+      
+      alert("Application submitted successfully!");
       toast.success("Application submitted successfully!");
       navigate("/dashboard");
     } catch (error) {
