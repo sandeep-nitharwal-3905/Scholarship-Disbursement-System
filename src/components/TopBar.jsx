@@ -37,14 +37,6 @@ const TopBar = (props) => {
     };
   }, []);
 
-  const handleLogin = () => {
-    navigate('/login')
-  };
-
-  const handleRegister = () => {
-    navigate('/signup')
-  };
-
   return (
     <div className="bg-[#000000FF] text-white p-4 shadow-md overflow-x-auto">
       <div className="flex justify-between items-center min-w-[800px]">
@@ -52,20 +44,7 @@ const TopBar = (props) => {
 
         <div className="flex items-center space-x-6 ml-auto">
           {/* Applicant Login Button */}
-          <button
-            onClick={handleLogin}
-            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition whitespace-nowrap"
-          >
-            Login
-          </button>
-
-          {/* New Registration Button */}
-          <button
-            onClick={handleRegister}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition whitespace-nowrap"
-          >
-            New Registration
-          </button>
+          
 
           {/* Notification Icon */}
           <div className="relative" ref={bellDropdownRef}>

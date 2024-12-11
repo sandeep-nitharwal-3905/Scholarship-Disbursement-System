@@ -64,7 +64,7 @@ const Layout = ({ children }) => {
     return (
       <div className="flex flex-col h-screen bg-white-100">
         <TopBar isNotification={true} />
-        <NewTopBar />
+        {/* <NewTopBar /> */}
         <div className="flex flex-1 overflow-hidden">
           <AdminSidebar user={userData} />
           <div className="flex-1 p-8 overflow-auto">{children}</div>
