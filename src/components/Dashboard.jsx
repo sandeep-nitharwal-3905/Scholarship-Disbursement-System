@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Users, GraduationCap, FileText } from "lucide-react";
+import { Users, GraduationCap, FileText, PaperclipIcon } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { 
   getFirestore, 
@@ -27,7 +27,9 @@ const Dashboard = () => {
     documentsSubmitted: 0,
     documentsVerified: 0,
     applicationsSubmitted: 0,
-    applicationsVerified: 0
+    applicationsVerified: 0,
+    passingCertificatesSubmitted: 0,
+    passingCertificatesVerified: 0
   });
 
   // Comprehensive data fetching function
@@ -52,21 +54,36 @@ const Dashboard = () => {
       const userQuery = query(usersRef, where('userId', '==', uid));
       const userSnapshot = await getDocs(userQuery);
 
-      // Process application statistics
+      // Process application and passing certificate statistics
       let applicationsSubmitted = 0;
       let applicationsVerified = 0;
+      let passingCertificatesSubmitted = 0;
+      let passingCertificatesVerified = 0;
 
       if (!userSnapshot.empty) {
         const userData = userSnapshot.docs[0].data();
         
-        // Check if review status is "approved"
-        applicationsVerified = userData.reviewStatus === "approved" ? 1 : 0;
+        // Check application status
+        if (userData.reviewStatus === "approved") {
+          applicationsVerified = 1;
+        } else {
+          // Count submitted stages (assuming any checked stage counts as submitted)
+          if (userData.reviewStages) {
+            applicationsSubmitted = Object.values(userData.reviewStages)
+              .filter(stage => stage.checked === true)
+              .length;
+          }
+        }
         
-        // Count submitted stages (assuming any checked stage counts as submitted)
-        if (userData.reviewStages) {
-          applicationsSubmitted = Object.values(userData.reviewStages)
-            .filter(stage => stage.checked === true)
-            .length;
+        // Process passing certificate status
+        if (userData.passingCertificate) {
+          const passingCertificate = userData.passingCertificate;
+          
+          if (passingCertificate.status === 3) {
+            passingCertificatesVerified = 1;
+          } else {
+            passingCertificatesSubmitted = 1;
+          }
         }
       }
 
@@ -75,7 +92,9 @@ const Dashboard = () => {
         documentsSubmitted: submittedDocuments.length,
         documentsVerified: verifiedDocuments.length,
         applicationsSubmitted,
-        applicationsVerified
+        applicationsVerified,
+        passingCertificatesSubmitted,
+        passingCertificatesVerified
       });
 
     } catch (error) {
@@ -145,6 +164,22 @@ const Dashboard = () => {
           title="Applications Verified"
           color="purple"
           icon={Users}
+        />
+        
+        {/* Passing Certificates Submitted */}
+        <StatButton
+          count={dashboardStats.passingCertificatesSubmitted}
+          title="Passing Certificates Submitted"
+          color="orange"
+          icon={PaperclipIcon}
+        />
+        
+        {/* Passing Certificates Verified */}
+        <StatButton
+          count={dashboardStats.passingCertificatesVerified}
+          title="Passing Certificates Verified"
+          color="green-100"
+          icon={PaperclipIcon}
         />
       </div>
     </div>
