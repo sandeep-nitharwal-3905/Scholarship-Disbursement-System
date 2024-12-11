@@ -1,4 +1,5 @@
 
+
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -6,6 +7,7 @@ const multer = require("multer");
 const { v2: cloudinary } = require("cloudinary");
 const streamifier = require("streamifier");
 const nodemailer = require("nodemailer");
+const twilio = require("twilio");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -18,13 +20,72 @@ const otpStore = new Map();
 const otpStoreReg = new Map();
 // const pendingRegistrations = new Map();
 
+// Twilio Configuration
+const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+const twilioServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
+
+// Generate OTP via SMS
+app.post("/generate-otp-phone", async (req, res) => {
+  try {
+    const { phoneNumber } = req.body;
+
+    if (!phoneNumber) {
+      return res.status(400).json({ error: "Phone number is required" });
+    }
+
+    const verification = await twilioClient.verify.v2
+      .services(twilioServiceSid)
+      .verifications.create({
+        to: phoneNumber,
+        channel: "sms", // Options: 'sms', 'call', 'email'
+      });
+
+    res.status(200).json({
+      message: "OTP sent successfully",
+      status: verification.status,
+    });
+  } catch (error) {
+    console.log("Failed to generate OTP:", error);
+    res.status(500).json({ error: "Failed to generate OTP" });
+  }
+});
+
+// Verify OTP
+app.post("/verify-otp-phone", async (req, res) => {
+  try {
+    const { phoneNumber, otp } = req.body;
+
+    if (!phoneNumber || !otp) {
+      return res.status(400).json({ error: "Phone number and OTP are required" });
+    }
+
+    const verificationCheck = await twilioClient.verify.v2
+      .services(twilioServiceSid)
+      .verificationChecks.create({
+        to: phoneNumber,
+        code: otp,
+      });
+
+    if (verificationCheck.status === "approved") {
+      return res.status(200).json({
+        message: "OTP verified successfully",
+      });
+    }
+
+    res.status(400).json({ error: "Invalid OTP" });
+  } catch (error) {
+    console.log("Failed to verify OTP:", error);
+    res.status(500).json({ error: "Failed to verify OTP" });
+  }
+});
+
 const transporter = nodemailer.createTransport({
   host: "smtp-relay.brevo.com",
   port: 587,
   secure: false,
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD, 
+    pass: process.env.EMAIL_PASSWORD,
   },
 });
 
@@ -43,7 +104,7 @@ app.post("/send-application-update-email", async (req, res) => {
   try {
     const { email, subject, body } = req.body;
     console.log(email, subject, body);
-    
+
     if (!email || !subject || !body) {
       return res.status(400).json({ error: "Missing required email parameters" });
     }
@@ -54,16 +115,15 @@ app.post("/send-application-update-email", async (req, res) => {
       subject: subject,
       text: body
     };
-    console.log(mailOptions);
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.error("Error sending application update email:", error);
         return res.status(500).json({ error: "Failed to send email" });
       }
-      
+
       console.log("Application update email sent:", info.response);
-      res.status(200).json({ 
+      res.status(200).json({
         message: "Application update email sent successfully",
         email: email
       });
@@ -79,14 +139,14 @@ app.post("/send-application-update-email", async (req, res) => {
 app.post("/generate-otp-reg", async (req, res) => {
   try {
     const { email } = req.body;
-    
+
     if (!email) {
       return res.status(400).json({ error: "Email is required" });
     }
 
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    
+
     // Store OTP with timestamp and email
     otpStoreReg.set(email, {
       otp,
@@ -171,14 +231,14 @@ app.post("/verify-otp-reg", (req, res) => {
 app.post("/generate-otp", async (req, res) => {
   try {
     const { email } = req.body;
-    
+
     if (!email) {
       return res.status(400).json({ error: "Email is required" });
     }
 
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    
+
     // Store OTP with timestamp and email
     otpStore.set(email, {
       otp,
@@ -289,5 +349,3 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
-
-
