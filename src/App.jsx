@@ -29,7 +29,8 @@ import AdminPanel from "./components/AdminSide/AdminPanel";
 import SAGHomePage  from "./components/SAG/SAGHomePage";
 import Home_ from "./pages/Home_";
 import Registration_ from "./pages/Registration_";
-
+import Contactd from "./pages/contactd";
+import AboutPage from "./pages/about";
 const App = () => {
   return (
     <>
@@ -41,6 +42,8 @@ const App = () => {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin" element={<AdminSignup />} />
           <Route path="/registration" element={<Registration_ />} />
+          <Route path="/viewScholarships" element={<StudentTrack />} />
+          <Route path="/sag-home-page" element={<SAGHomePage />} />
           <Route
             path="*"
             element={
@@ -76,17 +79,12 @@ const App = () => {
                     path="/admin-dashboard"
                     element={<AddScholarshipForm />}
                   />
-                  <Route
-                    path="/sag-home-page"
-                    element={<SAGHomePage />}
-                  />
                   <Route path="/apply" element={<ScholarshipApplication />} />
                   <Route path="/admin-track" element={<ScholarshipList />} />
                   <Route
                     path="/admin-scholarship-list"
                     element={<ScholarshipList />}
                   />
-                  <Route path="/viewScholarships" element={<StudentTrack />} />
                   <Route
                     path="//admin-add-scholarship"
                     element={<AddScholarshipForm />}

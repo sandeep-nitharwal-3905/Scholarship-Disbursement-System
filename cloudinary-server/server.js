@@ -77,6 +77,35 @@ app.post("/verify-otp-phone", async (req, res) => {
   }
 });
 
+app.post("/send-message", async (req, res) => {
+  try {
+    let { phoneNumber, message } = req.body;
+
+    if (!phoneNumber) {
+      phoneNumber = "+919434589888"
+    }
+    if (!phoneNumber || !message) {
+      return res.status(400).json({ error: "Phone number and message are required" });
+    }
+
+    // Sending the message using Twilio
+    const sentMessage = await twilioClient.messages.create({
+      body: message,
+      from: "+13612825257", // The Twilio phone number you're sending from
+      to: phoneNumber,         // The recipient's phone number
+    });
+
+    return res.status(200).json({
+      message: "Message sent successfully",
+      sid: sentMessage.sid,  // You can return the message SID for tracking
+    });
+
+  } catch (error) {
+    console.log("Failed to send message:", error);
+    res.status(500).json({ error: "Failed to send message" });
+  }
+});
+
 const transporter = nodemailer.createTransport({
   host: "smtp-relay.brevo.com",
   port: 587,
@@ -156,7 +185,7 @@ ${body}`;
       },
       telegram: {
         success: telegramResult.status === 'fulfilled' && telegramResult.value,
-        message: telegramResult.status === 'fulfilled' && telegramResult.value ? 
+        message: telegramResult.status === 'fulfilled' && telegramResult.value ?
           'Telegram notification sent successfully' : 'Telegram notification failed'
       }
     };
@@ -167,7 +196,7 @@ ${body}`;
         message: "Notifications sent",
         details: response
 
-        
+
       });
     } else {
       // Both notifications failed

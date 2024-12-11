@@ -21,8 +21,8 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
 
   // Render status icon based on document status
   const renderStatusIcon = (status) => {
-    switch(status) {
-      case 1: 
+    switch (status) {
+      case 1:
         return <CheckCircle className="text-green-500" />;
       case 0:
         return <AlertCircle className="text-yellow-500" />;
@@ -132,9 +132,9 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
             {scholarship.requiredDocuments.join(", ")}
           </p>
         </div> */}
-        
+
         <div>
-          
+
         </div>
 
         {/* Right Side - Review Stages */}
@@ -185,136 +185,135 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
                     />
                   )} */}
                   {activeStage === stage.key && (
-  <div className="mt-4">
-    {(() => {
-      switch (stage.key) {
-        case 'preliminaryScreening':
-          return (
-            <div>
-            <div className="p-4 bg-gray-100 rounded-md">
-            <h3 className="text-lg font-semibold">Basic Details</h3>
-            <p><strong>Applicant Name:</strong> {application.name} </p>
-            <p><strong>Email:</strong> {application.email} </p>
-            <p><strong>Application Date:</strong> {new Date(application.submittedAt).toLocaleString()}</p>
-            <p><strong>Date Of Birth</strong> {new Date(application.dateOfBirth).toLocaleDateString()}</p>
-            <p><strong>Contact Number: </strong> {application.contactNumber}</p>
-            <p><strong>School Name : </strong> {application.schoolName}</p>
+                    <div className="mt-4">
+                      {(() => {
+                        switch (stage.key) {
+                          case 'preliminaryScreening':
+                            return (
+                              <div>
+                                <div className="p-4 bg-gray-100 rounded-md">
+                                  <h3 className="text-lg font-semibold">Basic Details</h3>
+                                  <p><strong>Applicant Name:</strong> {application.name} </p>
+                                  <p><strong>Email:</strong> {application.email} </p>
+                                  <p><strong>Application Date:</strong> {new Date(application.submittedAt).toLocaleString()}</p>
+                                  <p><strong>Date Of Birth</strong> {new Date(application.dateOfBirth).toLocaleDateString()}</p>
+                                  <p><strong>Contact Number: </strong> {application.contactNumber}</p>
+                                  <p><strong>School Name : </strong> {application.schoolName}</p>
 
-          </div>
+                                </div>
 
-            <textarea
-              value={stageData.notes || ''}
-              onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
-              placeholder="Add preliminary screening notes..."
-              className="w-full p-2 border rounded focus:ring-blue-500"
-              rows={3}
-            />
-            </div>
-          );
-        case 'eligibilityVerification':
-          return (
-            <textarea
-              value={stageData.notes || ''}
-              onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
-              placeholder="Provide Eligibility Verification notes..."
-              className="w-full p-2 border rounded focus:ring-blue-500"
-              rows={3}
-            />
-          );
-        case 'documentAuthentication':
-          return (
-            <div className="p-4 bg-white rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4">Document Authentication</h2>
-              
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                {Object.entries(application.documents).map(([docName, docDetails]) => (
-                  <div 
-                    key={docName} 
-                    className={`border rounded p-3 cursor-pointer flex items-center justify-between ${
-                      activeDocument === docName ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
-                    }`}
-                    onClick={() => setActiveDocument(docName)}
-                  >
-                    <div className="flex items-center">
-                      <FileText className="mr-2 text-gray-600" />
-                      <span className="font-medium">{docName}</span>
-                    </div>
-                    <div className="flex items-center">
-                      {/* <span className="mr-2 text-sm text-gray-500">
+                                <textarea
+                                  value={stageData.notes || ''}
+                                  onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
+                                  placeholder="Add preliminary screening notes..."
+                                  className="w-full p-2 border rounded focus:ring-blue-500"
+                                  rows={3}
+                                />
+                              </div>
+                            );
+                          case 'eligibilityVerification':
+                            return (
+                              <textarea
+                                value={stageData.notes || ''}
+                                onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
+                                placeholder="Provide Eligibility Verification notes..."
+                                className="w-full p-2 border rounded focus:ring-blue-500"
+                                rows={3}
+                              />
+                            );
+                          case 'documentAuthentication':
+                            return (
+                              <div className="p-4 bg-white rounded-lg shadow-md">
+                                <h2 className="text-xl font-semibold mb-4">Document Authentication</h2>
+
+                                <div className="grid grid-cols-2 gap-4 mb-4">
+                                  {Object.entries(application.documents).map(([docName, docDetails]) => (
+                                    <div
+                                      key={docName}
+                                      className={`border rounded p-3 cursor-pointer flex items-center justify-between ${activeDocument === docName ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                                        }`}
+                                      onClick={() => setActiveDocument(docName)}
+                                    >
+                                      <div className="flex items-center">
+                                        <FileText className="mr-2 text-gray-600" />
+                                        <span className="font-medium">{docName}</span>
+                                      </div>
+                                      <div className="flex items-center">
+                                        {/* <span className="mr-2 text-sm text-gray-500">
                         Blur Score: {docDetails.blurScore.toFixed(2)}
                       </span> */}
-                      {renderStatusIcon(docDetails.status)}
-                    </div>
-                  </div>
-                ))}
-              </div>
-        
-              {activeDocument && (
-                <div className="mb-4">
-                  <h3 className="text-lg font-semibold mb-2">
-                    Viewing: {activeDocument}
-                  </h3>
-                  <div className="flex justify-center mb-4">
-                    <img 
-                      src={application.documents[activeDocument].url} 
-                      alt={activeDocument}
-                      className="max-h-96 max-w-full object-contain border rounded"
-                    />
-                  </div>
-                </div>
-              )}
-        
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Authentication Notes
-                </label>
-                <textarea
-                  value={stage.notes || ''}
-                  onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
-                  placeholder="Provide Document Authentication notes..."
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  rows={4}
-                />
-              </div>
-            </div>
-          );
-        case 'academicReview':
-          return (
-            <div>
-            <div className="p-4 bg-gray-100 rounded-md">
-            <h3 className="text-lg font-semibold">Academic Details</h3>
-            <p><strong>Course Of Study:</strong> {application.courseOfStudy} </p>
-            <p><strong>Registration Number:</strong> {application.registrationNumber} </p>
-            <p><strong>Roll Number:</strong> {application.rollNumber}</p>
-            <p><strong>School Name: </strong> {application.schoolName}</p>
-            <p><strong>GPA: </strong> {application.gpa}</p>
-                      </div>
+                                        {renderStatusIcon(docDetails.status)}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
 
-            <textarea
-              value={stageData.notes || ''}
-              onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
-              placeholder="Add Academic Review notes..."
-              className="w-full p-2 border rounded focus:ring-blue-500"
-              rows={3}
-            />
-            </div>
-          );
-        case 'finalApproval':
-          return (
-            <textarea
-              value={stageData.notes || ''}
-              onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
-              placeholder="Provide Final Approval notes..."
-              className="w-full p-2 border rounded focus:ring-blue-500"
-              rows={3}
-            />
-          );
-        default:
-          return null;
-      }
-    })()}
-  </div>
-)}
+                                {activeDocument && (
+                                  <div className="mb-4">
+                                    <h3 className="text-lg font-semibold mb-2">
+                                      Viewing: {activeDocument}
+                                    </h3>
+                                    <div className="flex justify-center mb-4">
+                                      <img
+                                        src={application.documents[activeDocument].url}
+                                        alt={activeDocument}
+                                        className="max-h-96 max-w-full object-contain border rounded"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+
+                                <div className="mt-4">
+                                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Authentication Notes
+                                  </label>
+                                  <textarea
+                                    value={stage.notes || ''}
+                                    onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
+                                    placeholder="Provide Document Authentication notes..."
+                                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    rows={4}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          case 'academicReview':
+                            return (
+                              <div>
+                                <div className="p-4 bg-gray-100 rounded-md">
+                                  <h3 className="text-lg font-semibold">Academic Details</h3>
+                                  <p><strong>Course Of Study:</strong> {application.courseOfStudy} </p>
+                                  <p><strong>Registration Number:</strong> {application.registrationNumber} </p>
+                                  <p><strong>Roll Number:</strong> {application.rollNumber}</p>
+                                  <p><strong>School Name: </strong> {application.schoolName}</p>
+                                  <p><strong>GPA: </strong> {application.gpa}</p>
+                                </div>
+
+                                <textarea
+                                  value={stageData.notes || ''}
+                                  onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
+                                  placeholder="Add Academic Review notes..."
+                                  className="w-full p-2 border rounded focus:ring-blue-500"
+                                  rows={3}
+                                />
+                              </div>
+                            );
+                          case 'finalApproval':
+                            return (
+                              <textarea
+                                value={stageData.notes || ''}
+                                onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
+                                placeholder="Provide Final Approval notes..."
+                                className="w-full p-2 border rounded focus:ring-blue-500"
+                                rows={3}
+                              />
+                            );
+                          default:
+                            return null;
+                        }
+                      })()}
+                    </div>
+                  )}
 
                 </div>
               );
@@ -433,6 +432,10 @@ const AdminDashboard = () => {
         ...emailDetails
       });
 
+      await axios.post('http://localhost:5000/send-message', {
+        phoneNumber: selectedApplication.phoneNumber,
+        message: emailDetails.body
+      });
       // Update Firestore document
       await updateDoc(applicationRef, reviewData);
 
