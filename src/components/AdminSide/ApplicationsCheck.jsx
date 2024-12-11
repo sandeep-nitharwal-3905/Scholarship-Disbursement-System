@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
-import { Camera, FileText, CheckCircle, AlertCircle } from 'lucide-react';
+import { Camera, CheckCircle, AlertCircle } from 'lucide-react';
 import { db } from "../../Firebase";
 import { useFirebase } from "../../firebase/FirebaseContext";
 import {
