@@ -26,6 +26,7 @@ import EKYC from "./components/EKYC";
 import FAQ from "./pages/FAQ";
 import DocumentDownload from './components/DocsDownload';
 import AdminPanel from "./components/AdminSide/AdminPanel";
+import Registration_ from "./pages/Registration_";
 
 const App = () => {
   return (
@@ -37,7 +38,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin" element={<AdminSignup />} />
-
+          <Route path="/registration" element={<Registration_ />} />
           <Route
             path="*"
             element={
