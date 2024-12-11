@@ -27,7 +27,8 @@ const Sidebar = (props) => {
     userManagement: false,
   });
 
-  const [activeLink, setActiveLink] = useState("Dashboard");
+  const [activeLink, setActiveLink] = useState("home"); // Set initial active link to Dashboard
+
 
   const toggleDropdown = (section) => {
     setDropdownOpen((prev) => ({
