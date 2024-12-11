@@ -57,13 +57,13 @@ const AdminSidebar = (props) => {
         { name: "Applications Verification", path: "/applications-check" },
       ],
     },
-    
-    { name: "E-KYC", icon: BarChart2, path: "/ekyc1" },
+    { name: "Video Verification", icon: BarChart2, path: "/ekyc1" },
     {
       name: "User Management",
       icon: Users,
       dropdown: ["Manage Users", "User Roles"],
     },
+    { name: "SAG HomePage", icon: UserPlus, path: "/sag-home-page" }, // New Option Added
     { name: "Payment History", icon: UserPlus },
     { name: "Settings", icon: Settings },
   ];

@@ -74,6 +74,7 @@ const ScholarshipApplication = () => {
       // Generate a unique ID for this application
       const applicationRef = doc(collection(db, "scholarshipApplications"));
   
+
       // Process documents
       const processedDocuments = {};
       for (const [docName, file] of Object.entries(formData.documents)) {
@@ -150,7 +151,6 @@ const ScholarshipApplication = () => {
         reviewStatus: "pending",
         userId: user.uid,
       });
-      
       alert("Application submitted successfully!");
       toast.success("Application submitted successfully!");
       navigate("/dashboard");
@@ -159,117 +159,6 @@ const ScholarshipApplication = () => {
       toast.error("Failed to submit application. Please try again.");
     }
   };
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-  //   const newData = {  };
-
-  //   // Get the current user UID from Firebase Authentication
-  //   const auth = getAuth();
-  //   const user = auth.currentUser;
-
-  //   if (!user) {
-  //     toast.error("User not logged in. Please log in to submit your application.");
-  //     return;
-  //   }
-
-  //   // Validate required documents
-  //   for (let doc of requiredDocuments) {
-  //     if (!formData.documents[doc.trim()]) {
-  //       toast.error(`Please upload ${doc.trim()}`);
-  //       return;
-  //     }
-  //   }
-
-  //   try {
-  //     // Generate a unique ID for this application
-  //     const applicationRef = doc(collection(db, "scholarshipApplications"));
-
-  //     // Convert file objects to base64 for storage
-  //     const documentsBase64 = {};
-  //     for (const [docName, file] of Object.entries(formData.documents)) {
-  //       // documentsBase64[docName] = await convertFileToBase64(file);
-  //       const formData = new FormData();
-  //       formData.append("file", file);
-  //       const cloudinaryResponse = await axios.post(
-  //         "http://localhost:5000/upload",
-  //         formData
-  //       );
-  //       const uploadedUrl = cloudinaryResponse.data.file.url;
-  //       console.log("Uploaded URL:", uploadedUrl);
-  //       // Check for blur using Python API
-  //       const blurCheckResponse = await axios.post(
-  //         "http://localhost:5001/analyze-blur",
-  //         {
-  //           image_url: uploadedUrl
-  //         }
-  //       );
-
-  //       if (blurCheckResponse.data.is_blurry === "True") {
-  //         // If image is blurry, show error and skip this file
-  //         alert(`${docName} is too blurry. Please upload a clearer image.`);
-  //         return;
-  //       }
-
-  //       // If image is not blurry, proceed with Firebase upload
-  //       const timestamp = new Date().toISOString();
-  //       console.log(docName);
-  //       newData[docName] = {
-  //         url: uploadedUrl,
-  //         uploadTimestamp: timestamp,
-  //         status: 1,
-  //         blurScore: blurCheckResponse.data.blur_score
-  //       };
-  //     }
-  //     const timestamp = new Date().toISOString();
-
-  //     // Initialize review stages and review notes
-  //     const reviewStages = {
-  //       academicReview: { checked: false },
-  //       documentAuthentication: { checked: false },
-  //       eligibilityVerification: { checked: false },
-  //       finalApproval: { checked: false },
-  //       financialNeedAssessment: { checked: false },
-  //       interviewAssessment: { checked: false },
-  //       personalStatementReview: { checked: false },
-  //       preliminaryScreening: { checked: false },
-  //       referenceCheck: { checked: false },
-  //     };
-
-  //     const reviewNotes = {
-  //       academicReview: "",
-  //       documentAuthentication: "",
-  //       eligibilityVerification: "",
-  //       finalApproval: "",
-  //       financialNeedAssessment: "",
-  //       interviewAssessment: "",
-  //       personalStatementReview: "",
-  //       preliminaryScreening: "",
-  //       referenceCheck: "",
-  //     };
-  //     // Save form data to Firestore with unique application ID
-  //     await setDoc(applicationRef, {
-  //       ...formData,
-  //       "aadharcard": newData["Aadhar Card"],
-  //       "transcript": newData["Transcript"],
-  //       "recommendation_letter": newData["Recommendation Letter"],
-  //       "personal_statement": newData["Personal Statement"],
-  //       dateOfBirth: formData.dateOfBirth?.toISOString(),
-  //       submittedAt: new Date().toISOString(),
-  //       reviewNotes, // Store empty notes for each stage
-  //       reviewStages, // Store stages and their checked status
-  //       reviewStatus: "pending", // Initial review status
-  //       userId: user.uid, // Store the UID of the logged-in user
-  //     });
-      
-  //     alert("Application submitted successfully!");
-  //     toast.success("Application submitted successfully!");
-  //     navigate("/dashboard");
-  //   } catch (error) {
-  //     console.error("Error submitting application:", error);
-  //     toast.error("Failed to submit application. Please try again.");
-  //   }
-  // };
-
   // Helper function to convert file to base64
   const convertFileToBase64 = (file) => {
     return new Promise((resolve, reject) => {

@@ -26,6 +26,7 @@ import EKYC from "./components/EKYC";
 import FAQ from "./pages/FAQ";
 import DocumentDownload from './components/DocsDownload';
 import AdminPanel from "./components/AdminSide/AdminPanel";
+import SAGHomePage  from "./components/SAG/SAGHomePage";
 import Home_ from "./pages/Home_";
 import Registration_ from "./pages/Registration_";
 
@@ -74,6 +75,10 @@ const App = () => {
                   <Route
                     path="/admin-dashboard"
                     element={<AddScholarshipForm />}
+                  />
+                  <Route
+                    path="/sag-home-page"
+                    element={<SAGHomePage />}
                   />
                   <Route path="/apply" element={<ScholarshipApplication />} />
                   <Route path="/admin-track" element={<ScholarshipList />} />
