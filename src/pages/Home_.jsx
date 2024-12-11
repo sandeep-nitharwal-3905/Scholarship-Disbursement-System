@@ -113,7 +113,7 @@ const PMSSSPortal = () => {
         Scholarship Disbursement System
       </div>
       <img
-        src="./assets/2.jpg"
+        src="src/assets/1.png"
         alt="Logo"
         className="h-12 w-12 rounded-full object-cover border-2 border-white"
       />
