@@ -32,7 +32,7 @@ const PMSSSPortal = () => {
           <div
             key={index}
             className="flex items-center cursor-pointer hover:bg-gray-700 p-2 rounded"
-            onClick={() => navigate(item.path)} // Add the navigation on click
+            onClick={() => navigate(item.path, { state: { name: item.name } })} // Add the navigation on click
           >
             {item.icon}
             {item.label}
@@ -48,6 +48,7 @@ const PMSSSPortal = () => {
       icon: <UserCheck className="mr-3" size={20} />,
       label: "Login",
       path: "/login",
+      name: "student",
     },
     {
       icon: <UserPlus className="mr-3" size={20} />,
@@ -69,6 +70,8 @@ const PMSSSPortal = () => {
     {
       icon: <UserCheck className="mr-3" size={20} />,
       label: "Login",
+      name: "admin",
+      path: "/login",
     },
     {
       icon: <Building className="mr-3" size={20} />,
@@ -116,14 +119,14 @@ const PMSSSPortal = () => {
             {/* Desktop Navigation Links */}
             <div className="hidden sm:flex space-x-6">
               <a
-                href="/home"
+                href="#"
                 className="flex items-center text-white hover:text-[#008000] mb-2 sm:mb-0"
               >
                 <Home className="mr-2" size={20} />
                 Home
               </a>
               <a
-                href="/home"
+                href="#"
                 className="flex items-center text-white hover:text-[#008000] mb-2 sm:mb-0"
               >
                 <School className="mr-2" size={20} />
