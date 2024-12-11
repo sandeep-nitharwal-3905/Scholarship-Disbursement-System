@@ -3,8 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-
-
 import { ArrowLeft } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -139,12 +137,9 @@ const ScholarshipApplication = () => {
         preliminaryScreening: "",
         referenceCheck: "",
       };
-
-
       // Save form data to Firestore with unique application ID
       await setDoc(applicationRef, {
         ...formData,
-        documents: documentsBase64,
         "aadhar-card": newData["Aadhar Card"],
         "transcript": newData["Transcript"],
         "recommendation-letter": newData["Recommendation Letter"],
@@ -175,9 +170,9 @@ const ScholarshipApplication = () => {
       reader.onerror = (error) => reject(error);
     });
   };
-
   // Split the requiredDocuments string into an array and add more documents
   const additionalDocuments = [
+    "Aadhar Card",
     "Transcript",
     "Recommendation Letter",
     "Personal Statement",
@@ -187,6 +182,7 @@ const ScholarshipApplication = () => {
       .split(";")
       .map((doc) => doc.trim())
       .concat(additionalDocuments) || [];
+    console.log("Required Documents:", requiredDocuments);
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
