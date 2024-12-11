@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
@@ -27,7 +28,7 @@ const NewTopBar = () => {
   ];
 
   return (
-    <div className="bg-gray-900 text-white w-full shadow-md">
+    <div className="bg-gray-900 text-white w-full shadow-md hidden sm:block">
       <div className="container mx-auto py-2">
         <ul className="flex flex-wrap justify-between">
           {menuItems.map((item, index) => (
