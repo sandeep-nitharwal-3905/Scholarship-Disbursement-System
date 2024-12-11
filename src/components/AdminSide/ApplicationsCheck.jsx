@@ -1,23 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
+import { Camera, CheckCircle, AlertCircle } from 'lucide-react';
 import { db } from "../../Firebase";
-import { 
-  ClipboardList, 
-  Eye, 
-  Check, 
-  X, 
-  FileText, 
-  Clock, 
-  Search, 
+import { useFirebase } from "../../firebase/FirebaseContext";
+import {
+  ClipboardList,
+  Eye,
+  Check,
+  X,
+  FileText,
+  Clock,
+  Search,
   Filter,
-  AlertTriangle 
+  AlertTriangle
 } from "lucide-react";
+import axios from "axios";
 
 const ReviewModal = ({ application, onClose, onReviewComplete }) => {
+  const [activeDocument, setActiveDocument] = useState(null);
+
+  // Render status icon based on document status
+  const renderStatusIcon = (status) => {
+    switch (status) {
+      case 1:
+        return <CheckCircle className="text-green-500" />;
+      case 0:
+        return <AlertCircle className="text-yellow-500" />;
+      default:
+        return <AlertCircle className="text-gray-500" />;
+    }
+  };
+
+  const formatTimestamp = (timestamp) => {
+    return new Date(timestamp).toLocaleString();
+  };
   const [reviewStages, setReviewStages] = useState({});
   const [activeStage, setActiveStage] = useState(null);
   const [rejectionReason, setRejectionReason] = useState('');
   const [isRejecting, setIsRejecting] = useState(false);
+  const Firebase = useFirebase();
 
   // Initialize reviewStages from application data
   useEffect(() => {
@@ -35,11 +56,10 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
       },
     }));
   };
-
   const handleFinalReview = () => {
     // If all stages are checked, mark as approved
     const allStagesChecked = Object.values(reviewStages).every((stage) => stage.checked);
-    
+
     onReviewComplete({
       reviewStages,
       reviewStatus: allStagesChecked ? "approved" : "pending",
@@ -58,16 +78,16 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
       rejectionReason: rejectionReason.trim(),
     });
   };
-
+  console.log(application);
   const stages = [
     { key: 'preliminaryScreening', label: 'Preliminary Screening' },
     { key: 'eligibilityVerification', label: 'Eligibility Verification' },
     { key: 'documentAuthentication', label: 'Document Authentication' },
-    { key: 'personalStatementReview', label: 'Personal Statement Review' },
-    { key: 'referenceCheck', label: 'Reference Check' },
+    // { key: 'personalStatementReview', label: 'Personal Statement Review' },
+    // { key: 'referenceCheck', label: 'Reference Check' },
     { key: 'academicReview', label: 'Academic Review' },
-    { key: 'financialNeedAssessment', label: 'Financial Need Assessment' },
-    { key: 'interviewAssessment', label: 'Interview Assessment' },
+    // { key: 'financialNeedAssessment', label: 'Financial Need Assessment' },
+    // { key: 'interviewAssessment', label: 'Interview Assessment' },
     { key: 'finalApproval', label: 'Final Approval' }
   ];
 
@@ -77,7 +97,7 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
         {/* Left Side - Application Details */}
         <div className="w-1/2 p-8 overflow-y-auto bg-gray-50 border-r">
           <h2 className="text-3xl font-bold mb-6 text-blue-700 flex items-center">
-            <FileText className="mr-3 text-blue-500" /> 
+            <FileText className="mr-3 text-blue-500" />
             Application Details
           </h2>
           <div className="space-y-4">
@@ -101,6 +121,22 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
           </div>
         </div>
 
+        {/*scholarship details*/}
+        {/* <div>
+          <p className="text-gray-700 mb-1">
+            <strong>Eligibility: </strong>
+            {scholarship.eligibility}
+          </p>
+          <p className="text-gray-600 mb-3">
+            <strong>Required Documents: </strong>
+            {scholarship.requiredDocuments.join(", ")}
+          </p>
+        </div> */}
+
+        <div>
+
+        </div>
+
         {/* Right Side - Review Stages */}
         <div className="w-1/2 p-8 overflow-y-auto">
           <h2 className="text-3xl font-bold mb-6 text-blue-700 flex items-center">
@@ -111,15 +147,14 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
             {stages.map((stage) => {
               const stageData = reviewStages[stage.key] || {};
               return (
-                <div 
-                  key={stage.key} 
-                  className={`p-4 rounded-lg transition-all ${
-                    activeStage === stage.key 
-                      ? 'bg-blue-50 border-blue-300' 
-                      : 'bg-gray-50 hover:bg-gray-100'
-                  } border`}
+                <div
+                  key={stage.key}
+                  className={`p-4 rounded-lg transition-all ${activeStage === stage.key
+                    ? 'bg-blue-50 border-blue-300'
+                    : 'bg-gray-50 hover:bg-gray-100'
+                    } border`}
                 >
-                  <div 
+                  <div
                     className="flex items-center justify-between cursor-pointer"
                     onClick={() => setActiveStage(activeStage === stage.key ? null : stage.key)}
                   >
@@ -140,7 +175,7 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
                       <Clock className="text-gray-400" />
                     )}
                   </div>
-                  {activeStage === stage.key && (
+                  {/* {activeStage === stage.key && (
                     <textarea
                       value={stageData.notes || ''}
                       onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
@@ -148,7 +183,138 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
                       className="w-full mt-4 p-2 border rounded focus:ring-blue-500"
                       rows={3}
                     />
+                  )} */}
+                  {activeStage === stage.key && (
+                    <div className="mt-4">
+                      {(() => {
+                        switch (stage.key) {
+                          case 'preliminaryScreening':
+                            return (
+                              <div>
+                                <div className="p-4 bg-gray-100 rounded-md">
+                                  <h3 className="text-lg font-semibold">Basic Details</h3>
+                                  <p><strong>Applicant Name:</strong> {application.name} </p>
+                                  <p><strong>Email:</strong> {application.email} </p>
+                                  <p><strong>Application Date:</strong> {new Date(application.submittedAt).toLocaleString()}</p>
+                                  <p><strong>Date Of Birth</strong> {new Date(application.dateOfBirth).toLocaleDateString()}</p>
+                                  <p><strong>Contact Number: </strong> {application.contactNumber}</p>
+                                  <p><strong>School Name : </strong> {application.schoolName}</p>
+
+                                </div>
+
+                                <textarea
+                                  value={stageData.notes || ''}
+                                  onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
+                                  placeholder="Add preliminary screening notes..."
+                                  className="w-full p-2 border rounded focus:ring-blue-500"
+                                  rows={3}
+                                />
+                              </div>
+                            );
+                          case 'eligibilityVerification':
+                            return (
+                              <textarea
+                                value={stageData.notes || ''}
+                                onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
+                                placeholder="Provide Eligibility Verification notes..."
+                                className="w-full p-2 border rounded focus:ring-blue-500"
+                                rows={3}
+                              />
+                            );
+                          case 'documentAuthentication':
+                            return (
+                              <div className="p-4 bg-white rounded-lg shadow-md">
+                                <h2 className="text-xl font-semibold mb-4">Document Authentication</h2>
+
+                                <div className="grid grid-cols-2 gap-4 mb-4">
+                                  {Object.entries(application.documents).map(([docName, docDetails]) => (
+                                    <div
+                                      key={docName}
+                                      className={`border rounded p-3 cursor-pointer flex items-center justify-between ${activeDocument === docName ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                                        }`}
+                                      onClick={() => setActiveDocument(docName)}
+                                    >
+                                      <div className="flex items-center">
+                                        <FileText className="mr-2 text-gray-600" />
+                                        <span className="font-medium">{docName}</span>
+                                      </div>
+                                      <div className="flex items-center">
+                                        {/* <span className="mr-2 text-sm text-gray-500">
+                        Blur Score: {docDetails.blurScore.toFixed(2)}
+                      </span> */}
+                                        {renderStatusIcon(docDetails.status)}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                {activeDocument && (
+                                  <div className="mb-4">
+                                    <h3 className="text-lg font-semibold mb-2">
+                                      Viewing: {activeDocument}
+                                    </h3>
+                                    <div className="flex justify-center mb-4">
+                                      <img
+                                        src={application.documents[activeDocument].url}
+                                        alt={activeDocument}
+                                        className="max-h-96 max-w-full object-contain border rounded"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+
+                                <div className="mt-4">
+                                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Authentication Notes
+                                  </label>
+                                  <textarea
+                                    value={stage.notes || ''}
+                                    onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
+                                    placeholder="Provide Document Authentication notes..."
+                                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    rows={4}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          case 'academicReview':
+                            return (
+                              <div>
+                                <div className="p-4 bg-gray-100 rounded-md">
+                                  <h3 className="text-lg font-semibold">Academic Details</h3>
+                                  <p><strong>Course Of Study:</strong> {application.courseOfStudy} </p>
+                                  <p><strong>Registration Number:</strong> {application.registrationNumber} </p>
+                                  <p><strong>Roll Number:</strong> {application.rollNumber}</p>
+                                  <p><strong>School Name: </strong> {application.schoolName}</p>
+                                  <p><strong>GPA: </strong> {application.gpa}</p>
+                                </div>
+
+                                <textarea
+                                  value={stageData.notes || ''}
+                                  onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
+                                  placeholder="Add Academic Review notes..."
+                                  className="w-full p-2 border rounded focus:ring-blue-500"
+                                  rows={3}
+                                />
+                              </div>
+                            );
+                          case 'finalApproval':
+                            return (
+                              <textarea
+                                value={stageData.notes || ''}
+                                onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
+                                placeholder="Provide Final Approval notes..."
+                                className="w-full p-2 border rounded focus:ring-blue-500"
+                                rows={3}
+                              />
+                            );
+                          default:
+                            return null;
+                        }
+                      })()}
+                    </div>
                   )}
+
                 </div>
               );
             })}
@@ -172,30 +338,30 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
           ) : null}
 
           <div className="flex justify-between mt-6">
-            <button 
-              onClick={onClose} 
+            <button
+              onClick={onClose}
               className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
             >
               Cancel
             </button>
             <div className="space-x-4">
               {!isRejecting ? (
-                <button 
-                  onClick={() => setIsRejecting(true)} 
+                <button
+                  onClick={() => setIsRejecting(true)}
                   className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                 >
                   Reject
                 </button>
               ) : (
-                <button 
-                  onClick={handleReject} 
+                <button
+                  onClick={handleReject}
                   className="px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition-colors"
                 >
                   Confirm Rejection
                 </button>
               )}
-              <button 
-                onClick={handleFinalReview} 
+              <button
+                onClick={handleFinalReview}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Save Review
@@ -239,15 +405,13 @@ const AdminDashboard = () => {
   useEffect(() => {
     let result = applications;
 
-    // Filter by search term
     if (searchTerm) {
-      result = result.filter(app => 
+      result = result.filter(app =>
         app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         app.email.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
-    // Filter by status
     if (filterStatus !== 'all') {
       result = result.filter(app => app.reviewStatus === filterStatus);
     }
@@ -258,8 +422,24 @@ const AdminDashboard = () => {
   const handleReviewComplete = async (reviewData) => {
     try {
       const applicationRef = doc(db, "scholarshipApplications", selectedApplication.id);
+
+      // Prepare email details
+      const emailDetails = prepareEmailDetails(reviewData, selectedApplication);
+      // console.log(emailDetails);
+      // Send email via your existing server endpoint
+      await axios.post('http://localhost:5000/send-application-update-email', {
+        email: selectedApplication.email,
+        ...emailDetails
+      });
+
+      await axios.post('http://localhost:5000/send-message', {
+        phoneNumber: selectedApplication.phoneNumber,
+        message: emailDetails.body
+      });
+      // Update Firestore document
       await updateDoc(applicationRef, reviewData);
 
+      // Update local state
       setApplications((prev) =>
         prev.map((app) =>
           app.id === selectedApplication.id ? { ...app, ...reviewData } : app
@@ -268,9 +448,87 @@ const AdminDashboard = () => {
       setIsReviewModalOpen(false);
     } catch (error) {
       console.error("Error updating application:", error);
+      alert("Failed to update application. Please try again.");
     }
   };
 
+  // Helper function to prepare email details
+  const prepareEmailDetails = (reviewData, application, previousReviewData) => {
+    let subject = "Scholarship Application Status Update";
+    let body = `Dear ${application.name},\n\n`;
+
+    // Status update section
+    if (reviewData.reviewStatus === 'approved') {
+      body += `We are pleased to inform you that your scholarship application has been approved.\n\n`;
+    } else if (reviewData.reviewStatus === 'rejected') {
+      subject = "Scholarship Application Status Update - Action Required";
+      body += `We regret to inform you that your scholarship application has been rejected.\n\n`;
+      if (reviewData.rejectionReason) {
+        body += `Reason for Rejection: ${reviewData.rejectionReason}\n\n`;
+      }
+    } else {
+      body += `Your application is currently under review. Here's the latest update on your application:\n\n`;
+    }
+
+    // Review stages section
+    body += "Review Stages Status:\n";
+
+    const stageLabels = {
+      preliminaryScreening: "Preliminary Screening",
+      eligibilityVerification: "Eligibility Verification",
+      documentAuthentication: "Document Authentication",
+      // personalStatementReview: "Personal Statement Review",
+      // referenceCheck: "Reference Check",
+      academicReview: "Academic Review",
+      // financialNeedAssessment: "Financial Need Assessment",
+      // interviewAssessment: "Interview Assessment",
+      finalApproval: "Final Approval"
+    };
+
+    if (reviewData.reviewStages) {
+      Object.entries(stageLabels).forEach(([stageKey, stageLabel]) => {
+        const stageData = reviewData.reviewStages[stageKey];
+        const previousStageData = previousReviewData?.reviewStages?.[stageKey];
+
+        let stageStatus = "⌛ Pending";
+        if (stageData?.checked) {
+          stageStatus = "✅ Approved";
+        }
+
+        body += `\n${stageLabel}: ${stageStatus}`;
+
+        // Add stage notes if they exist
+        if (stageData?.notes) {
+          body += `\n   Notes: ${stageData.notes}`;
+        }
+
+      });
+    }
+
+    // Overall changes section
+    if (previousReviewData?.reviewStatus !== reviewData.reviewStatus) {
+      body += "\n\nIMPORTANT: Your application status has changed from " +
+        `'${previousReviewData?.reviewStatus || "pending"}' to '${reviewData.reviewStatus}'.`;
+    }
+
+    // Next steps section
+    body += "\n\nNext Steps:";
+    if (reviewData.reviewStatus === 'approved') {
+      body += "\n- You will receive additional information about scholarship disbursement soon.";
+      body += "\n- Please ensure your bank details are up to date in your profile.";
+    } else if (reviewData.reviewStatus === 'rejected') {
+      body += "\n- You may appeal this decision within 14 days.";
+      body += "\n- Contact our support team for guidance on the appeal process.";
+    } else {
+      body += "\n- Continue to monitor your email for further updates.";
+      body += "\n- Ensure all requested documents are submitted and up to date.";
+    }
+
+    body += "\n\nIf you have any questions, please don't hesitate to contact our support team.";
+    body += "\n\nBest regards,\nScholarship Committee";
+
+    return { subject, body };
+  };
   const getStatusColor = (status) => {
     switch (status) {
       case 'approved': return 'bg-green-100 text-green-800';
@@ -323,7 +581,7 @@ const AdminDashboard = () => {
               <div className="p-6">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-xl font-bold text-blue-700">{application.name}</h2>
-                  <span 
+                  <span
                     className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(application.reviewStatus)}`}
                   >
                     {application.reviewStatus || 'Pending'}

@@ -26,7 +26,9 @@ import EKYC from "./components/EKYC";
 import FAQ from "./pages/FAQ";
 import DocumentDownload from './components/DocsDownload';
 import AdminPanel from "./components/AdminSide/AdminPanel";
+import SAGHomePage  from "./components/SAG/SAGHomePage";
 import Home_ from "./pages/Home_";
+import Registration_ from "./pages/Registration_";
 
 const App = () => {
   return (
@@ -38,14 +40,13 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin" element={<AdminSignup />} />
-
+          <Route path="/registration" element={<Registration_ />} />
           <Route
             path="*"
             element={
               <Layout>
                 <Routes>
                   <Route path="/dashboard" element={<Dashboard />} />
-                  
                   <Route path="/home" element={<Home />} />
                   <Route path="/faq" element={<FAQ />} />
                   <Route path="/upload" element={<UploadDocs />} />
@@ -57,21 +58,15 @@ const App = () => {
                     path="/docs-verification"
                     element={<DocsVerification />}
                   />
-
                   <Route path="/download-documents" element={<DocumentDownload />} />
-
                   <Route
                     path="/applications-check"
                     element={<ApplicationsCheck />}
                   />
-
-
                   <Route
                     path="/updatedDashboard"
                     element={<UpdatedDashboard />}
                   />
-
-
                   <Route path="/details/:id" element={<DocDetails />} />
                   <Route
                     path="/editScholarship"
@@ -80,6 +75,10 @@ const App = () => {
                   <Route
                     path="/admin-dashboard"
                     element={<AddScholarshipForm />}
+                  />
+                  <Route
+                    path="/sag-home-page"
+                    element={<SAGHomePage />}
                   />
                   <Route path="/apply" element={<ScholarshipApplication />} />
                   <Route path="/admin-track" element={<ScholarshipList />} />
