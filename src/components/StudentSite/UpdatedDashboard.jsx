@@ -64,11 +64,11 @@ const ScholarshipData = () => {
             { key: 'preliminaryScreening', label: 'Preliminary Screening' },
             { key: 'eligibilityVerification', label: 'Eligibility Verification' },
             { key: 'documentAuthentication', label: 'Document Authentication' },
-            { key: 'personalStatementReview', label: 'Personal Statement Review' },
-            { key: 'referenceCheck', label: 'Reference Check' },
+            // { key: 'personalStatementReview', label: 'Personal Statement Review' },
+            // { key: 'referenceCheck', label: 'Reference Check' },
             { key: 'academicReview', label: 'Academic Review' },
-            { key: 'financialNeedAssessment', label: 'Financial Need Assessment' },
-            { key: 'interviewAssessment', label: 'Interview Assessment' },
+            // { key: 'financialNeedAssessment', label: 'Financial Need Assessment' },
+            // { key: 'interviewAssessment', label: 'Interview Assessment' },
             { key: 'finalApproval', label: 'Final Approval' }
         ];
 
@@ -137,7 +137,6 @@ const ScholarshipData = () => {
             </div>
         );
     }
-// console.log(scholarshipData);
 return (
     <div className="min-h-screen bg-gray-50 p-8">
         <div className="container mx-auto max-w-4xl">
