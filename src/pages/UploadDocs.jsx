@@ -78,71 +78,147 @@ const UploadDocs = () => {
 
   console.log(userData);
   console.log(user.uid);
+ 
+  // const handleUpload = async () => {
+  //   if (uploadedFiles.length === 0) {
+  //     alert("Please select some files first!");
+  //     return;
+  //   }
+
+  //   setIsLoading(true);
+  //   try {
+  //     const userDocRef = doc(firestore, "usersDocs", user.uid);
+
+  //     // Fetch existing data or initialize with an empty object
+  //     const userData = (await getDoc(userDocRef)).data() || {};
+
+  //     const newData = { ...userData };
+
+  //     for (const fileObj of uploadedFiles) {
+  //       const formData = new FormData();
+  //       formData.append("file", fileObj.file);
+
+  //       // Upload file and get the URL
+  //       const response = await axios.post(
+  //         "http://localhost:5000/upload",
+  //         formData
+  //       );
+  //       const uploadedUrl = response.data.file.url;
+  //       console.log(uploadedUrl);
+  //       // const temp =await axios.post("http://localhost:5001/analyze-blur",uploadedUrl);
+  //       // console.log(temp.data);
+
+  //       // Get the current date and time
+  //       const timestamp = new Date().toISOString();
+
+  //       // Determine the document type and update the data
+  //       const docTypeKey = fileObj.type;
+
+  //       if (docTypeKey === "other") {
+  //         // Handle 'Other Docs' as an array of objects
+  //         newData.other_docs = newData.other_docs || [];
+  //         newData.other_docs.push({
+  //           url: uploadedUrl,
+  //           uploadTimestamp: timestamp,
+  //           status: 1,
+  //         });
+  //       } else {
+  //         // Handle single document fields
+  //         newData[docTypeKey] = {
+  //           url: uploadedUrl,
+  //           uploadTimestamp: timestamp,
+  //           status: 1,
+  //         };
+  //       }
+
+  //       console.log(`Uploaded and added ${fileObj.file.name} with timestamp.`);
+  //     }
+
+  //     // Save the updated data to Firestore
+  //     await setDoc(userDocRef, newData);
+
+  //     alert("Files uploaded and metadata saved successfully!");
+  //     setUploadedFiles([]);
+  //   } catch (error) {
+  //     console.error("Error uploading file or saving metadata:", error);
+  //     alert("Upload failed.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
   const handleUpload = async () => {
     if (uploadedFiles.length === 0) {
       alert("Please select some files first!");
       return;
     }
-
+  
     setIsLoading(true);
     try {
       const userDocRef = doc(firestore, "usersDocs", user.uid);
-
-      // Fetch existing data or initialize with an empty object
       const userData = (await getDoc(userDocRef)).data() || {};
-
       const newData = { ...userData };
-
+  
       for (const fileObj of uploadedFiles) {
+        // First upload to Cloudinary
         const formData = new FormData();
         formData.append("file", fileObj.file);
-
-        // Upload file and get the URL
-        const response = await axios.post(
+  
+        const cloudinaryResponse = await axios.post(
           "http://localhost:5000/upload",
           formData
         );
-        const uploadedUrl = response.data.file.url;
-
-        // Get the current date and time
+        const uploadedUrl = cloudinaryResponse.data.file.url;
+  
+        // Check for blur using Python API
+        const blurCheckResponse = await axios.post(
+          "http://localhost:5001/analyze-blur",
+          {
+            image_url: uploadedUrl
+          }
+        );
+  
+        if (blurCheckResponse.data.is_blurry === "True") {
+          // If image is blurry, show error and skip this file
+          alert(`${fileObj.file.name} is too blurry. Please upload a clearer image.`);
+          return;
+        }
+  
+        // If image is not blurry, proceed with Firebase upload
         const timestamp = new Date().toISOString();
-
-        // Determine the document type and update the data
         const docTypeKey = fileObj.type;
-
+  
         if (docTypeKey === "other") {
-          // Handle 'Other Docs' as an array of objects
           newData.other_docs = newData.other_docs || [];
           newData.other_docs.push({
             url: uploadedUrl,
             uploadTimestamp: timestamp,
             status: 1,
+            blurScore: blurCheckResponse.data.blur_score
           });
         } else {
-          // Handle single document fields
           newData[docTypeKey] = {
             url: uploadedUrl,
             uploadTimestamp: timestamp,
             status: 1,
+            blurScore: blurCheckResponse.data.blur_score
           };
         }
-
-        console.log(`Uploaded and added ${fileObj.file.name} with timestamp.`);
+  
+        console.log(`Successfully processed ${fileObj.file.name}`);
       }
-
-      // Save the updated data to Firestore
+  
+      // Save the successfully processed files to Firestore
       await setDoc(userDocRef, newData);
-
-      alert("Files uploaded and metadata saved successfully!");
+      alert("Files processed and uploaded successfully!");
       setUploadedFiles([]);
+  
     } catch (error) {
-      console.error("Error uploading file or saving metadata:", error);
-      alert("Upload failed.");
+      console.error("Error during upload process:", error);
+      alert("Upload failed: " + error.message);
     } finally {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-100 to-purple-100 flex items-center justify-center p-6">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-lg">
