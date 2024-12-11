@@ -51,7 +51,7 @@ const Sidebar = (props) => {
         { name: "Upload Documents", path: "/upload" },
         // { name: "Track Submission Status", path: "/track" },
         { name: "Documents Status", path: "/docs-track" },
-        {name : "Download Your Documents", path : "/download-documents"}
+        // {name : "Download Your Documents", path : "/download-documents"}
         
       ],
     },
