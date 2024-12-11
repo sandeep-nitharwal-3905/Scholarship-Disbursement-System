@@ -54,16 +54,16 @@ const ScholarshipApplication = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     // Get the current user UID from Firebase Authentication
     const auth = getAuth();
     const user = auth.currentUser;
-
+  
     if (!user) {
       toast.error("User not logged in. Please log in to submit your application.");
       return;
     }
-
+  
     // Validate required documents
     for (let doc of requiredDocuments) {
       if (!formData.documents[doc.trim()]) {
@@ -71,17 +71,17 @@ const ScholarshipApplication = () => {
         return;
       }
     }
-
+  
     try {
       // Generate a unique ID for this application
       const applicationRef = doc(collection(db, "scholarshipApplications"));
-
+  
       // Convert file objects to base64 for storage
       const documentsBase64 = {};
       for (const [docName, file] of Object.entries(formData.documents)) {
         documentsBase64[docName] = await convertFileToBase64(file);
       }
-
+  
       // Initialize review stages and review notes
       const reviewStages = {
         academicReview: { checked: false },
@@ -94,7 +94,7 @@ const ScholarshipApplication = () => {
         preliminaryScreening: { checked: false },
         referenceCheck: { checked: false },
       };
-
+  
       const reviewNotes = {
         academicReview: "",
         documentAuthentication: "",
@@ -106,10 +106,12 @@ const ScholarshipApplication = () => {
         preliminaryScreening: "",
         referenceCheck: "",
       };
-
+  
       // Save form data to Firestore with unique application ID
       await setDoc(applicationRef, {
         ...formData,
+        scholarshipId: scholarship?.id, // Store the scholarship ID
+        scholarshipName: scholarship?.name, // Optionally include the name
         documents: documentsBase64,
         dateOfBirth: formData.dateOfBirth?.toISOString(),
         submittedAt: new Date().toISOString(),
@@ -118,7 +120,7 @@ const ScholarshipApplication = () => {
         reviewStatus: "pending", // Initial review status
         userId: user.uid, // Store the UID of the logged-in user
       });
-
+  
       toast.success("Application submitted successfully!");
       navigate("/dashboard");
     } catch (error) {
@@ -126,6 +128,7 @@ const ScholarshipApplication = () => {
       toast.error("Failed to submit application. Please try again.");
     }
   };
+  
 
   // Helper function to convert file to base64
   const convertFileToBase64 = (file) => {
