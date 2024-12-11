@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
+import { Camera, FileText, CheckCircle, AlertCircle } from 'lucide-react';
 import { db } from "../../Firebase";
 import { 
   ClipboardList, 
   Eye, 
   Check, 
   X, 
-  FileText, 
+   
   Clock, 
   Search, 
   Filter,
@@ -15,6 +16,23 @@ import {
 import axios from "axios";
 
 const ReviewModal = ({ application, onClose, onReviewComplete }) => {
+  const [activeDocument, setActiveDocument] = useState(null);
+
+  // Render status icon based on document status
+  const renderStatusIcon = (status) => {
+    switch(status) {
+      case 1: 
+        return <CheckCircle className="text-green-500" />;
+      case 0:
+        return <AlertCircle className="text-yellow-500" />;
+      default:
+        return <AlertCircle className="text-gray-500" />;
+    }
+  };
+
+  const formatTimestamp = (timestamp) => {
+    return new Date(timestamp).toLocaleString();
+  };
   const [reviewStages, setReviewStages] = useState({});
   const [activeStage, setActiveStage] = useState(null);
   const [rejectionReason, setRejectionReason] = useState('');
@@ -188,13 +206,60 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
           );
         case 'documentAuthentication':
           return (
-            <textarea
-              value={stageData.notes || ''}
-              onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
-              placeholder="Provide Document Authentication notes..."
-              className="w-full p-2 border rounded focus:ring-blue-500"
-              rows={3}
-            />
+            <div className="p-4 bg-white rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold mb-4">Document Authentication</h2>
+              
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                {Object.entries(application.documents).map(([docName, docDetails]) => (
+                  <div 
+                    key={docName} 
+                    className={`border rounded p-3 cursor-pointer flex items-center justify-between ${
+                      activeDocument === docName ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                    }`}
+                    onClick={() => setActiveDocument(docName)}
+                  >
+                    <div className="flex items-center">
+                      <FileText className="mr-2 text-gray-600" />
+                      <span className="font-medium">{docName}</span>
+                    </div>
+                    <div className="flex items-center">
+                      {/* <span className="mr-2 text-sm text-gray-500">
+                        Blur Score: {docDetails.blurScore.toFixed(2)}
+                      </span> */}
+                      {renderStatusIcon(docDetails.status)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+        
+              {activeDocument && (
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold mb-2">
+                    Viewing: {activeDocument}
+                  </h3>
+                  <div className="flex justify-center mb-4">
+                    <img 
+                      src={application.documents[activeDocument].url} 
+                      alt={activeDocument}
+                      className="max-h-96 max-w-full object-contain border rounded"
+                    />
+                  </div>
+                </div>
+              )}
+        
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Authentication Notes
+                </label>
+                <textarea
+                  value={stage.notes || ''}
+                  onChange={(e) => updateStageStatus(stage.key, "notes", e.target.value)}
+                  placeholder="Provide Document Authentication notes..."
+                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={4}
+                />
+              </div>
+            </div>
           );
         case 'academicReview':
           return (
