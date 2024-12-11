@@ -189,7 +189,7 @@ const ScholarshipSignup = () => {
       setLoading(true);
       setError("");
 
-      const response = await fetch("http://localhost:5000/generate-otp-phone", {
+      const response = await fetch("http://172.16.11.157:5007/generate-otp-phone", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -221,7 +221,7 @@ const ScholarshipSignup = () => {
     try {
       setLoading(true);
       setError("");
-      const response = await fetch("http://localhost:5000/verify-otp-phone", {
+      const response = await fetch("http://172.16.11.157:5007/verify-otp-phone", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

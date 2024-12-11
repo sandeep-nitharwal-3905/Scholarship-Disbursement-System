@@ -83,14 +83,14 @@ const ScholarshipApplication = () => {
           const formData = new FormData();
           formData.append("file", file);
           const cloudinaryResponse = await axios.post(
-            "http://localhost:5000/upload",
+            "http://172.16.11.157:5007/upload",
             formData
           );
           const uploadedUrl = cloudinaryResponse.data.file.url;
   
           // Check for blur using Python API
           const blurCheckResponse = await axios.post(
-            "http://localhost:5001/analyze-blur",
+            "http://172.16.11.157:5007/analyze-blur",
             {
               image_url: uploadedUrl
             }
