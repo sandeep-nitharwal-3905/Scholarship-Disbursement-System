@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getDatabase, ref, get } from "firebase/database";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { 
   getFirestore, 
   doc, 
@@ -182,10 +184,21 @@ const DocDetails = () => {
       setDocument(currentDoc);
       setVerificationStatus({ ...verificationStatus });
 
-      alert(`Document ${docType} status updated to ${status}`);
+      //alert("Document ${docType} status updated to");
+      toast.warning(`Document ${docType} status updated successfully.`, {
+        position: "top-right",
+        style: { fontSize: "1.25rem", padding: "1rem" },
+        autoClose: 3000,
+      });
     } catch (error) {
-      console.error("Error updating document status:", error);
-      alert("Failed to update document status");
+      console.log(error);
+      //console.error("Error updating document status:", error);
+    // alert("Failed to update document status");
+      toast.error("Failed to update document status", {
+        position: "top-right",
+        style: { fontSize: "1.25rem", padding: "1rem" },
+        autoClose: 3000,
+      });
     }
   };
 

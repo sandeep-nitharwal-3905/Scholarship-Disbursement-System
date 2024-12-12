@@ -55,11 +55,6 @@ const PMSSSPortal = () => {
       label: "Signup",
       path: "/signup",
     },
-    {
-      icon: <Award className="mr-3" size={20} />,
-      label: "Available Scholarships",
-      path: "/viewScholarships",
-    },
   ];
 
   const instituteItems = [
@@ -96,7 +91,7 @@ const PMSSSPortal = () => {
       {/* Header with Tricolor */}
       <header className="bg-gradient-to-b from-[#0d121d] to-[#0d121d] text-white">
         {/* Navigation Bar 1 */}
-        <div className="flex justify-between items-center px-4 py-2">
+        <div className="flex justify-between items-center px-6 py-4">
           <div className="text-xl font-bold text-center flex-1">
             Scholarship Disbursement System
           </div>
@@ -118,7 +113,7 @@ const PMSSSPortal = () => {
             </div>
 
             {/* Desktop Navigation Links */}
-            <div className="hidden sm:flex space-x-6">
+            <div className="hidden sm:flex space-x-7">
               <a
                 href="#"
                 className="flex items-center text-white hover:text-[#008000] mb-2 sm:mb-0"
@@ -127,18 +122,11 @@ const PMSSSPortal = () => {
                 Home
               </a>
               <a
-                href="#"
+                href="/about"
                 className="flex items-center text-white hover:text-[#008000] mb-2 sm:mb-0"
               >
                 <School className="mr-2" size={20} />
                 About PMSSS
-              </a>
-              <a
-                href="/viewScholarships"
-                className="flex items-center text-white hover:text-[#008000] mb-2 sm:mb-0"
-              >
-                <Award className="mr-2" size={20} />
-                Scholarship Details
               </a>
               <a
                 href="#"
@@ -192,7 +180,7 @@ const PMSSSPortal = () => {
 
         {/* Main Content Area */}
         <div className="min-h-screen w-screen bg-gradient-to-b from-blue-100 to-white">
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+          <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
             <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
               {/* Quote Section */}
               <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-8 sm:p-10">
