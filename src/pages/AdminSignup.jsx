@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { registerUser } from "../firebase/auth"; // Adjust the path if necessary
+import { registerUser } from "../firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Lock, Mail, User, Phone, Calendar } from "lucide-react";
 
 const AdminSignup = () => {
   const [fullName, setFullName] = useState("");
@@ -16,7 +17,6 @@ const AdminSignup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      // Pass 'admin' as the role
       await registerUser(email, password, fullName, dob, phoneNumber, "admin");
       toast.success("Admin sign up successful!");
       setTimeout(() => {
@@ -30,64 +30,88 @@ const AdminSignup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-blue-200">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300 p-4">
       <ToastContainer />
-      <div className="bg-gray-100 p-10 rounded-lg shadow-lg text-center w-[400px]">
-        <h1 className="text-4xl font-bold text-gray-800 mb-10">
-          Scholarship Portal
-        </h1>
-        <form onSubmit={handleSignup}>
-          <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2 border-gray-300">
-            Admin Signup
-          </h2>
-          <input
-            type="text"
-            placeholder="Full Name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
-            required
-          />
-          <input
-            type="date"
-            placeholder="Date of Birth"
-            value={dob}
-            onChange={(e) => setDob(e.target.value)}
-            className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
-            required
-          />
-          <input
-            type="email"
-            placeholder="Admin Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
-            required
-          />
-          <input
-            type="tel"
-            placeholder="Phone Number"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
-            required
-          />
+      <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+        <div className="bg-blue-600 text-white p-6 text-center">
+          <h1 className="text-3xl font-bold">Scholarship Portal</h1>
+          <p className="text-blue-100 mt-2">Admin Registration</p>
+        </div>
+        
+        <form onSubmit={handleSignup} className="p-6 space-y-4">
+          <div className="relative">
+            <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Full Name"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="w-full pl-10 p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+              required
+            />
+          </div>
+
+          <div className="relative">
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="date"
+              placeholder="Date of Birth"
+              value={dob}
+              onChange={(e) => setDob(e.target.value)}
+              className="w-full pl-10 p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+              required
+            />
+          </div>
+
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="email"
+              placeholder="Admin Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full pl-10 p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+              required
+            />
+          </div>
+
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full pl-10 p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+              required
+            />
+          </div>
+
+          <div className="relative">
+            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="tel"
+              placeholder="Phone Number"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              className="w-full pl-10 p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+              required
+            />
+          </div>
+
           <button
             type="submit"
-            className="w-full bg-gray-800 text-white py-3 rounded-lg mt-4 transition-transform transform hover:scale-105 active:scale-95"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors duration-300 ease-in-out transform hover:scale-[1.02] active:scale-95"
           >
-            Signup as Admin
+            Create Admin Account
           </button>
         </form>
-        {error && <p className="text-red-500 mt-4">{error}</p>}
+
+        {error && (
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 mx-6 mb-6">
+            <p className="text-red-700">{error}</p>
+          </div>
+        )}
       </div>
     </div>
   );
