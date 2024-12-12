@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const cloudName = "dmqzrmtsf";
 
 const CloudinaryUpload = () => {
@@ -14,7 +15,12 @@ const CloudinaryUpload = () => {
 
   const handleUpload = async () => {
     if (!file) {
-      alert("Please select a file first!");
+      //alert("Please select a file first!");
+      toast.warning("Please select a file first!", {
+        position: "top-right",
+        style: { fontSize: "1.25rem", padding: "1rem" },
+        autoClose: 3000,
+      });
       return;
     }
 
@@ -35,8 +41,13 @@ const CloudinaryUpload = () => {
       console.log("File uploaded successfully:", uploadedUrl);
       setFileUrl(uploadedUrl);
     } catch (error) {
-      console.error("Error uploading file:", error);
-      alert("Upload failed.");
+      //console.error("Error uploading file:", error);
+      //alert("Upload failed.");
+      toast.error("Upload failed", {
+        position: "top-right",
+        style: { fontSize: "1.25rem", padding: "1rem" },
+        autoClose: 3000,
+      });
     } finally {
       setLoading(false);
     }

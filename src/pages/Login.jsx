@@ -138,7 +138,7 @@ const StudentLogin = () => {
       toast.success("Student logged in successfully!");
 
       setTimeout(() => {
-        navigate("/dashboard", {
+        navigate("/home", {
           state: { uid: userData.uid, role: "student" },
         });
       }, 2000);

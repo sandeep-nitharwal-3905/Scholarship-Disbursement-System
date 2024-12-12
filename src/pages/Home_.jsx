@@ -192,7 +192,7 @@ const PMSSSPortal = () => {
 
         {/* Main Content Area */}
         <div className="min-h-screen w-screen bg-gradient-to-b from-blue-100 to-white">
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+          <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
             <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
               {/* Quote Section */}
               <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-8 sm:p-10">
