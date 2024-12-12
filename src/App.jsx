@@ -46,33 +46,19 @@ const App = () => {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin" element={<AdminSignup />} />
           <Route path="/registration" element={<Registration_ />} />
-          {/* <Route path="/about" element={<AboutPage />} ///> */}
           <Route path="/forbidden" element={<ForbiddenPage />} />
-
           <Route
             path="/sag-home-page"
             element={
               <ProtectedRoute element={<SAGHomePage />} role="SAG" />
             }
           />
-
           <Route
             path="*"
             element={
               <Layout>
                 <Routes>
-
-                <Route path="/about" element={<AboutPage />} />
-                  <Route path="/viewScholarships" element={<StudentTrack />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/home" element={<Home />} />
-                  <Route path="/faq" element={<FAQ />} />
-                  <Route path="/upload" element={<UploadDocs />} />
-                  <Route path="/track" element={<Track />} />
-                  <Route path="/ekyc0" element={<EKYC />} />
-                  <Route path="/ekyc1" element={<AdminPanel />} />
-                  <Route path="/docs-track" element={<DocsTrack />} />
-                  <Route path ="/contactd" element={<Contactd />} />
+                  <Route path="/about" element={<AboutPage />} />
                   <Route
                     path="/viewScholarships"
                     element={
