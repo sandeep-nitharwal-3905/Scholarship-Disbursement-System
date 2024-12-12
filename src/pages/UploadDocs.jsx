@@ -6,6 +6,8 @@ import { getDatabase, ref, get } from "firebase/database";
 import { useFirebase } from "../firebase/FirebaseContext";
 import app from "../Firebase";
 const cloudName = "dmqzrmtsf";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   getFirestore,
   doc,
@@ -148,7 +150,10 @@ const UploadDocs = () => {
   // };
   const handleUpload = async () => {
     if (uploadedFiles.length === 0) {
-      alert("Please select some files first!");
+      toast.warning("Failed to fetch applications", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       return;
     }
   
@@ -179,7 +184,12 @@ const UploadDocs = () => {
   
         if (blurCheckResponse.data.is_blurry === "True") {
           // If image is blurry, show error and skip this file
-          alert(`${fileObj.file.name} is too blurry. Please upload a clearer image.`);
+          toast.error(`${fileObj.file.name} is too blurry. Please upload a clearer image.`, {
+            position: "top-right",
+            style: { fontSize: "1.25rem", padding: "1rem" },
+            autoClose: 3000,
+          });
+          //alert(`${fileObj.file.name} is too blurry. Please upload a clearer image.`);
           return;
         }
   
@@ -209,12 +219,22 @@ const UploadDocs = () => {
   
       // Save the successfully processed files to Firestore
       await setDoc(userDocRef, newData);
-      alert("Files processed and uploaded successfully!");
+      //alert("Files processed and uploaded successfully!");
+      toast.success("Files processed and uploaded successfully!", {
+        position: "top-right",
+        style: { fontSize: "1.25rem", padding: "1rem" },
+        autoClose: 3000,
+      });
       setUploadedFiles([]);
   
     } catch (error) {
-      console.error("Error during upload process:", error);
-      alert("Upload failed: " + error.message);
+      //console.error("Error during upload process:", error);
+      toast.error("Error during upload process:", error, {
+        position: "top-right",
+        style: { fontSize: "1.25rem", padding: "1rem" },
+        autoClose: 3000,
+      });
+      //alert("Upload failed: " + error.message);
     } finally {
       setIsLoading(false);
     }
