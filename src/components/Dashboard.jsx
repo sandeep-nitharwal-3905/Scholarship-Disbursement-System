@@ -43,10 +43,10 @@ const Dashboard = () => {
       // Process document statistics
       const allDocuments = documentsSnapshot.docs.map(doc => doc.data());
       const submittedDocuments = allDocuments.filter(doc => 
-        doc.status2 !== undefined
+        doc.status === 1
       );
       const verifiedDocuments = allDocuments.filter(doc => 
-        doc.status2 === 2
+        doc.status === 2
       );
       console.log(submittedDocuments, verifiedDocuments);
 

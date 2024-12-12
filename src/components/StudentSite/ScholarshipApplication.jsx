@@ -95,7 +95,12 @@ const ScholarshipApplication = () => {
           );
 
           if (blurCheckResponse.data.is_blurry === "True") {
-            alert(`${docName} is too blurry. Please upload a clearer image.`);
+            toast.warning(`${docName} is too blurry. Please upload a clearer image.`, {
+              position: "top-right",
+              style: { fontSize: "1.25rem", padding: "1rem" },
+              autoClose: 3000,
+            });
+            //alert(`${docName} is too blurry. Please upload a clearer image.`);
             setIsSubmitting(false);
             return;
           }

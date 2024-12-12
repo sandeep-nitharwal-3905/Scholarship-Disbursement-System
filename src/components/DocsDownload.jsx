@@ -71,8 +71,13 @@ const DocumentDownload = () => {
       // For Cloudinary URLs, simply open the URL directly
       window.open(documentUrl, '_blank');
     } catch (error) {
-      console.error("Download error:", error);
-      alert("Failed to download document");
+      //console.error("Download error:", error);
+      //alert("Failed to download document");
+      toast.warning("Failed to download document",  {
+        position: "top-right",
+        style: { fontSize: "1.25rem", padding: "1rem" },
+        autoClose: 3000,
+      });
     }
   };
 
