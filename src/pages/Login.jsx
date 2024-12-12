@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { loginUser } from "../firebase/auth";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -11,42 +11,63 @@ const Login = () => {
   const [isPageLoaded, setIsPageLoaded] = useState(false);
   const [error, setError] = useState("");
 
-  console.log(name)
   useEffect(() => {
     setTimeout(() => {
       setIsPageLoaded(true);
     }, 500);
   }, []);
 
-  const handleSelectRole = (selectedRole) => {
-    setRole(selectedRole);
-  };
-
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-blue-200">
+    <div
+      className="min-h-screen flex items-center justify-center relative bg-cover bg-center"
+      style={{
+        backgroundImage: `url('https://www.bpmb.com.my/wp-content/uploads/bagus-scholarship.jpg')`,
+      }}
+    >
       <ToastContainer />
-      <div
-        className={`${isPageLoaded
-          ? "opacity-100 translate-y-0"
-          : "opacity-0 translate-y-12"
-          } transition-all duration-800 ease-out bg-gray-100 p-10 rounded-lg shadow-lg text-center w-[400px]`}
-      >
-        <h1 className="text-4xl font-bold text-gray-800 mb-10">
-          Scholarship Portal
-        </h1>
-        {name === "admin" ? (
-          <AdminLogin/>
-        ) : (
-          <StudentLogin/>
-        )}
-        {error && <p className="text-red-500 mt-4">{error}</p>}
+      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-40"></div>
+      <div className="container mx-auto flex flex-col md:flex-row items-center justify-between relative z-10 px-4">
+        {/* Left Content */}
+        <div
+          className={`text-white max-w-md text-center md:text-left mb-8 md:mb-0 transition-all duration-700 ${isPageLoaded ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8"
+            }`}
+        >
+          <h1 className="text-7xl font-bold mb-4 animate-fadeIn" style={{
+    WebkitTextStroke: "1px #000", // Black border
+    color: "white", // Fill color
+  }}>
+            Empower Your Future
+          </h1>
+          <p className="text-lg mb-6" >
+            Welcome to the Scholarship Disbursement System. Our platform is
+            designed to help students achieve their dreams by connecting them
+            with the financial resources they need.
+          </p>
+          <p className="text-lg">
+            Whether you're a student seeking opportunities or an administrator
+            managing funds, we're here to make the process seamless and
+            efficient.
+          </p>
+        </div>
+        {/* Right Login Form */}
+        <div
+          className={`${isPageLoaded
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-12"
+            } transition-all duration-800 ease-out bg-gray-100 p-10 rounded-lg shadow-lg text-center w-full md:w-[400px]`}
+        >
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">
+            <span className="text-blue-600">Scholarship System</span>
+          </h1>
+          {name === "admin" ? <AdminLogin /> : <StudentLogin />}
+          {error && <p className="text-red-500 mt-4">{error}</p>}
+        </div>
       </div>
     </div>
   );
 };
 
-const AdminLogin = ({ onBack }) => {
+const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -57,7 +78,6 @@ const AdminLogin = ({ onBack }) => {
       const userData = await loginUser(email, password);
       toast.success("Admin logged in successfully!");
 
-      // Navigate to the admin dashboard with uid
       setTimeout(() => {
         navigate("/admin-dashboard", {
           state: { uid: userData.uid, role: "admin" },
@@ -70,7 +90,7 @@ const AdminLogin = ({ onBack }) => {
   };
 
   return (
-    <div className="animate-slideIn">
+    <div className="animate-fadeIn">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2 border-gray-300">
         Admin Login
       </h2>
@@ -95,20 +115,18 @@ const AdminLogin = ({ onBack }) => {
         >
           Login as Admin
         </button>
+        <Link
+          to="/signup"
+          className="block w-full bg-blue-600 text-white py-3 rounded-lg mt-4 transition-transform transform hover:scale-105 active:scale-95"
+        >
+          Sign Up
+        </Link>
       </form>
-
-      {/* Sample credentials box */}
-      <div className="bg-gray-100 p-4 rounded-lg mt-6 border border-gray-300 text-gray-700">
-        <h3 className="font-semibold mb-2">Sample Login Credentials:</h3>
-        <p>Email: Admin@gmail.com</p>
-        <p>Password: 123456</p>
-      </div>
     </div>
   );
 };
 
-
-const StudentLogin = ({ onBack }) => {
+const StudentLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -119,7 +137,6 @@ const StudentLogin = ({ onBack }) => {
       const userData = await loginUser(email, password);
       toast.success("Student logged in successfully!");
 
-      // Navigate to the student dashboard with uid
       setTimeout(() => {
         navigate("/dashboard", {
           state: { uid: userData.uid, role: "student" },
@@ -132,7 +149,7 @@ const StudentLogin = ({ onBack }) => {
   };
 
   return (
-    <div className="animate-slideIn">
+    <div className="animate-fadeIn">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2 border-gray-300">
         Student Login
       </h2>
@@ -157,14 +174,13 @@ const StudentLogin = ({ onBack }) => {
         >
           Login as Student
         </button>
+        <Link
+          to="/signup"
+          className="block w-full bg-blue-600 text-white py-3 rounded-lg mt-4 transition-transform transform hover:scale-105 active:scale-95"
+        >
+          Sign Up
+        </Link>
       </form>
-      {/* Sample credentials box */}
-      <div className="bg-gray-100 p-4 rounded-lg mt-6 border border-gray-300 text-gray-700">
-        <h3 className="font-semibold mb-2">Sample Login Credentials:</h3>
-        <p>Email: Student@gmail.com</p>
-        <p>Password: 123456</p>
-      </div>
-
     </div>
   );
 };
