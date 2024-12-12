@@ -432,10 +432,10 @@ const AdminDashboard = () => {
         ...emailDetails
       });
 
-      await axios.post('http://localhost:5000/send-message', {
-        phoneNumber: selectedApplication.phoneNumber,
-        message: emailDetails.body
-      });
+      // await axios.post('http://localhost:5000/send-message', {
+      //   phoneNumber: selectedApplication.phoneNumber,
+      //   message: emailDetails.body
+      // });
       // Update Firestore document
       await updateDoc(applicationRef, reviewData);
 
