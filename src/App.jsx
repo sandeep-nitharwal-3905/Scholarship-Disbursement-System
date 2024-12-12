@@ -29,6 +29,7 @@ import SAGHomePage from "./components/SAG/SAGHomePage";
 import Home_ from "./pages/Home_";
 import Registration_ from "./pages/Registration_";
 import Contactd from "./pages/contactd";
+import "./App.css";
 import AboutPage from "./pages/Home_About";
 import ProtectedRoute from "./pages/ProtectedRoutes";
 
@@ -45,15 +46,24 @@ const App = () => {
           <Route path="/admin" element={<AdminSignup />} />
           <Route path="/registration" element={<Registration_ />} />
           <Route path="/sag-home-page" element={<SAGHomePage />} />
-          <Route path="/about" element={<AboutPage />} />
 
-          {/* Protected Routes */}
           <Route
             path="*"
             element={
               <Layout>
                 <Routes>
-                  {/* Student Routes */}
+
+                <Route path="/about" element={<AboutPage />} />
+                  <Route path="/viewScholarships" element={<StudentTrack />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/home" element={<Home />} />
+                  <Route path="/faq" element={<FAQ />} />
+                  <Route path="/upload" element={<UploadDocs />} />
+                  <Route path="/track" element={<Track />} />
+                  <Route path="/ekyc0" element={<EKYC />} />
+                  <Route path="/ekyc1" element={<AdminPanel />} />
+                  <Route path="/docs-track" element={<DocsTrack />} />
+
                   <Route
                     path="/viewScholarships"
                     element={
