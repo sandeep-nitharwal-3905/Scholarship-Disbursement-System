@@ -132,6 +132,11 @@ const AdminLogin = () => {
           Sign Up
         </Link>
       </form>
+      <div className="bg-gray-100 p-4 rounded-lg mt-6 border border-gray-300 text-gray-700">
+        <h3 className="font-semibold mb-2">Sample Login Credentials:</h3>
+        <p>Email: admin@gmail.com</p>
+        <p>Password: 123456</p>
+      </div>
     </div>
   );
 };
@@ -192,6 +197,11 @@ const StudentLogin = () => {
           Sign Up
         </Link>
       </form>
+      <div className="bg-gray-100 p-4 rounded-lg mt-6 border border-gray-300 text-gray-700">
+        <h3 className="font-semibold mb-2">Sample Login Credentials:</h3>
+        <p>Email: Student@gmail.com</p>
+        <p>Password: 123456</p>
+      </div>
     </div>
   );
 };
@@ -252,6 +262,11 @@ const SAGLogin = () => {
           Sign Up
         </Link>
       </form>
+      <div className="bg-gray-100 p-4 rounded-lg mt-6 border border-gray-300 text-gray-700">
+        <h3 className="font-semibold mb-2">Sample Login Credentials:</h3>
+        <p>Email: sag@gmail.com</p>
+        <p>Password: 123456</p>
+      </div>
     </div>
   );
 };
