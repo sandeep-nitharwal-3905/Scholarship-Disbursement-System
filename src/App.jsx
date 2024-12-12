@@ -15,7 +15,6 @@ import AddScholarshipForm from "./components/AdminSide/AddScholarshipForm";
 import ScholarshipList from "./components/ScholarshipList";
 import StudentTrack from "./components/StudentTrack";
 import ScholarshipApplication from "./components/StudentSite/ScholarshipApplication";
-import "react-toastify/dist/ReactToastify.css";
 import EditScholarship from "./components/EditScholarship";
 import DocsTrack from "./components/AdminSide/DocsTrack";
 import DocsVerification from "./components/AdminSide/DocsVerification";
@@ -31,12 +30,15 @@ import Home_ from "./pages/Home_";
 import Registration_ from "./pages/Registration_";
 import Contactd from "./pages/contactd";
 import AboutPage from "./pages/Home_About";
+import ProtectedRoute from "./pages/ProtectedRoutes";
+
 const App = () => {
   return (
     <>
       <Analytics />
       <Router>
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Home_ />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
@@ -44,54 +46,113 @@ const App = () => {
           <Route path="/registration" element={<Registration_ />} />
           <Route path="/sag-home-page" element={<SAGHomePage />} />
           <Route path="/about" element={<AboutPage />} />
+
+          {/* Protected Routes */}
           <Route
             path="*"
             element={
               <Layout>
                 <Routes>
-                  <Route path="/viewScholarships" element={<StudentTrack />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/home" element={<Home />} />
-                  <Route path="/faq" element={<FAQ />} />
-                  <Route path="/upload" element={<UploadDocs />} />
-                  <Route path="/track" element={<Track />} />
-                  <Route path="/ekyc0" element={<EKYC />} />
-                  <Route path="/ekyc1" element={<AdminPanel />} />
-                  <Route path="/docs-track" element={<DocsTrack />} />
+                  {/* Student Routes */}
                   <Route
-                    path="/docs-verification"
-                    element={<DocsVerification />}
+                    path="/viewScholarships"
+                    element={
+                      <ProtectedRoute element={<StudentTrack />} role="student" />
+                    }
                   />
                   <Route
-                    path="/download-documents"
-                    element={<DocumentDownload />}
+                    path="/dashboard"
+                    element={<ProtectedRoute element={<Dashboard />} role="student" />}
                   />
                   <Route
-                    path="/applications-check"
-                    element={<ApplicationsCheck />}
+                    path="/home"
+                    element={<ProtectedRoute element={<Home />} role="student" />}
+                  />
+                  <Route
+                    path="/faq"
+                    element={<ProtectedRoute element={<FAQ />} role="student" />}
+                  />
+                  <Route
+                    path="/upload"
+                    element={<ProtectedRoute element={<UploadDocs />} role="student" />}
+                  />
+                  <Route
+                    path="/track"
+                    element={<ProtectedRoute element={<Track />} role="student" />}
+                  />
+                  <Route
+                    path="/apply"
+                    element={
+                      <ProtectedRoute element={<ScholarshipApplication />} role="student" />
+                    }
                   />
                   <Route
                     path="/updatedDashboard"
-                    element={<UpdatedDashboard />}
+                    element={
+                      <ProtectedRoute element={<UpdatedDashboard />} role="student" />
+                    }
                   />
-                  <Route path="/details/:id" element={<DocDetails />} />
                   <Route
-                    path="/editScholarship"
-                    element={<EditScholarship />}
+                    path="/details/:id"
+                    element={<ProtectedRoute element={<DocDetails />} role="student" />}
+                  />
+
+                  {/* Admin Routes */}
+                  <Route
+                    path="/ekyc0"
+                    element={<ProtectedRoute element={<EKYC />} role="student" />}
+                  />
+                  <Route
+                    path="/ekyc1"
+                    element={<ProtectedRoute element={<AdminPanel />} role="admin" />}
+                  />
+                  <Route
+                    path="/docs-track"
+                    element={<ProtectedRoute element={<DocsTrack />} role="student" />}
+                  />
+                  <Route
+                    path="/docs-verification"
+                    element={
+                      <ProtectedRoute element={<DocsVerification />} role="admin" />
+                    }
+                  />
+                  <Route
+                    path="/download-documents"
+                    element={
+                      <ProtectedRoute element={<DocumentDownload />} role="student" />
+                    }
+                  />
+                  <Route
+                    path="/applications-check"
+                    element={
+                      <ProtectedRoute element={<ApplicationsCheck />} role="admin" />
+                    }
                   />
                   <Route
                     path="/admin-dashboard"
-                    element={<AddScholarshipForm />}
+                    element={
+                      <ProtectedRoute element={<AddScholarshipForm />} role="admin" />
+                    }
                   />
-                  <Route path="/apply" element={<ScholarshipApplication />} />
-                  <Route path="/admin-track" element={<ScholarshipList />} />
+                  <Route
+                    path="/admin-track"
+                    element={<ProtectedRoute element={<ScholarshipList />} role="admin" />}
+                  />
                   <Route
                     path="/admin-scholarship-list"
-                    element={<ScholarshipList />}
+                    element={
+                      <ProtectedRoute element={<ScholarshipList />} role="admin" />
+                    }
                   />
                   <Route
-                    path="//admin-add-scholarship"
-                    element={<AddScholarshipForm />}
+                    path="/admin-add-scholarship"
+                    element={
+                      <ProtectedRoute element={<AddScholarshipForm />} role="admin" />
+                    }
+                  />
+                  <Route
+                    path="/editScholarship"
+                    element={<ProtectedRoute element={<EditScholarship />} role="admin" />}
                   />
                 </Routes>
               </Layout>
