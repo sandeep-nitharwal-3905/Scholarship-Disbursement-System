@@ -31,6 +31,7 @@ import Registration_ from "./pages/Registration_";
 import Contactd from "./pages/contactd";
 import AboutPage from "./pages/Home_About";
 import ProtectedRoute from "./pages/ProtectedRoutes";
+import ForbiddenPage from "./pages/forbidden";
 
 const App = () => {
   return (
@@ -46,6 +47,7 @@ const App = () => {
           <Route path="/registration" element={<Registration_ />} />
           <Route path="/sag-home-page" element={<SAGHomePage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/forbidden" element={<ForbiddenPage />} />
 
           {/* Protected Routes */}
           <Route
