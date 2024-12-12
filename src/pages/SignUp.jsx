@@ -12,9 +12,11 @@ import {
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../Firebase";
-import { getDatabase, ref, set, get } from "firebase/database";
-import app from "../Firebase";
+// import { getDatabase, set, get } from "firebase/database";
+import { ref, get, query, orderByChild, equalTo,getDatabase, set } from "firebase/database";
 
+import app from "../Firebase";
+import { collection, where, getDocs } from "firebase/firestore";
 const auth = getAuth(app);
 const database = getDatabase(app);
 
@@ -180,32 +182,42 @@ const ScholarshipSignup = () => {
     setCollegeInfo({ institutionName: "", course: "", cgpa: "" });
     setAgreeTerms(false);
   };
-
   const handleGenerateOTP = async () => {
     if (!validateForm()) {
       return;
     }
+  
     try {
       setLoading(true);
       setError("");
 
+      // Check if email already exists in Realtime Database
+      const usersRef = ref(database, "users"); // Adjust the path if your user data is stored elsewhere
+      const emailQuery = query(usersRef, orderByChild("email"), equalTo(email));
+      const snapshot = await get(emailQuery);
+        console.log(snapshot.exists())
+      if (snapshot.exists()) {
+        toast.error("A user with this email already exists. Please use a different email.");
+        return;
+      }
+      // Proceed with OTP generation
       const response = await fetch("http://172.16.11.157:5007/generate-otp-phone", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          phoneNumber: "+91" + phoneNumber
+          phoneNumber: "+91" + phoneNumber,
         }),
       });
-
+  
       const data = await response.json();
-
+  
       if (!response.ok) {
         console.error("OTP generation failed:", data.error);
         throw new Error(data.error || "Failed to generate OTP");
       }
-
+  
       console.log("OTP sent successfully");
       setSuccessMessage("OTP sent successfully to your email");
       setStep(2); // Move to the next step
@@ -216,6 +228,42 @@ const ScholarshipSignup = () => {
       setLoading(false);
     }
   };
+  
+  // const handleGenerateOTP = async () => {
+  //   if (!validateForm()) {
+  //     return;
+  //   }
+  //   try {
+  //     setLoading(true);
+  //     setError("");
+
+  //     const response = await fetch("http://172.16.11.157:5007/generate-otp-phone", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         phoneNumber: "+91" + phoneNumber
+  //       }),
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (!response.ok) {
+  //       console.error("OTP generation failed:", data.error);
+  //       throw new Error(data.error || "Failed to generate OTP");
+  //     }
+
+  //     console.log("OTP sent successfully");
+  //     setSuccessMessage("OTP sent successfully to your email");
+  //     setStep(2); // Move to the next step
+  //   } catch (err) {
+  //     console.error("Error during OTP generation:", err.message);
+  //     setError(err.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handleVerifyOTP = async () => {
     try {

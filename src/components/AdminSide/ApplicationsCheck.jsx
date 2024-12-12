@@ -427,12 +427,12 @@ const AdminDashboard = () => {
       const emailDetails = prepareEmailDetails(reviewData, selectedApplication);
       // console.log(emailDetails);
       // Send email via your existing server endpoint
-      await axios.post('http://172.16.11.157:5005/send-application-update-email', {
+      await axios.post('http://172.16.11.157:5007/send-application-update-email', {
         email: selectedApplication.email,
         ...emailDetails
       });
 
-      await axios.post('http://localhost:5000/send-message', {
+      await axios.post('http://localhost:5007/send-message', {
         phoneNumber: selectedApplication.phoneNumber,
         message: emailDetails.body
       });
