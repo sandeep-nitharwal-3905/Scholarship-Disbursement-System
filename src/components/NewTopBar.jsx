@@ -14,17 +14,17 @@ const NewTopBar = () => {
     {
       label: "Downloads",
       items: [
-        { label: "Income Certificate", path: "/downloads/income-certificate" },
-        { label: "User Manual", path: "/downloads/user-manual" },
-        { label: "User Manual For Non-NET", path: "/downloads/non-net-manual" },
-        { label: "HDI Forwarding Letter", path: "/downloads/hdi-letter" },
-        { label: "GUIDELINES", path: "/downloads/guidelines" },
-        { label: "TR FORM 7", path: "/downloads/tr-form" },
+        { label: "Income Certificate", path: "#" },
+        { label: "User Manual", path: "#" },
+        { label: "User Manual For Non-NET", path: "#" },
+        { label: "HDI Forwarding Letter", path: "#" },
+        { label: "GUIDELINES", path: "#" },
+        { label: "TR FORM 7", path: "#" },
       ],
     },
-    { label: "Contacts", items: [], path: "/contacts" },
-    { label: "Weblinks", items: [], path: "/weblinks" },
-    { label: "Emergency Relief Fund", items: [], path: "/emergency-fund" },
+    { label: "Contacts", items: [], path: "/contactd" },
+    { label: "Weblinks", items: [], path: "#" },
+    { label: "Emergency Relief Fund", items: [], path: "#" },
   ];
 
   return (

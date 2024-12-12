@@ -46,7 +46,7 @@ const App = () => {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin" element={<AdminSignup />} />
           <Route path="/registration" element={<Registration_ />} />
-          <Route path="/about" element={<AboutPage />} />
+          {/* <Route path="/about" element={<AboutPage />} ///> */}
           <Route path="/forbidden" element={<ForbiddenPage />} />
 
           <Route
@@ -72,7 +72,7 @@ const App = () => {
                   <Route path="/ekyc0" element={<EKYC />} />
                   <Route path="/ekyc1" element={<AdminPanel />} />
                   <Route path="/docs-track" element={<DocsTrack />} />
-
+                  <Route path ="/contactd" element={<Contactd />} />
                   <Route
                     path="/viewScholarships"
                     element={
