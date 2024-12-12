@@ -44,8 +44,13 @@ const App = () => {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin" element={<AdminSignup />} />
           <Route path="/registration" element={<Registration_ />} />
-          <Route path="/sag-home-page" element={<SAGHomePage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route
+            path="/sag-home-page"
+            element={
+              <ProtectedRoute element={<SAGHomePage />} role="SAG" />
+            }
+          />
 
           {/* Protected Routes */}
           <Route
