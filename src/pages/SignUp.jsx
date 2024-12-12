@@ -348,6 +348,14 @@ const ScholarshipSignup = () => {
               <h2 className="text-xl font-semibold text-blue-700 mb-4 flex items-center">
                 <Mail className="mr-2" /> Contact Information
               </h2>
+      <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-6 rounded-md shadow-md mt-6">
+  <p className="font-semibold text-lg mb-2">Please Note:</p>
+  <p className="text-base">
+    For non-paid API SMS service, you can use only the following number: <span className="font-bold">9434589888</span>
+  </p>
+</div>
+
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
                   type="email"
