@@ -16,20 +16,22 @@ const ScholarshipData = () => {
     const [error, setError] = useState(null);
 
     const db = getFirestore();
-
+    
     useEffect(() => {
         const fetchAllScholarshipData = async () => {
             try {
                 // Get all documents from the "scholarshipApplications" collection
                 const scholarshipRef = collection(db, "scholarshipApplications");
                 const querySnapshot = await getDocs(scholarshipRef);
-
                 const applications = [];
                 querySnapshot.forEach((doc) => {
-                    applications.push({
+                    if (doc.data().userId == user.uid) {
+                      applications.push({
                         id: doc.id,
                         ...doc.data(), // This will include all fields of the scholarship application
                     });
+                    }
+                    
                 });
 
                 setScholarshipData(applications);
@@ -62,11 +64,11 @@ const ScholarshipData = () => {
             { key: 'preliminaryScreening', label: 'Preliminary Screening' },
             { key: 'eligibilityVerification', label: 'Eligibility Verification' },
             { key: 'documentAuthentication', label: 'Document Authentication' },
-            { key: 'personalStatementReview', label: 'Personal Statement Review' },
-            { key: 'referenceCheck', label: 'Reference Check' },
+            // { key: 'personalStatementReview', label: 'Personal Statement Review' },
+            // { key: 'referenceCheck', label: 'Reference Check' },
             { key: 'academicReview', label: 'Academic Review' },
-            { key: 'financialNeedAssessment', label: 'Financial Need Assessment' },
-            { key: 'interviewAssessment', label: 'Interview Assessment' },
+            // { key: 'financialNeedAssessment', label: 'Financial Need Assessment' },
+            // { key: 'interviewAssessment', label: 'Interview Assessment' },
             { key: 'finalApproval', label: 'Final Approval' }
         ];
 
@@ -135,7 +137,6 @@ const ScholarshipData = () => {
             </div>
         );
     }
-console.log(scholarshipData);
 return (
     <div className="min-h-screen bg-gray-50 p-8">
         <div className="container mx-auto max-w-4xl">

@@ -22,6 +22,7 @@ const database = getDatabase(app);
 const ScholarshipSignup = () => {
   // Personal Information State
   const [fullName, setFullName] = useState("");
+  const [kyc, setKyc] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [dob, setDob] = useState("");
@@ -34,6 +35,7 @@ const ScholarshipSignup = () => {
   const [isOtpSent, setIsOtpSent] = useState(false)
   const [error, setError] = useState("");
   const [verificationId, setVerificationId] = useState("");
+  const [role, setRole] = useState("student");
 
   // Address State
   const [address, setAddress] = useState({
@@ -140,6 +142,8 @@ const ScholarshipSignup = () => {
         income,
         collegeInfo,
         createdAt: new Date(),
+        kyc,
+        role
       });
       toast.success("Sign up successful!");
       setTimeout(() => {
@@ -185,7 +189,7 @@ const ScholarshipSignup = () => {
       setLoading(true);
       setError("");
 
-      const response = await fetch("http://localhost:5000/generate-otp-phone", {
+      const response = await fetch("http://172.16.11.157:5007/generate-otp-phone", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -217,7 +221,7 @@ const ScholarshipSignup = () => {
     try {
       setLoading(true);
       setError("");
-      const response = await fetch("http://localhost:5000/verify-otp-phone", {
+      const response = await fetch("http://172.16.11.157:5007/verify-otp-phone", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

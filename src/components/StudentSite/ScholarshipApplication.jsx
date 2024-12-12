@@ -3,18 +3,18 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft,Loader } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { doc, setDoc, collection } from "firebase/firestore";
 import { getAuth } from "firebase/auth"; // Import Firebase Authentication
 import { db } from "../../Firebase";
-
+// import { ArrowLeft, Loader } from "lucide-react";
 const ScholarshipApplication = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { scholarship } = location.state || {};
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -52,13 +52,14 @@ const ScholarshipApplication = () => {
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsSubmitting(true);
 
-    // Get the current user UID from Firebase Authentication
     const auth = getAuth();
     const user = auth.currentUser;
 
     if (!user) {
       toast.error("User not logged in. Please log in to submit your application.");
+      setIsSubmitting(false);
       return;
     }
 
@@ -66,31 +67,28 @@ const ScholarshipApplication = () => {
     for (let doc of requiredDocuments) {
       if (!formData.documents[doc.trim()]) {
         toast.error(`Please upload ${doc.trim()}`);
+        setIsSubmitting(false);
         return;
       }
     }
 
     try {
-      // Generate a unique ID for this application
       const applicationRef = doc(collection(db, "scholarshipApplications"));
-
-
-      // Process documents
       const processedDocuments = {};
+      
+      // Process documents
       for (const [docName, file] of Object.entries(formData.documents)) {
         try {
-          // Upload to Cloudinary
           const formData = new FormData();
           formData.append("file", file);
           const cloudinaryResponse = await axios.post(
-            "http://localhost:5000/upload",
+            "http://172.16.11.157:5007/upload",
             formData
           );
           const uploadedUrl = cloudinaryResponse.data.file.url;
 
-          // Check for blur using Python API
           const blurCheckResponse = await axios.post(
-            "http://localhost:5001/analyze-blur",
+            "http://172.16.11.157:5001/analyze-blur",
             {
               image_url: uploadedUrl
             }
@@ -98,10 +96,10 @@ const ScholarshipApplication = () => {
 
           if (blurCheckResponse.data.is_blurry === "True") {
             alert(`${docName} is too blurry. Please upload a clearer image.`);
+            setIsSubmitting(false);
             return;
           }
 
-          // Store processed document information
           processedDocuments[docName] = {
             url: uploadedUrl,
             uploadTimestamp: new Date().toISOString(),
@@ -111,11 +109,12 @@ const ScholarshipApplication = () => {
         } catch (uploadError) {
           console.error(`Error processing ${docName}:`, uploadError);
           toast.error(`Failed to upload ${docName}. Please try again.`);
+          setIsSubmitting(false);
           return;
         }
       }
 
-      // Initialize review stages and review notes
+      // Initialize review stages and review notes (keep existing initialization)
       const reviewStages = {
         academicReview: { checked: false },
         documentAuthentication: { checked: false },
@@ -140,10 +139,9 @@ const ScholarshipApplication = () => {
         referenceCheck: "",
       };
 
-      // Save form data to Firestore with unique application ID
       await setDoc(applicationRef, {
         ...formData,
-        documents: processedDocuments, // Store processed document information
+        documents: processedDocuments,
         dateOfBirth: formData.dateOfBirth?.toISOString(),
         submittedAt: new Date().toISOString(),
         reviewNotes,
@@ -152,14 +150,128 @@ const ScholarshipApplication = () => {
         userId: user.uid,
         phoneNumber: user.phoneNumber
       });
-      alert("Application submitted successfully!");
+
       toast.success("Application submitted successfully!");
-      navigate("/dashboard");
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 2000);
     } catch (error) {
       console.error("Error submitting application:", error);
       toast.error("Failed to submit application. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
+  // const handleSubmit = async (event) => {
+  //   event.preventDefault();
+
+  //   // Get the current user UID from Firebase Authentication
+  //   const auth = getAuth();
+  //   const user = auth.currentUser;
+
+  //   if (!user) {
+  //     toast.error("User not logged in. Please log in to submit your application.");
+  //     return;
+  //   }
+
+  //   // Validate required documents
+  //   for (let doc of requiredDocuments) {
+  //     if (!formData.documents[doc.trim()]) {
+  //       toast.error(`Please upload ${doc.trim()}`);
+  //       return;
+  //     }
+  //   }
+
+  //   try {
+  //     // Generate a unique ID for this application
+  //     const applicationRef = doc(collection(db, "scholarshipApplications"));
+
+
+  //     // Process documents
+  //     const processedDocuments = {};
+  //     for (const [docName, file] of Object.entries(formData.documents)) {
+  //       try {
+  //         // Upload to Cloudinary
+  //         const formData = new FormData();
+  //         formData.append("file", file);
+  //         const cloudinaryResponse = await axios.post(
+  //           "http://172.16.11.157:5007/upload",
+  //           formData
+  //         );
+  //         const uploadedUrl = cloudinaryResponse.data.file.url;
+
+  //         // Check for blur using Python API
+  //         const blurCheckResponse = await axios.post(
+  //           "http://172.16.11.157:5001/analyze-blur",
+  //           {
+  //             image_url: uploadedUrl
+  //           }
+  //         );
+
+  //         if (blurCheckResponse.data.is_blurry === "True") {
+  //           alert(`${docName} is too blurry. Please upload a clearer image.`);
+  //           return;
+  //         }
+
+  //         // Store processed document information
+  //         processedDocuments[docName] = {
+  //           url: uploadedUrl,
+  //           uploadTimestamp: new Date().toISOString(),
+  //           status: 1,
+  //           blurScore: blurCheckResponse.data.blur_score
+  //         };
+  //       } catch (uploadError) {
+  //         console.error(`Error processing ${docName}:`, uploadError);
+  //         toast.error(`Failed to upload ${docName}. Please try again.`);
+  //         return;
+  //       }
+  //     }
+
+  //     // Initialize review stages and review notes
+  //     const reviewStages = {
+  //       academicReview: { checked: false },
+  //       documentAuthentication: { checked: false },
+  //       eligibilityVerification: { checked: false },
+  //       finalApproval: { checked: false },
+  //       financialNeedAssessment: { checked: false },
+  //       interviewAssessment: { checked: false },
+  //       personalStatementReview: { checked: false },
+  //       preliminaryScreening: { checked: false },
+  //       referenceCheck: { checked: false },
+  //     };
+
+  //     const reviewNotes = {
+  //       academicReview: "",
+  //       documentAuthentication: "",
+  //       eligibilityVerification: "",
+  //       finalApproval: "",
+  //       financialNeedAssessment: "",
+  //       interviewAssessment: "",
+  //       personalStatementReview: "",
+  //       preliminaryScreening: "",
+  //       referenceCheck: "",
+  //     };
+
+  //     // Save form data to Firestore with unique application ID
+  //     await setDoc(applicationRef, {
+  //       ...formData,
+  //       documents: processedDocuments, // Store processed document information
+  //       dateOfBirth: formData.dateOfBirth?.toISOString(),
+  //       submittedAt: new Date().toISOString(),
+  //       reviewNotes,
+  //       reviewStages,
+  //       reviewStatus: "pending",
+  //       userId: user.uid,
+  //       phoneNumber: user.phoneNumber
+  //     });
+  //     alert("Application submitted successfully!");
+  //     toast.success("Application submitted successfully!");
+  //     navigate("/dashboard");
+  //   } catch (error) {
+  //     console.error("Error submitting application:", error);
+  //     toast.error("Failed to submit application. Please try again.");
+  //   }
+  // };
   // Helper function to convert file to base64
   const convertFileToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -363,9 +475,19 @@ const ScholarshipApplication = () => {
             <div className="flex justify-end">
               <button
                 type="submit"
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
+                disabled={isSubmitting}
+                className={`${
+                  isSubmitting ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
+                } text-white px-6 py-3 rounded-lg shadow-md transition duration-200 flex items-center`}
               >
-                Submit Application
+                {isSubmitting ? (
+                  <>
+                    <Loader className="animate-spin mr-2" size={20} />
+                    Submitting...
+                  </>
+                ) : (
+                  'Submit Application'
+                )}
               </button>
             </div>
           </form>

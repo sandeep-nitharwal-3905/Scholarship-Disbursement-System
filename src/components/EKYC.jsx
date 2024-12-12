@@ -6,6 +6,8 @@ import "react-calendar/dist/Calendar.css";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 import app from "../Firebase";
 // import { useFirebase } from "../firebase/FirebaseContext";
+
+
 const EKYC = () => {
   const { user } = useFirebase();
   const [adminAvailable, setAdminAvailable] = useState(false);
@@ -78,7 +80,7 @@ const EKYC = () => {
       setLoading(true);
       setError("");
 
-      const response = await fetch("http://localhost:5000/generate-otp", {
+      const response = await fetch("http://172.16.11.157:5007/generate-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -105,7 +107,7 @@ const EKYC = () => {
       setLoading(true);
       setError("");
 
-      const response = await fetch("http://localhost:5000/verify-otp", {
+      const response = await fetch("http://172.16.11.157:5007/verify-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -180,8 +182,16 @@ const EKYC = () => {
     const maxReconnectAttempts = 5;
 
     const connectSignalingServer = () => {
-      const socket = new WebSocket('ws://localhost:3000');
-      // const socket = new WebSocket('ws://172.20.10.4:3000');
+
+      // const socket = new WebSocket('wss://172.16.11.157:5005', {
+//   rejectUnauthorized: false, // Allow self-signed certificates for testing
+// });
+const socket = new WebSocket('ws://localhost:3000');
+
+// const socket = new WebSocket('wss://172.16.11.157:5005', {
+//   rejectUnauthorized: false,  // Allow self-signed certificates (development only)
+//   agent: true
+// });
       signalingSocketRef.current = socket;
 
       socket.onopen = () => {

@@ -24,9 +24,9 @@ import ApplicationsCheck from "./components/AdminSide/ApplicationsCheck";
 import UpdatedDashboard from "./components/StudentSite/UpdatedDashboard";
 import EKYC from "./components/EKYC";
 import FAQ from "./pages/FAQ";
-import DocumentDownload from './components/DocsDownload';
+import DocumentDownload from "./components/DocsDownload";
 import AdminPanel from "./components/AdminSide/AdminPanel";
-import SAGHomePage  from "./components/SAG/SAGHomePage";
+import SAGHomePage from "./components/SAG/SAGHomePage";
 import Home_ from "./pages/Home_";
 import Registration_ from "./pages/Registration_";
 import Contactd from "./pages/contactd";
@@ -42,11 +42,13 @@ const App = () => {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin" element={<AdminSignup />} />
           <Route path="/registration" element={<Registration_ />} />
+          <Route path="/sag-home-page" element={<SAGHomePage />} />
           <Route
             path="*"
             element={
               <Layout>
                 <Routes>
+                  <Route path="/viewScholarships" element={<StudentTrack />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/home" element={<Home />} />
                   <Route path="/faq" element={<FAQ />} />
@@ -59,7 +61,10 @@ const App = () => {
                     path="/docs-verification"
                     element={<DocsVerification />}
                   />
-                  <Route path="/download-documents" element={<DocumentDownload />} />
+                  <Route
+                    path="/download-documents"
+                    element={<DocumentDownload />}
+                  />
                   <Route
                     path="/applications-check"
                     element={<ApplicationsCheck />}
@@ -77,17 +82,12 @@ const App = () => {
                     path="/admin-dashboard"
                     element={<AddScholarshipForm />}
                   />
-                  <Route
-                    path="/sag-home-page"
-                    element={<SAGHomePage />}
-                  />
                   <Route path="/apply" element={<ScholarshipApplication />} />
                   <Route path="/admin-track" element={<ScholarshipList />} />
                   <Route
                     path="/admin-scholarship-list"
                     element={<ScholarshipList />}
                   />
-                  <Route path="/viewScholarships" element={<StudentTrack />} />
                   <Route
                     path="//admin-add-scholarship"
                     element={<AddScholarshipForm />}
