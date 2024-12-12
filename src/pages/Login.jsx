@@ -206,6 +206,7 @@ const SAGLogin = () => {
     try {
       const userData = await loginUser(email, password);
       toast.success("SAG logged in successfully!");
+      localStorage.setItem("userRole", "SAG");
 
       setTimeout(() => {
         navigate("/sag-home-page", {
