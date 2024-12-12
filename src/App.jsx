@@ -30,7 +30,7 @@ import SAGHomePage from "./components/SAG/SAGHomePage";
 import Home_ from "./pages/Home_";
 import Registration_ from "./pages/Registration_";
 import Contactd from "./pages/contactd";
-import AboutPage from "./pages/about";
+import AboutPage from "./pages/Home_About";
 const App = () => {
   return (
     <>
@@ -43,6 +43,7 @@ const App = () => {
           <Route path="/admin" element={<AdminSignup />} />
           <Route path="/registration" element={<Registration_ />} />
           <Route path="/sag-home-page" element={<SAGHomePage />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route
             path="*"
             element={
