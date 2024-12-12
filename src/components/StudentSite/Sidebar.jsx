@@ -61,7 +61,7 @@ const Sidebar = (props) => {
 
   const handleLogout = () => {
     localStorage.removeItem("uid");
-    navigate("/login");
+    navigate("/");
     console.log("User logged out");
   };
 
