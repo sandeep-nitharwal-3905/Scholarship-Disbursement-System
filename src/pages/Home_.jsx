@@ -59,10 +59,6 @@ const PMSSSPortal = () => {
 
   const instituteItems = [
     {
-      icon: <FileText className="mr-3" size={20} />,
-      label: "Registration Form",
-    },
-    {
       icon: <UserCheck className="mr-3" size={20} />,
       label: "Login",
       name: "admin",
