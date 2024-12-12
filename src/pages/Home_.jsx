@@ -122,7 +122,7 @@ const PMSSSPortal = () => {
                 Home
               </a>
               <a
-                href="#"
+                href="/about"
                 className="flex items-center text-white hover:text-[#008000] mb-2 sm:mb-0"
               >
                 <School className="mr-2" size={20} />
