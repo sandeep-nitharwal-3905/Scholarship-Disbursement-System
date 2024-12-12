@@ -10,7 +10,7 @@ const Login = () => {
   const { name } = location.state || {};
   const [isPageLoaded, setIsPageLoaded] = useState(false);
   const [error, setError] = useState("");
-
+console.log(name);
   useEffect(() => {
     setTimeout(() => {
       setIsPageLoaded(true);
@@ -59,7 +59,7 @@ const Login = () => {
           <h1 className="text-4xl font-bold text-gray-800 mb-4">
             <span className="text-blue-600">Scholarship System</span>
           </h1>
-          {name === "student" ? (
+          {(name === "student"||!name) ? (
             <StudentLogin />
           ) : name === "admin" ? (
             <AdminLogin />
