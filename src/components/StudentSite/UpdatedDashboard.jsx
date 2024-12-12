@@ -31,7 +31,6 @@ const ScholarshipData = () => {
                         ...doc.data(), // This will include all fields of the scholarship application
                     });
                     }
-                    
                 });
 
                 setScholarshipData(applications);

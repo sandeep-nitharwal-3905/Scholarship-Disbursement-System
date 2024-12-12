@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronDown,
   ChevronUp,
@@ -21,9 +22,9 @@ const Sidebar = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // State for dropdowns, active link, sidebar visibility
+  // State management
   const [dropdownOpen, setDropdownOpen] = useState({
-    documentStatus: true,
+    documentStatus: false,
     scholarshipInfo: false,
     userManagement: false,
   });
@@ -31,33 +32,23 @@ const Sidebar = (props) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCompactMode, setIsCompactMode] = useState(false);
 
-  // Check screen size and update sidebar mode
+  // Screen size and responsiveness
   useEffect(() => {
     const checkScreenSize = () => {
-      // Mobile view: sidebar hidden by default
       if (window.innerWidth < 768) {
         setIsCompactMode(false);
         setIsSidebarOpen(false);
-      } 
-      // Desktop view: check if screen is small
-      else if (window.innerWidth < 1024) {
+      } else if (window.innerWidth < 1024) {
         setIsCompactMode(true);
         setIsSidebarOpen(false);
-      } 
-      // Large desktop: full sidebar
-      else {
+      } else {
         setIsCompactMode(false);
         setIsSidebarOpen(true);
       }
     };
 
-    // Check initial screen size
     checkScreenSize();
-
-    // Add event listener for resizing
     window.addEventListener('resize', checkScreenSize);
-
-    // Cleanup listener
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
@@ -103,6 +94,7 @@ const Sidebar = (props) => {
     { name: "Payment History", icon: UserPlus },
     { name: "Guidelines", icon: BookOpen },
     { name: "Settings", icon: Settings },
+    { name: "Logout", icon: LogOut, action: handleLogout }
   ];
 
   const convertToNameFormat = (text) =>
@@ -111,149 +103,201 @@ const Sidebar = (props) => {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
 
-  // Mobile Menu Button
-  const MobileMenuToggle = () => (
-    <div 
-      className="md:hidden fixed top-4 left-4 z-50 bg-gray-800 p-2 rounded-full"
-      onClick={toggleSidebar}
-    >
-      {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-    </div>
-  );
+  // Sidebar variants for animation
+  const sidebarVariants = {
+    closed: { 
+      width: isCompactMode ? '5rem' : '0',
+      transition: { 
+        duration: 0.3,
+        type: "tween"
+      }
+    },
+    open: { 
+      width: isCompactMode ? '5rem' : '16rem',
+      transition: { 
+        duration: 0.3,
+        type: "tween"
+      }
+    }
+  };
+
+  const menuItemVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: { 
+        duration: 0.3 
+      }
+    }
+  };
 
   return (
     <>
       {/* Mobile Menu Toggle */}
-      <MobileMenuToggle />
+      <motion.div 
+        className="md:hidden fixed top-4 left-4 z-50 bg-gray-800 text-white p-2 rounded-full shadow-lg"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={toggleSidebar}
+      >
+        {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+      </motion.div>
 
       {/* Sidebar */}
-      <div 
+      <motion.div 
+        initial={false}
+        animate={isSidebarOpen ? "open" : "closed"}
+        variants={sidebarVariants}
         className={`
           fixed top-0 left-0 z-40 
-          w-64 bg-gray-800 text-white 
-          h-full p-4 overflow-y-auto 
-          transform transition-transform duration-300 ease-in-out
+          bg-gradient-to-b from-gray-900 to-gray-800 
+          text-white h-full 
+          shadow-2xl
           ${isCompactMode ? 'w-20' : 'w-64'}
           ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           md:relative md:translate-x-0 
-          ${isCompactMode && !isSidebarOpen ? 'md:w-20' : 'md:w-64'}
+          flex flex-col
         `}
       >
         {/* Close Button for Mobile/Compact Mode */}
         {(isSidebarOpen || isCompactMode) && (
-          <div 
-            className="absolute top-4 right-4 cursor-pointer"
+          <motion.div 
+            className="absolute top-4 right-4 cursor-pointer text-gray-300 hover:text-white"
+            whileHover={{ scale: 1.2 }}
+            whileTap={{ scale: 0.9 }}
             onClick={toggleSidebar}
           >
             <X size={24} />
-          </div>
+          </motion.div>
         )}
 
         {/* User Profile Section */}
-        <div className="flex items-center mb-6">
-          <img
+        <motion.div 
+          initial="hidden"
+          animate="visible"
+          variants={menuItemVariants}
+          className="flex items-center mb-6 p-4 border-b border-gray-700"
+        >
+          <motion.img
             src="https://thumbs.dreamstime.com/b/half-body-father-avatar-vector-stock-illustration-isolated-blue-background-312576179.jpg"
             alt="User Avatar"
-            className="w-10 h-10 rounded-full mr-3"
+            className="w-12 h-12 rounded-full mr-4 border-2 border-blue-500"
+            whileHover={{ scale: 1.1 }}
           />
           <div className={isCompactMode ? 'hidden' : ''}>
-            <p className="font-semibold text-lg">
+            <p className="font-bold text-xl text-blue-300">
               {convertToNameFormat(props.user.fullName)}
             </p>
-            <p className="text-xs text-gray-400">
+            <p className="text-sm text-gray-400">
               {props.user.role === "student" ? "Student" : "Admin"}
             </p>
           </div>
-        </div>
+        </motion.div>
 
-        {items.map((item, index) => (
-          <div key={index}>
-            <div
-              onClick={() => {
-                if (item.dropdown) {
-                  toggleDropdown(item.name);
-                } else {
-                  setActiveLink(item.name);
-                }
-              }}
-            >
-              <NavLink
-                to={item.path || "#"}
-                className={`
-                  flex items-center py-2 px-4 rounded cursor-pointer 
-                  ${activeLink === item.name ? "bg-gray-600" : "hover:bg-gray-700"}
-                  ${isCompactMode ? 'justify-center' : ''}
-                `}
-                onClick={() => {
-                  if (!item.dropdown) setActiveLink(item.name);
-                }}
-              >
-                <item.icon size={20} className="mr-2" />
-                <span 
-                  className={`text-base ${isCompactMode ? 'hidden' : ''}`}
+        {/* Menu Items */}
+        <div className="flex-grow overflow-hidden">
+          <div className="h-full overflow-y-auto">
+            <AnimatePresence>
+              {items.map((item, index) => (
+                <motion.div 
+                  key={index}
+                  initial="hidden"
+                  animate="visible"
+                  variants={menuItemVariants}
+                  transition={{ delay: index * 0.1 }}
                 >
-                  {item.name}
-                </span>
-                {item.dropdown && !isCompactMode && 
-                  (dropdownOpen[item.name] ? (
-                    <ChevronUp size={20} className="ml-auto" />
-                  ) : (
-                    <ChevronDown size={20} className="ml-auto" />
-                  ))
-                }
-              </NavLink>
-            </div>
-
-            {item.dropdown && dropdownOpen[item.name] && !isCompactMode && (
-              <div className="ml-8">
-                {item.dropdown.map((subItem, subIndex) => {
-                  if (typeof subItem === "object") {
-                    return (
-                      <NavLink
-                        key={subIndex}
-                        to={subItem.path}
-                        className={({ isActive }) =>
-                          `py-2 px-4 rounded cursor-pointer hover:bg-gray-700 text-sm block ${
-                            activeLink === subItem.name ? "bg-gray-600" : ""
-                          }`
-                        }
-                        onClick={() => setActiveLink(subItem.name)}
-                      >
-                        {subItem.name}
-                      </NavLink>
-                    );
-                  }
-                  return (
-                    <div
-                      key={subIndex}
-                      className="py-2 px-4 rounded cursor-pointer hover:bg-gray-700 text-sm"
+                  <motion.div
+                    onClick={() => {
+                      if (item.dropdown) {
+                        toggleDropdown(item.name);
+                      } else if (item.action) {
+                        item.action();
+                      } else {
+                        setActiveLink(item.name);
+                      }
+                    }}
+                    whileHover={{ 
+                      scale: 1.05,
+                      transition: { duration: 0.2 }
+                    }}
+                  >
+                    <NavLink
+                      to={item.path || "#"}
+                      className={`
+                        flex items-center py-3 px-4 rounded-lg cursor-pointer 
+                        transition duration-300 ease-in-out
+                        ${activeLink === item.name 
+                          ? "bg-blue-600 text-white" 
+                          : "hover:bg-gray-700 text-gray-300"}
+                        ${isCompactMode ? 'justify-center' : ''}
+                        ${item.name === 'Logout' ? 'hover:bg-red-600' : ''}
+                      `}
                     >
-                      {subItem}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        ))}
+                      <item.icon size={20} className="mr-3" />
+                      <span 
+                        className={`text-base font-medium ${isCompactMode ? 'hidden' : ''}`}
+                      >
+                        {item.name}
+                      </span>
+                      {item.dropdown && !isCompactMode && 
+                        (dropdownOpen[item.name] ? (
+                          <ChevronUp size={20} className="ml-auto" />
+                        ) : (
+                          <ChevronDown size={20} className="ml-auto" />
+                        ))
+                      }
+                    </NavLink>
+                  </motion.div>
 
-        {/* Logout Button Container */}
-        <div className={`mt-4 bg-gray-700 rounded-lg ${isCompactMode ? 'text-center' : ''}`}>
-          <div
-            className={`
-              flex items-center py-2 px-4 rounded cursor-pointer 
-              hover:bg-red-600 transition duration-200
-              ${isCompactMode ? 'justify-center' : ''}
-            `}
-            onClick={handleLogout}
-          >
-            <LogOut size={20} className="mr-2" />
-            <span className={`text-base font-semibold ${isCompactMode ? 'hidden' : ''}`}>
-              Logout
-            </span>
+                  {/* Dropdown Submenu */}
+                  <AnimatePresence>
+                    {item.dropdown && dropdownOpen[item.name] && !isCompactMode && (
+                      <motion.div 
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ 
+                          opacity: 1, 
+                          height: 'auto',
+                          transition: { duration: 0.3 }
+                        }}
+                        exit={{ 
+                          opacity: 0, 
+                          height: 0,
+                          transition: { duration: 0.2 }
+                        }}
+                        className="ml-8 mt-1"
+                      >
+                        {item.dropdown.map((subItem, subIndex) => (
+                          <motion.div 
+                            key={subIndex}
+                            whileHover={{ 
+                              scale: 1.05,
+                              transition: { duration: 0.2 }
+                            }}
+                          >
+                            <NavLink
+                              to={subItem.path}
+                              className={({ isActive }) =>
+                                `py-2 px-4 rounded-lg cursor-pointer 
+                                text-sm block transition duration-300 ease-in-out
+                                ${isActive 
+                                  ? "bg-blue-500 text-white" 
+                                  : "hover:bg-gray-700 text-gray-300"}`
+                              }
+                            >
+                              {subItem.name}
+                            </NavLink>
+                          </motion.div>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 };
