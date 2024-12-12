@@ -30,6 +30,7 @@ import SAGHomePage from "./components/SAG/SAGHomePage";
 import Home_ from "./pages/Home_";
 import Registration_ from "./pages/Registration_";
 import Contactd from "./pages/contactd";
+import "./App.css";
 import AboutPage from "./pages/Home_About";
 const App = () => {
   return (

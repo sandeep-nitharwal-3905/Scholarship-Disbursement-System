@@ -198,7 +198,7 @@ const Sidebar = (props) => {
 
         {/* Menu Items */}
         <div className="flex-grow overflow-hidden">
-          <div className="h-full overflow-y-auto">
+        <div className="h-full overflow-y-auto sidebar-scroll">
             <AnimatePresence>
               {items.map((item, index) => (
                 <motion.div 
