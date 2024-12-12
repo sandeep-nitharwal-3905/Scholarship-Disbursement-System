@@ -32,7 +32,7 @@ const Dashboard = () => {
     passingCertificatesVerified: 0
   });
 
-  // Comprehensive data fetching function
+  // Comprehensive data fetching function (same as previous implementation)
   const fetchDashboardStatistics = async (uid) => {
     try {
       // Fetch documents collection
@@ -48,6 +48,7 @@ const Dashboard = () => {
       const verifiedDocuments = allDocuments.filter(doc => 
         doc.status === 2
       );
+      console.log(submittedDocuments, verifiedDocuments);
 
       // Fetch user collection
       const usersRef = collection(db, 'scholarshipApplications');
@@ -88,6 +89,7 @@ const Dashboard = () => {
       }
 
       // Update dashboard statistics
+      console.log(dashboardStats);
       setDashboardStats({
         documentsSubmitted: submittedDocuments.length,
         documentsVerified: verifiedDocuments.length,
@@ -123,64 +125,97 @@ const Dashboard = () => {
 
   // Redirect if no user
   if (!currentUser) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div className="text-xl font-semibold text-gray-700">Loading...</div>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <PhotoSlider />
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">My Dashboard</h1>
-        {currentUser && <p>Welcome, {currentUser.email}</p>}
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {/* Documents Submitted */}
-        <StatButton
-          count={dashboardStats.documentsSubmitted}
-          title="Documents Submitted"
-          color="red"
-          icon={FileText}
-        />
+    <div className="min-h-screen bg-gray-50 p-6 md:p-10">
+      {/* Background gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 opacity-50 -z-10"></div>
+      
+      {/* Container with subtle shadow and rounded corners */}
+      <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+        {/* Slider Section */}
+        <div className="mb-8">
+          <PhotoSlider />
+        </div>
         
-        {/* Documents Verified */}
-        <StatButton
-          count={dashboardStats.documentsVerified}
-          title="Documents Verified"
-          color="green"
-          icon={Users}
-        />
+        {/* Header Section */}
+        <div className="px-6 md:px-10 py-6 bg-gray-100/50 border-b border-gray-200">
+          <div className="flex justify-between items-center">
+            <h1 className="text-3xl font-extrabold text-gray-800 tracking-tight">
+              My Dashboard
+            </h1>
+            {currentUser && (
+              <p className="text-gray-600 font-medium">
+                Welcome, <span className="text-blue-600">{currentUser.email}</span>
+              </p>
+            )}
+          </div>
+        </div>
         
-        {/* Applications Submitted */}
-        <StatButton
-          count={dashboardStats.applicationsSubmitted}
-          title="Applications Submitted"
-          color="blue"
-          icon={GraduationCap}
-        />
-        
-        {/* Applications Verified */}
-        <StatButton
-          count={dashboardStats.applicationsVerified}
-          title="Applications Verified"
-          color="purple"
-          icon={Users}
-        />
-        
-        {/* Passing Certificates Submitted */}
-        <StatButton
-          count={dashboardStats.passingCertificatesSubmitted}
-          title="Passing Certificates Submitted"
-          color="orange"
-          icon={PaperclipIcon}
-        />
-        
-        {/* Passing Certificates Verified */}
-        <StatButton
-          count={dashboardStats.passingCertificatesVerified}
-          title="Passing Certificates Verified"
-          color="green-100"
-          icon={PaperclipIcon}
-        />
+        {/* Statistics Grid */}
+        <div className="p-6 md:p-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Documents Submitted */}
+            <StatButton
+              count={dashboardStats.documentsSubmitted}
+              title="Documents Submitted"
+              color="red"
+              icon={FileText}
+              className="hover:scale-105 transition-transform"
+            />
+            
+            {/* Documents Verified */}
+            <StatButton
+              count={dashboardStats.documentsVerified}
+              title="Documents Verified"
+              color="green"
+              icon={Users}
+              className="hover:scale-105 transition-transform"
+            />
+            
+            {/* Applications Submitted */}
+            <StatButton
+              count={dashboardStats.applicationsSubmitted}
+              title="Applications Submitted"
+              color="blue"
+              icon={GraduationCap}
+              className="hover:scale-105 transition-transform"
+            />
+            
+            {/* Applications Verified */}
+            <StatButton
+              count={dashboardStats.applicationsVerified}
+              title="Applications Verified"
+              color="purple"
+              icon={Users}
+              className="hover:scale-105 transition-transform"
+            />
+            
+            {/* Passing Certificates Submitted */}
+            <StatButton
+              count={dashboardStats.passingCertificatesSubmitted}
+              title="Passing Certificates Submitted"
+              color="orange"
+              icon={PaperclipIcon}
+              className="hover:scale-105 transition-transform"
+            />
+            
+            {/* Passing Certificates Verified */}
+            <StatButton
+              count={dashboardStats.passingCertificatesVerified}
+              title="Passing Certificates Verified"
+              color="green-100"
+              icon={PaperclipIcon}
+              className="hover:scale-105 transition-transform"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

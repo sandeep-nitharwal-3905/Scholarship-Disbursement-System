@@ -11,6 +11,16 @@ const AddScholarshipForm = () => {
     requiredDocuments: [""],
   });
 
+  const predefinedDocuments = [
+    "Passport",
+    "Birth Certificate",
+    "12th Transcript",
+    "10th Transcript",
+    "Recommendation Letter",
+    "Aadhar Card",
+    "PAN Card",
+  ];
+
   const handleChange = (e) => {
     setScholarship({
       ...scholarship,
@@ -19,6 +29,15 @@ const AddScholarshipForm = () => {
   };
 
   const handleDocumentChange = (index, value) => {
+    const updatedDocs = [...scholarship.requiredDocuments];
+    if (updatedDocs[index] === "Other" && value !== "Other") {
+      updatedDocs[index] = "";
+    }
+    updatedDocs[index] = value;
+    setScholarship({ ...scholarship, requiredDocuments: updatedDocs });
+  };
+
+  const handleCustomDocumentChange = (index, value) => {
     const updatedDocs = [...scholarship.requiredDocuments];
     updatedDocs[index] = value;
     setScholarship({ ...scholarship, requiredDocuments: updatedDocs });
@@ -83,15 +102,31 @@ const AddScholarshipForm = () => {
         </label>
 
         {scholarship.requiredDocuments.map((doc, index) => (
-          <div key={index} className="flex items-center mb-2">
-            <input
-              type="text"
+          <div key={index} className="flex items-center mb-2 space-x-2">
+            <select
               value={doc}
               onChange={(e) => handleDocumentChange(index, e.target.value)}
-              placeholder={`Document ${index + 1}`}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-            />
+              className="w-2/3 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            >
+              <option value="" disabled>
+                Select a document
+              </option>
+              {predefinedDocuments.map((option, i) => (
+                <option key={i} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+
+            {doc === "Other" && (
+              <input
+                type="text"
+                placeholder="Specify document"
+                value={doc === "Other" ? "" : doc}
+                className="w-1/3 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                onChange={(e) => handleCustomDocumentChange(index, e.target.value)}
+              />
+            )}
           </div>
         ))}
 

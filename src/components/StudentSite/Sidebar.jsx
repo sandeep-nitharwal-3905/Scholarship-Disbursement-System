@@ -78,7 +78,7 @@ const Sidebar = (props) => {
       dropdown: [
         { name: "Upload Documents", path: "/upload" },
         { name: "Documents Status", path: "/docs-track" },
-        { name: "Download Your Documents", path: "/download-documents" }
+        // { name: "Download Your Documents", path: "/download-documents" }
       ],
     },
     {
