@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
 import { Camera, CheckCircle, AlertCircle } from 'lucide-react';
 import { db } from "../../Firebase";
@@ -59,7 +61,11 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
   const handleFinalReview = () => {
     // If all stages are checked, mark as approved
     const allStagesChecked = Object.values(reviewStages).every((stage) => stage.checked);
-
+    toast.success("Application updated successfully", {
+      position: "top-right",
+      autoClose: 3000,
+      style: { fontSize: "1.25rem", padding: "1rem" },
+    });
     onReviewComplete({
       reviewStages,
       reviewStatus: allStagesChecked ? "approved" : "pending",
@@ -68,7 +74,11 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
 
   const handleReject = () => {
     if (!rejectionReason.trim()) {
-      alert("Please provide a reason for rejection");
+      toast.error("Please provide a reason for rejecting the application", {
+        position: "top-right",
+        autoClose: 3000,
+        style: { fontSize: "1.25rem", padding: "1rem" },
+      });
       return;
     }
 
@@ -78,7 +88,7 @@ const ReviewModal = ({ application, onClose, onReviewComplete }) => {
       rejectionReason: rejectionReason.trim(),
     });
   };
-  console.log(application);
+  //console.log(application);
   const stages = [
     { key: 'preliminaryScreening', label: 'Preliminary Screening' },
     { key: 'eligibilityVerification', label: 'Eligibility Verification' },
@@ -395,7 +405,12 @@ const AdminDashboard = () => {
         setApplications(applicationsList);
         setFilteredApplications(applicationsList);
       } catch (error) {
-        console.error("Error fetching applications:", error);
+        //console.error("Error fetching applications:", error);
+        toast.error("Failed to fetch applications", {
+          position: "top-right",
+          autoClose: 3000,
+          style: { fontSize: "1.25rem", padding: "1rem" },
+        });
       }
     };
 
@@ -425,7 +440,7 @@ const AdminDashboard = () => {
 
       // Prepare email details
       const emailDetails = prepareEmailDetails(reviewData, selectedApplication);
-      // console.log(emailDetails);
+      //console.log(emailDetails);
       // Send email via your existing server endpoint
       await axios.post('http://172.16.11.157:5005/send-application-update-email', {
         email: selectedApplication.email,
@@ -446,9 +461,18 @@ const AdminDashboard = () => {
         )
       );
       setIsReviewModalOpen(false);
+      toast.success("Application updated successfully", {
+        position: "top-right",
+        autoClose: 3000,
+        style: { fontSize: "1.25rem", padding: "1rem" },
+      });
     } catch (error) {
-      console.error("Error updating application:", error);
-      alert("Failed to update application. Please try again.");
+      //console.error("Error updating application:", error);
+      toast.error("Failed to update application. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        style: { fontSize: "1.25rem", padding: "1rem" },
+      });
     }
   };
 
