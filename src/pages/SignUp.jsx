@@ -21,9 +21,11 @@ import {
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../Firebase";
-import { getDatabase, ref, set, get } from "firebase/database";
-import app from "../Firebase";
+// import { getDatabase, set, get } from "firebase/database";
+import { ref, get, query, orderByChild, equalTo,getDatabase, set } from "firebase/database";
 
+import app from "../Firebase";
+import { collection, where, getDocs } from "firebase/firestore";
 const auth = getAuth(app);
 const database = getDatabase(app);
 
@@ -194,35 +196,44 @@ const ScholarshipSignup = () => {
     setCollegeInfo({ institutionName: "", course: "", cgpa: "" });
     setAgreeTerms(false);
   };
-
   const handleGenerateOTP = async () => {
     if (!validateForm()) {
       return;
     }
+  
     try {
       setLoading(true);
       setError("");
 
-      const response = await fetch(
-        "http://172.16.11.157:5007/generate-otp-phone",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            phoneNumber: "+91" + phoneNumber,
-          }),
-        }
-      );
+
+      // Check if email already exists in Realtime Database
+      const usersRef = ref(database, "users"); // Adjust the path if your user data is stored elsewhere
+      const emailQuery = query(usersRef, orderByChild("email"), equalTo(email));
+      const snapshot = await get(emailQuery);
+        console.log(snapshot.exists())
+      if (snapshot.exists()) {
+        toast.error("A user with this email already exists. Please use a different email.");
+        return;
+      }
+      // Proceed with OTP generation
+      const response = await fetch("http://172.16.11.157:5007/generate-otp-phone", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phoneNumber: "+91" + phoneNumber,
+        }),
+      });
+  
 
       const data = await response.json();
-
+  
       if (!response.ok) {
         console.error("OTP generation failed:", data.error);
         throw new Error(data.error || "Failed to generate OTP");
       }
-
+  
       console.log("OTP sent successfully");
       setSuccessMessage("OTP sent successfully to your email");
       setStep(2); // Move to the next step
@@ -233,6 +244,42 @@ const ScholarshipSignup = () => {
       setLoading(false);
     }
   };
+  
+  // const handleGenerateOTP = async () => {
+  //   if (!validateForm()) {
+  //     return;
+  //   }
+  //   try {
+  //     setLoading(true);
+  //     setError("");
+
+  //     const response = await fetch("http://172.16.11.157:5007/generate-otp-phone", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         phoneNumber: "+91" + phoneNumber
+  //       }),
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (!response.ok) {
+  //       console.error("OTP generation failed:", data.error);
+  //       throw new Error(data.error || "Failed to generate OTP");
+  //     }
+
+  //     console.log("OTP sent successfully");
+  //     setSuccessMessage("OTP sent successfully to your email");
+  //     setStep(2); // Move to the next step
+  //   } catch (err) {
+  //     console.error("Error during OTP generation:", err.message);
+  //     setError(err.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handleVerifyOTP = async () => {
     try {
@@ -317,32 +364,39 @@ const ScholarshipSignup = () => {
                 </div>
               </div>
 
-              {/* Contact Information Section */}
-              <div className="border-b pb-4">
-                <h2 className="text-xl font-semibold text-blue-700 mb-4 flex items-center">
-                  <Mail className="mr-2" /> Contact Information
-                  <span style={{ color: "red" }}>*</span>
-                </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input
-                    type="email"
-                    placeholder="Email Address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full p-3 rounded-lg border border-gray-300"
-                    required
-                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Phone Number "
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="w-full p-3 rounded-lg border border-gray-300"
-                    required
-                  />
-                </div>
+            {/* Contact Information Section */}
+            <div className="border-b pb-4">
+              <h2 className="text-xl font-semibold text-blue-700 mb-4 flex items-center">
+                <Mail className="mr-2" /> Contact Information
+              </h2>
+      <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-6 rounded-md shadow-md mt-6">
+  <p className="font-semibold text-lg mb-2">Please Note:</p>
+  <p className="text-base">
+    For non-paid API SMS service, you can use only the following number: <span className="font-bold">9434589888</span>
+  </p>
+</div>
+
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  type="email"
+                  placeholder="Email Address *"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full p-3 rounded-lg border border-gray-300"
+                  required
+                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                />
+                <input
+                  type="tel"
+                  placeholder="Phone Number *"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  className="w-full p-3 rounded-lg border border-gray-300"
+                  required
+                />
+
               </div>
 
               {/* Address Section */}
