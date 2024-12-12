@@ -205,9 +205,9 @@ const Login = () => {
             }`}
         >
           <h1 className="text-7xl font-bold mb-4 animate-fadeIn" style={{
-    WebkitTextStroke: "1px #000", // Black border
-    color: "white", // Fill color
-  }}>
+            WebkitTextStroke: "1px #000", // Black border
+            color: "white", // Fill color
+          }}>
             Empower Your Future
           </h1>
           <p className="text-lg mb-6" >
@@ -231,7 +231,15 @@ const Login = () => {
           <h1 className="text-4xl font-bold text-gray-800 mb-4">
             <span className="text-blue-600">Scholarship System</span>
           </h1>
-          {name === "admin" ? <AdminLogin /> : <StudentLogin />}
+          {name === "student" ? (
+            <StudentLogin />
+          ) : name === "admin" ? (
+            <AdminLogin />
+          ) : name === "SAG" ? (
+            <SAGLogin />
+          ) : (
+            <DefaultLogin /> // Optional fallback
+          )}
           {error && <p className="text-red-500 mt-4">{error}</p>}
         </div>
       </div>
@@ -345,6 +353,65 @@ const StudentLogin = () => {
           className="w-full bg-gray-800 text-white py-3 rounded-lg mt-4 transition-transform transform hover:scale-105 active:scale-95"
         >
           Login as Student
+        </button>
+        <Link
+          to="/signup"
+          className="block w-full bg-blue-600 text-white py-3 rounded-lg mt-4 transition-transform transform hover:scale-105 active:scale-95"
+        >
+          Sign Up
+        </Link>
+      </form>
+    </div>
+  );
+};
+
+const SAGLogin = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const userData = await loginUser(email, password);
+      toast.success("SAG logged in successfully!");
+
+      setTimeout(() => {
+        navigate("/sag-home-page", {
+          state: { uid: userData.uid, role: "SAG" },
+        });
+      }, 2000);
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Failed to login. Please check your credentials.");
+    }
+  };
+
+  return (
+    <div className="animate-fadeIn">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2 border-gray-300">
+        SAG Login
+      </h2>
+      <form onSubmit={handleLogin}>
+        <input
+          type="email"
+          placeholder="SAG Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 transition"
+        />
+        <button
+          type="submit"
+          className="w-full bg-gray-800 text-white py-3 rounded-lg mt-4 transition-transform transform hover:scale-105 active:scale-95"
+        >
+          Login as SAG
         </button>
         <Link
           to="/signup"
