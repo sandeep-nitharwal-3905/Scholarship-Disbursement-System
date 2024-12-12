@@ -9,20 +9,24 @@ import { Navigate } from 'react-router-dom';
 
 const getUserRole = () => {
   // Replace with your actual role fetching logic
-  console.log(localStorage.getItem('userRole'));
   return localStorage.getItem('userRole'); // e.g., 'admin' or 'student'
 };
-
+const handleReturnHome = () => {
+    // Basic navigation to home page
+    window.location.href = "/forbidden";
+  };
 const ProtectedRoute = ({ element: Component, role, ...rest }) => {
 //   if (!isAuthenticated()) {
 //     return <Navigate to="/" replace />;
 //   }
 
   const userRole = getUserRole();
-
+  
   if (role && userRole !== role) {
+    console.log('User role:', userRole);
+    handleReturnHome();
     // Redirect to a "Not Authorized" page or the home page
-    return <Navigate to="/" replace />;
+    return <></>;
   }
 
   return Component;
