@@ -24,7 +24,7 @@ const CloudinaryUpload = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:5000/upload",
+        "http://172.16.11.157:5007/upload",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
