@@ -110,7 +110,7 @@ const App = () => {
                   />
                   <Route
                     path="/details/:id"
-                    element={<ProtectedRoute element={<DocDetails />} role="student" />}
+                    element={<ProtectedRoute element={<DocDetails />} role="admin" />}
                   />
 
                   {/* Admin Routes */}
