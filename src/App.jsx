@@ -44,12 +44,12 @@ const App = () => {
           <Route path="/admin" element={<AdminSignup />} />
           <Route path="/registration" element={<Registration_ />} />
           <Route path="/sag-home-page" element={<SAGHomePage />} />
-          <Route path="/about" element={<AboutPage />} />
           <Route
             path="*"
             element={
               <Layout>
                 <Routes>
+                <Route path="/about" element={<AboutPage />} />
                   <Route path="/viewScholarships" element={<StudentTrack />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/home" element={<Home />} />
