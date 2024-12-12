@@ -284,15 +284,21 @@ const ScholarshipApplication = () => {
   // Split the requiredDocuments string into an array and add more documents
   const additionalDocuments = [
 
-    "Transcript",
-    "Recommendation Letter",
-    "Personal Statement",
+    // "Transcript",
+    // "Recommendation Letter",
+    // "Personal Statement",
   ];
-  const requiredDocuments =
-    scholarship?.requiredDocuments[0]
-      .split(";")
-      .map((doc) => doc.trim())
-      .concat(additionalDocuments) || [];
+
+  // const requiredDocuments =
+  //   scholarship?.requiredDocuments[0]
+  //     .split(";")
+  //     .map((doc) => doc.trim())
+  //     .concat(additionalDocuments) || [];
+  const requiredDocuments = 
+  (scholarship?.requiredDocuments || [])
+    .flatMap((doc) => doc.split(";").map((item) => item.trim()))
+    .concat(additionalDocuments) || [];
+
   console.log("Required Documents:", requiredDocuments);
 
   return (
