@@ -25,64 +25,7 @@ const AboutPMSSS = () => {
 
   return (
     <div>
-      <header className="bg-gradient-to-b from-[#0d121d] to-[#0d121d] text-white">
-        {/* Navigation Bar 1 */}
-        <div className="flex justify-between items-center px-6 py-4">
-          <div className="text-xl font-bold text-center flex-1">
-            Scholarship Disbursement System
-          </div>
-          <img
-            src="src/assets/1.png"
-            alt="Logo"
-            className="h-12 w-12 rounded-full object-cover border-2 border-white"
-          />
-        </div>
-
-        {/* Navigation Bar 2 */}
-        <nav className="bg-[#111827] py-5">
-          <div className="container mx-auto flex justify-between items-center sm:justify-center sm:space-x-6 flex-wrap">
-            {/* Mobile Hamburger Menu */}
-            <div className="sm:hidden flex items-center">
-              <button className="text-white" onClick={toggleSidebar}>
-                <Menu size={24} />
-              </button>
-            </div>
-
-            {/* Desktop Navigation Links */}
-            <div className="hidden sm:flex space-x-7">
-              <a
-                href="/"
-                className="flex items-center text-white hover:text-[#008000] mb-2 sm:mb-0"
-              >
-                <Home className="mr-2" size={20} />
-                Home
-              </a>
-              <a
-                href="/about"
-                className="flex items-center text-white hover:text-[#008000] mb-2 sm:mb-0"
-              >
-                <School className="mr-2" size={20} />
-                About PMSSS
-              </a>
-              <a
-                href="#"
-                className="flex items-center text-white hover:text-[#008000] mb-2 sm:mb-0"
-              >
-                <FileText className="mr-2" size={20} />
-                How to Apply
-              </a>
-              <a
-                href="#"
-                className="flex items-center text-white hover:text-[#008000] mb-2 sm:mb-0"
-              >
-                <Phone className="mr-2" size={20} />
-                Contact Us
-              </a>
-            </div>
-          </div>
-        </nav>
-      </header>
-
+  
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="bg-white shadow-lg rounded-lg overflow-hidden">
           <div className="p-6">
