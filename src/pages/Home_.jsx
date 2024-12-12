@@ -78,7 +78,8 @@ const PMSSSPortal = () => {
     {
       icon: <UserCheck className="mr-3" size={20} />,
       label: "Login",
-      path:"/sag-home-page",
+      path:"/login",
+      name : "SAG",
     },
     {
       icon: <DollarSign className="mr-3" size={20} />,
