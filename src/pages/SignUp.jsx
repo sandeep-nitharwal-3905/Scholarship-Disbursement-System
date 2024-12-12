@@ -259,12 +259,12 @@ const ScholarshipSignup = () => {
             {/* Personal Information Section */}
             <div className="border-b pb-4">
               <h2 className="text-xl font-semibold text-blue-700 mb-4 flex items-center">
-                <User className="mr-2" /> Personal Information
+                <User className="mr-2" /> Personal Information *
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
                   type="text"
-                  placeholder="Full Name *"
+                  placeholder="Full Name "
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   className="w-full p-3 rounded-lg border border-gray-300"
@@ -298,12 +298,12 @@ const ScholarshipSignup = () => {
             {/* Contact Information Section */}
             <div className="border-b pb-4">
               <h2 className="text-xl font-semibold text-blue-700 mb-4 flex items-center">
-                <Mail className="mr-2" /> Contact Information
+                <Mail className="mr-2" /> Contact Information *
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
                   type="email"
-                  placeholder="Email Address *"
+                  placeholder="Email Address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full p-3 rounded-lg border border-gray-300"
@@ -312,7 +312,7 @@ const ScholarshipSignup = () => {
                 />
                 <input
                   type="tel"
-                  placeholder="Phone Number *"
+                  placeholder="Phone Number "
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   className="w-full p-3 rounded-lg border border-gray-300"
@@ -324,7 +324,7 @@ const ScholarshipSignup = () => {
             {/* Address Section */}
             <div className="border-b pb-4">
               <h2 className="text-xl font-semibold text-blue-700 mb-4 flex items-center">
-                <MapPin className="mr-2" /> Address Details
+                <MapPin className="mr-2" /> Address Details *
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
@@ -401,12 +401,12 @@ const ScholarshipSignup = () => {
             {/* Authentication Section */}
             <div className="border-b pb-4">
               <h2 className="text-xl font-semibold text-blue-700 mb-4 flex items-center">
-                <Lock className="mr-2" /> Account Security
+                <Lock className="mr-2" /> Account Security *
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
                   type="password"
-                  placeholder="Password *"
+                  placeholder="Password "
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full p-3 rounded-lg border border-gray-300"
@@ -415,7 +415,7 @@ const ScholarshipSignup = () => {
                 />
                 <input
                   type="password"
-                  placeholder="Confirm Password *"
+                  placeholder="Confirm Password "
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="w-full p-3 rounded-lg border border-gray-300"
