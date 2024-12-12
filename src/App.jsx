@@ -32,6 +32,7 @@ import Contactd from "./pages/contactd";
 import "./App.css";
 import AboutPage from "./pages/Home_About";
 import ProtectedRoute from "./pages/ProtectedRoutes";
+import ForbiddenPage from "./pages/forbidden";
 
 const App = () => {
   return (
@@ -46,6 +47,8 @@ const App = () => {
           <Route path="/admin" element={<AdminSignup />} />
           <Route path="/registration" element={<Registration_ />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/forbidden" element={<ForbiddenPage />} />
+
           <Route
             path="/sag-home-page"
             element={
