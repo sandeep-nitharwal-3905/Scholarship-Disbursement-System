@@ -161,16 +161,17 @@ const Sidebar = (props) => {
         `}
       >
         {/* Close Button for Mobile/Compact Mode */}
-        {(isSidebarOpen || isCompactMode) && (
-          <motion.div 
-            className="absolute top-4 right-4 cursor-pointer text-gray-300 hover:text-white"
-            whileHover={{ scale: 1.2 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={toggleSidebar}
-          >
-            <X size={24} />
-          </motion.div>
-        )}
+{(isSidebarOpen || isCompactMode) && window.innerWidth < 1024 && (
+  <motion.div 
+    className="absolute top-4 right-4 cursor-pointer text-gray-300 hover:text-white"
+    whileHover={{ scale: 1.2 }}
+    whileTap={{ scale: 0.9 }}
+    onClick={toggleSidebar}
+  >
+    <X size={24} />
+  </motion.div>
+)}
+
 
         {/* User Profile Section */}
         <motion.div 
