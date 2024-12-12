@@ -27,7 +27,7 @@ const Sidebar = (props) => {
     scholarshipInfo: false,
     userManagement: false,
   });
-  const [activeLink, setActiveLink] = useState("Dashboard");
+  const [activeLink, setActiveLink] = useState("Home");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCompactMode, setIsCompactMode] = useState(false);
 
