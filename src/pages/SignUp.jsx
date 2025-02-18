@@ -27,6 +27,7 @@ import app from "../Firebase";
 const auth = getAuth(app);
 const database = getDatabase(app);
 
+
 const ScholarshipSignup = () => {
   // Personal Information State
   const [fullName, setFullName] = useState("");
@@ -41,6 +42,7 @@ const ScholarshipSignup = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [otp, setOtp] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
+
   const [error, setError] = useState("");
   const [verificationId, setVerificationId] = useState("");
   const [role, setRole] = useState("student");
@@ -135,11 +137,7 @@ const ScholarshipSignup = () => {
 
     try {
       // Step 1: Create user with email & password (Firebase Authentication)
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
       // Step 2: Store additional user information in Firestore
@@ -196,6 +194,7 @@ const ScholarshipSignup = () => {
     setAgreeTerms(false);
   };
 
+
   const handleGenerateOTP = async () => {
     if (!validateForm()) {
       return;
@@ -203,7 +202,6 @@ const ScholarshipSignup = () => {
     try {
       setLoading(true);
       setError("");
-
       const response = await fetch(
         "http://172.16.11.157:5007/generate-otp-phone",
         {
@@ -223,7 +221,6 @@ const ScholarshipSignup = () => {
         console.error("OTP generation failed:", data.error);
         throw new Error(data.error || "Failed to generate OTP");
       }
-
       console.log("OTP sent successfully");
       setSuccessMessage("OTP sent successfully to your email");
       setStep(2); // Move to the next step
@@ -264,6 +261,7 @@ const ScholarshipSignup = () => {
     } finally {
       setLoading(false);
       return true;
+
     }
   };
 
